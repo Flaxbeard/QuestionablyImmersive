@@ -1,8 +1,8 @@
 package flaxbeard.questionablyimmersive.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_Radios;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.metal.*;
+import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QEMetalDevice;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -19,15 +19,15 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
+public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDevice>
 {
-	public BlockRadio()
+	public BlockQEMetalDevice()
 	{
-		super("radio", Material.IRON, PropertyEnum.create("type", BlockTypes_Radios.class), ItemBlockQEBase.class, IEProperties.FACING_HORIZONTAL, IEProperties.MULTIBLOCKSLAVE);
+		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QEMetalDevice.class), ItemBlockQEBase.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;
-		this.setNotNormalBlock(BlockTypes_Radios.RADIO.getMeta());
+		this.setNotNormalBlock(BlockTypes_QEMetalDevice.GAUGE.getMeta());
 
 	}
 
@@ -36,7 +36,6 @@ public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
 	{
 		return true;
 	}
-
 	@Override
 	public String getCustomStateMapping(int meta, boolean itemBlock)
 	{
@@ -54,8 +53,10 @@ public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
-		switch (BlockTypes_Radios.values()[meta])
+		switch(BlockTypes_QEMetalDevice.values()[meta])
 		{
+			case GAUGE:
+				return new TileEntityGauge();
 			case RADIO:
 				return new TileEntityRadio();
 		}
@@ -67,19 +68,27 @@ public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
 	{
 		return true;
 	}
-
+	
 	@Override
 	public boolean canIEBlockBePlaced(World world, BlockPos pos, IBlockState newState, EnumFacing side, float hitX, float hitY, float hitZ, EntityPlayer player, ItemStack stack)
 	{
 		return true;
 	}
-
+	
 	@Deprecated
 	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
+		int meta = this.getMetaFromState(state);
+		switch(BlockTypes_QEMetalDevice.values()[meta])
+		{
+			case GAUGE:
+				return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
+			case RADIO:
+				return EnumBlockRenderType.MODEL;
+		}
 		return EnumBlockRenderType.MODEL;
 	}
-
+	
 	@Override
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
@@ -89,19 +98,46 @@ public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
-		TileEntity te = world.getTileEntity(pos);
-		return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
+		int meta = this.getMetaFromState(state);
+		switch(BlockTypes_QEMetalDevice.values()[meta])
+		{
+			case GAUGE:
+				TileEntity te = world.getTileEntity(pos);
+				if (te != null && te instanceof TileEntityGauge)
+				{
+					switch (((TileEntityGauge) te).facing)
+					{
+						case DOWN:
+							return new AxisAlignedBB(0.25f, 0, 0.25f, 0.75f, 0.0625f, 0.75f);
+						case UP:
+							return new AxisAlignedBB(0.25f, 0.9375f, 0.25f, 0.75f, 1, 0.75f);
+						case EAST:
+							return new AxisAlignedBB(0.9375f, 0.25f, 0.25f, 1, 0.75f, 0.75f);
+						case WEST:
+							return new AxisAlignedBB(0, 0.25f, 0.25f, 0.0625f, 0.75f, 0.75f);
+						case SOUTH:
+							return new AxisAlignedBB(0.25f, 0.25f, 0.9375f, 0.75f, 0.75f, 1);
+						case NORTH:
+							return new AxisAlignedBB(0.25f, 0.25f, 0, 0.75f, 0.75f, 0.0625f);
+					}
+				}
+		}
+		return new AxisAlignedBB(0,0,0,1,1,1);
 	}
 
 	@Override
 	public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
 	{
-		TileEntity te = blockAccess.getTileEntity(pos);
-		if (te instanceof TileEntityRadio)
+		if (this.getMetaFromState(blockState) == BlockTypes_QEMetalDevice.RADIO.getMeta())
 		{
-			TileEntityRadio radio = ((TileEntityRadio) te);
-			return radio.receiveMode ? radio.power : 0;
+			TileEntity te = blockAccess.getTileEntity(pos);
+			if (te instanceof TileEntityRadio)
+			{
+				TileEntityRadio radio = ((TileEntityRadio) te);
+				return radio.receiveMode ? radio.power : 0;
+			}
 		}
+
 		return 0;
 	}
 
@@ -114,27 +150,37 @@ public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
 	@Override
 	public boolean canProvidePower(IBlockState state)
 	{
-		return true;
+		if (this.getMetaFromState(state) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		{
+			return true;
+		}
+		return false;
 	}
 
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos)
 	{
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
-		updatePower(world, pos);
+		if (this.getMetaFromState(state) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		{
+			updatePower(world, pos);
+		}
 	}
 
 	@Override
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
 	{
 		super.updateTick(world, pos, state, rand);
-		updatePower(world, pos);
+		if (this.getMetaFromState(state) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		{
+			updatePower(world, pos);
+		}
 	}
 
 	private void updatePower(World world, BlockPos pos)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if (te instanceof TileEntityRadio)
+		if (!world.isRemote && te instanceof TileEntityRadio)
 		{
 			TileEntityRadio radio = ((TileEntityRadio) te);
 			if (!radio.receiveMode && radio.network != null)
@@ -143,4 +189,5 @@ public class BlockRadio extends BlockQETileProvider<BlockTypes_Radios>
 			}
 		}
 	}
+
 }

@@ -83,13 +83,19 @@ public class TileEntityRadio extends TileEntityIEBase implements IDirectionalTil
 	@Override
 	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
 	{
-		RadioHelper.removeRadio(this);
+		if (!world.isRemote)
+		{
+			RadioHelper.removeRadio(this);
+		}
 		receiveMode = !receiveMode;
-		network = RadioHelper.addRadio(this);
+		if (!world.isRemote)
+		{
+			network = RadioHelper.addRadio(this);
+		}
 
 
 		markContainingBlockForUpdate(null);
-		world.notifyNeighborsOfStateChange(getPos(), QEContent.blockRadio, false);
+		world.notifyNeighborsOfStateChange(getPos(), QEContent.blockGauge, false);
 		markDirty();
 		return true;
 	}
@@ -112,13 +118,19 @@ public class TileEntityRadio extends TileEntityIEBase implements IDirectionalTil
 	public void onLoad()
 	{
 		super.onLoad();
-		network = RadioHelper.addRadio(this);
+		if (!world.isRemote)
+		{
+			network = RadioHelper.addRadio(this);
+		}
 	}
 
 	@Override
 	public void invalidate()
 	{
 		super.invalidate();
-		RadioHelper.removeRadio(this);
+		if (!world.isRemote)
+		{
+			RadioHelper.removeRadio(this);
+		}
 	}
 }

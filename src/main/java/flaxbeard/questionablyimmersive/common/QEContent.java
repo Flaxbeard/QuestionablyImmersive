@@ -2,10 +2,9 @@ package flaxbeard.questionablyimmersive.common;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
-import flaxbeard.questionablyimmersive.common.blocks.BlockGauge;
+import flaxbeard.questionablyimmersive.common.blocks.BlockQEMetalDevice;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQEBase;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQEMetalMultiblocks;
-import flaxbeard.questionablyimmersive.common.blocks.BlockRadio;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
@@ -34,7 +33,6 @@ public class QEContent
 	public static BlockQEBase blockMetalMultiblock;
 
 	public static BlockQEBase blockGauge;
-	public static BlockQEBase blockRadio;
 
 	
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
@@ -49,8 +47,7 @@ public class QEContent
 
 		blockMetalMultiblock = new BlockQEMetalMultiblocks();
 
-		blockGauge = new BlockGauge();
-		blockRadio = new BlockRadio();
+		blockGauge = new BlockQEMetalDevice();
 
 
 		itemPunchcard = new ItemPunchcard("punchcard");

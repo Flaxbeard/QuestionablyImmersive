@@ -5,9 +5,10 @@ import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
 
-public enum BlockTypes_Gauges implements IStringSerializable, BlockQEBase.IBlockEnum
+public enum BlockTypes_QEMetalDevice implements IStringSerializable, BlockQEBase.IBlockEnum
 {
-	GAUGE;
+	GAUGE,
+	RADIO;
 
 	@Override
 	public String getName()

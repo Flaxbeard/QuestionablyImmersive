@@ -51,7 +51,7 @@ public class RadioHelper
 					TileEntityRadio radio = (TileEntityRadio) te;
 					radio.power = maxPower;
 					radio.markContainingBlockForUpdate(null);
-					world.notifyNeighborsOfStateChange(pos, QEContent.blockRadio, false);
+					world.notifyNeighborsOfStateChange(pos, QEContent.blockGauge, false);
 				}
 			}
 		}
