@@ -7,8 +7,8 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecor
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDecoration1;
 import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevice1;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.questionablyimmersive.common.QEContent;
-import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QEMetalMultiblock;
+import flaxbeard.questionablyimmersive.common.QIContent;
+import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalMultiblock;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -143,11 +143,13 @@ public class MultiblockMortar implements IMultiblock
 					
 					if (l == 0 && w == 0 && h == 0)
 					{
-						world.setBlockState(pos2, QEContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_QEMetalMultiblock.MORTAR_PARENT.getMeta()));
+						world.setBlockState(pos2, QIContent.blockMetalMultiblock.getStateFromMeta(
+								BlockTypes_QIMetalMultiblock.MORTAR_PARENT.getMeta()));
 					}
 					else
 					{
-						world.setBlockState(pos2, QEContent.blockMetalMultiblock.getStateFromMeta(BlockTypes_QEMetalMultiblock.MORTAR.getMeta()));
+						world.setBlockState(pos2, QIContent.blockMetalMultiblock.getStateFromMeta(
+								BlockTypes_QIMetalMultiblock.MORTAR.getMeta()));
 					}
 					TileEntity curr = world.getTileEntity(pos2);
 					if(curr instanceof TileEntityMortar)
@@ -159,7 +161,7 @@ public class MultiblockMortar implements IMultiblock
 						tile.offset = new int[]{(side==EnumFacing.WEST?-l: side==EnumFacing.EAST?l: side==EnumFacing.NORTH?ww: -ww),h,(side==EnumFacing.NORTH?-l: side==EnumFacing.SOUTH?l: side==EnumFacing.EAST?ww : -ww)};
 						tile.mirrored=mirror;
 						tile.markDirty();
-						world.addBlockEvent(pos2, QEContent.blockMetalMultiblock, 255, 0);
+						world.addBlockEvent(pos2, QIContent.blockMetalMultiblock, 255, 0);
 					}
 
 				}

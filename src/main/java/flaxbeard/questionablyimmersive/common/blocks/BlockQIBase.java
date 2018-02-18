@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import com.google.common.collect.Sets;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
-import flaxbeard.questionablyimmersive.common.QEContent;
+import flaxbeard.questionablyimmersive.common.QIContent;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -33,7 +33,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.*;
 
-public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Block implements IIEMetaBlock
+public class BlockQIBase<E extends Enum<E> & BlockQIBase.IBlockEnum> extends Block implements IIEMetaBlock
 {
 	protected static IProperty[] tempProperties;
 	protected static IUnlistedProperty[] tempUnlistedProperties;
@@ -51,7 +51,7 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 	protected Map<Integer, Integer> metaResistances = new HashMap<>();
 	protected boolean[] metaNotNormalBlock;
 	private boolean opaqueCube = false;
-	public BlockQEBase(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockQEBase> itemBlock, Object... additionalProperties)
+	public BlockQIBase(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockQIBase> itemBlock, Object... additionalProperties)
 	{
 		super(setTempProperties(material, mainProperty, additionalProperties));
 		this.name = name;
@@ -84,9 +84,9 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		this.setCreativeTab(QuestionablyImmersive.creativeTab);
 		this.adjustSound();
 		//QuestionablyImmersive.registerBlockByFullName(this, itemBlock, registryName);
-		QEContent.registeredIPBlocks.add(this);
+		QIContent.registeredIPBlocks.add(this);
 		try{
-			QEContent.registeredIPItems.add(itemBlock.getConstructor(Block.class).newInstance(this));
+			QIContent.registeredIPItems.add(itemBlock.getConstructor(Block.class).newInstance(this));
 		}catch(Exception e){e.printStackTrace();}
 		lightOpacity = 255;
 	}
@@ -176,14 +176,14 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		return array;
 	}
 
-	public BlockQEBase setMetaHidden(int... meta)
+	public BlockQIBase setMetaHidden(int... meta)
 	{
 		for(int i : meta)
 			if(i>=0 && i<this.isMetaHidden.length)
 				this.isMetaHidden[i] = true;
 		return this;
 	}
-	public BlockQEBase setMetaUnhidden(int... meta)
+	public BlockQIBase setMetaUnhidden(int... meta)
 	{
 		for(int i : meta)
 			if(i>=0 && i<this.isMetaHidden.length)
@@ -195,7 +195,7 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		return this.isMetaHidden[Math.max(0, Math.min(meta, this.isMetaHidden.length-1))];
 	}
 
-	public BlockQEBase setHasFlavour(int... meta)
+	public BlockQIBase setHasFlavour(int... meta)
 	{
 		if(meta==null||meta.length<1)
 			for(int i=0; i<hasFlavour.length; i++)
@@ -211,12 +211,12 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		return this.hasFlavour[Math.max(0, Math.min(stack.getItemDamage(), this.hasFlavour.length-1))];
 	}
 
-	public BlockQEBase<E> setBlockLayer(BlockRenderLayer... layer)
+	public BlockQIBase<E> setBlockLayer(BlockRenderLayer... layer)
 	{
 		this.renderLayers = Sets.newHashSet(layer);
 		return this;
 	}
-	public BlockQEBase<E> setMetaBlockLayer(int meta, BlockRenderLayer... layer)
+	public BlockQIBase<E> setMetaBlockLayer(int meta, BlockRenderLayer... layer)
 	{
 		this.metaRenderLayers[Math.max(0, Math.min(meta, this.metaRenderLayers.length-1))] = Sets.newHashSet(layer);
 		return this;
@@ -232,7 +232,7 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		}
 		return renderLayers.contains(layer);
 	}
-	public BlockQEBase<E> setMetaLightOpacity(int meta, int opacity)
+	public BlockQIBase<E> setMetaLightOpacity(int meta, int opacity)
 	{
 		metaLightOpacities.put(meta, opacity);
 		return this;
@@ -246,7 +246,7 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		return super.getLightOpacity(state,w,pos);
 	}
 
-	public BlockQEBase<E> setMetaExplosionResistance(int meta, int resistance)
+	public BlockQIBase<E> setMetaExplosionResistance(int meta, int resistance)
 	{
 		metaResistances.put(meta, resistance);
 		return this;
@@ -260,14 +260,14 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		return super.getExplosionResistance(world, pos, exploder, explosion);
 	}
 
-	public BlockQEBase<E> setNotNormalBlock(int meta)
+	public BlockQIBase<E> setNotNormalBlock(int meta)
 	{
 		if(metaNotNormalBlock == null)
 			metaNotNormalBlock = new boolean[this.enumValues.length];
 		metaNotNormalBlock[meta] = true;
 		return this;
 	}
-	public BlockQEBase<E> setAllNotNormalBlock()
+	public BlockQIBase<E> setAllNotNormalBlock()
 	{
 		if(metaNotNormalBlock == null)
 			metaNotNormalBlock = new boolean[this.enumValues.length];
@@ -454,7 +454,7 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 	{
 		return opaqueCube;
 	}
-	public BlockQEBase<E> setOpaque(boolean isOpaque)
+	public BlockQIBase<E> setOpaque(boolean isOpaque)
 	{
 		opaqueCube = isOpaque;
 		fullBlock = isOpaque;
@@ -480,10 +480,10 @@ public class BlockQEBase<E extends Enum<E> & BlockQEBase.IBlockEnum> extends Blo
 		int getMeta();
 		boolean listForCreative();
 	}
-	public abstract static class IPLadderBlock<E extends Enum<E> & IBlockEnum> extends BlockQEBase<E>
+	public abstract static class IPLadderBlock<E extends Enum<E> & IBlockEnum> extends BlockQIBase<E>
 	{
 		public IPLadderBlock(String name, Material material, PropertyEnum<E> mainProperty,
-		                     Class<? extends ItemBlockQEBase> itemBlock, Object... additionalProperties)
+							 Class<? extends ItemBlockQIBase> itemBlock, Object... additionalProperties)
 		{
 			super(name, material, mainProperty, itemBlock, additionalProperties);
 		}

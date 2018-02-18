@@ -1,11 +1,11 @@
 package flaxbeard.questionablyimmersive.common.blocks.metal;
 
-import flaxbeard.questionablyimmersive.common.blocks.BlockQEBase;
+import flaxbeard.questionablyimmersive.common.blocks.BlockQIBase;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
 
-public enum BlockTypes_QEMetalDevice implements IStringSerializable, BlockQEBase.IBlockEnum
+public enum BlockTypes_QIMetalDevice implements IStringSerializable, BlockQIBase.IBlockEnum
 {
 	GAUGE,
 	RADIO;

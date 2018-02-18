@@ -46,11 +46,11 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class BlockQETileProvider<E extends Enum<E> & BlockQEBase.IBlockEnum> extends BlockQEBase<E> implements ITileEntityProvider, IColouredBlock
+public abstract class BlockQITileProvider<E extends Enum<E> & BlockQIBase.IBlockEnum> extends BlockQIBase<E> implements ITileEntityProvider, IColouredBlock
 {
 	private boolean hasColours = false;
 
-	public BlockQETileProvider(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockQEBase> itemBlock, Object... additionalProperties)
+	public BlockQITileProvider(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockQIBase> itemBlock, Object... additionalProperties)
 	{
 		super(name, material, mainProperty, itemBlock, additionalProperties);
 	}
@@ -330,7 +330,7 @@ public abstract class BlockQETileProvider<E extends Enum<E> & BlockQEBase.IBlock
 			TileEntity master = ((IGuiTile)tile).getGuiMaster();
 			if (((IGuiTile)tile).canOpenGui(player))
 			{
-				if(!world.isRemote && master!=null)
+				//if(!world.isRemote && master!=null)
 					CommonProxy.openGuiForTile(player,(TileEntity & IGuiTile)master);
 				return true;
 			}
@@ -355,7 +355,7 @@ public abstract class BlockQETileProvider<E extends Enum<E> & BlockQEBase.IBlock
 		return 0;
 	}
 
-	public BlockQETileProvider setHasColours()
+	public BlockQITileProvider setHasColours()
 	{
 		this.hasColours = true;
 		return this;

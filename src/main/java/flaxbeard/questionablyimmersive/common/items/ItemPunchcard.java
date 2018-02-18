@@ -17,7 +17,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ItemPunchcard extends ItemQEBase
+public class ItemPunchcard extends ItemQIBase
 {
 
 	public ItemPunchcard(String name)

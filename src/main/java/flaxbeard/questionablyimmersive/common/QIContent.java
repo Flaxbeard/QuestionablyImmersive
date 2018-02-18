@@ -2,14 +2,15 @@ package flaxbeard.questionablyimmersive.common;
 
 import blusunrize.immersiveengineering.api.MultiblockHandler;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
-import flaxbeard.questionablyimmersive.common.blocks.BlockQEMetalDevice;
-import flaxbeard.questionablyimmersive.common.blocks.BlockQEBase;
-import flaxbeard.questionablyimmersive.common.blocks.BlockQEMetalMultiblocks;
+import flaxbeard.questionablyimmersive.common.blocks.BlockQIMetalDevice;
+import flaxbeard.questionablyimmersive.common.blocks.BlockQIBase;
+import flaxbeard.questionablyimmersive.common.blocks.BlockQIMetalMultiblocks;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
+import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import flaxbeard.questionablyimmersive.common.items.ItemPunchcard;
 import net.minecraft.block.Block;
 import net.minecraft.entity.projectile.*;
@@ -26,31 +27,33 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import java.util.ArrayList;
 
 @Mod.EventBusSubscriber(modid= QuestionablyImmersive.MODID)
-public class QEContent
+public class QIContent
 {
 	public static ArrayList<Block> registeredIPBlocks = new ArrayList<Block>();
 
-	public static BlockQEBase blockMetalMultiblock;
+	public static BlockQIBase blockMetalMultiblock;
 
-	public static BlockQEBase blockGauge;
+	public static BlockQIBase blockGauge;
 
 	
 	public static ArrayList<Item> registeredIPItems = new ArrayList<Item>();
 
 
 	public static Item itemPunchcard;
+	public static Item itemPortableRadio;
 
 	public static void preInit()
 	{
 		EntityRegistry.registerModEntity(new ResourceLocation(QuestionablyImmersive.MODID, "mortar_item"), EntityMortarItem.class, "mortar_item", 1, QuestionablyImmersive.INSTANCE, 180, 1, true);
 
 
-		blockMetalMultiblock = new BlockQEMetalMultiblocks();
+		blockMetalMultiblock = new BlockQIMetalMultiblocks();
 
-		blockGauge = new BlockQEMetalDevice();
+		blockGauge = new BlockQIMetalDevice();
 
 
 		itemPunchcard = new ItemPunchcard("punchcard");
+		itemPortableRadio = new ItemPortableRadio("radio");
 
 		EntityMortarItem.registerHandler(Items.ARROW, -1, (item, world, xPos, yPos, zPos) -> {
 			EntityArrow arrow = new EntityTippedArrow(world, xPos + (world.rand.nextFloat() * 4f) - 2f, yPos, zPos + (world.rand.nextFloat() * 4f) - 2f);

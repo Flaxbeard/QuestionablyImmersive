@@ -2,7 +2,7 @@ package flaxbeard.questionablyimmersive.common.items;
 
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces.IColouredItem;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
-import flaxbeard.questionablyimmersive.common.QEContent;
+import flaxbeard.questionablyimmersive.common.QIContent;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -10,14 +10,14 @@ import net.minecraft.util.NonNullList;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ItemQEBase extends Item implements IColouredItem
+public class ItemQIBase extends Item implements IColouredItem
 {
 	public String itemName;
 	protected String[] subNames;
 	boolean[] isMetaHidden;
 	public boolean registerSubModels=true;
 
-	public ItemQEBase(String name, int stackSize, String... subNames)
+	public ItemQIBase(String name, int stackSize, String... subNames)
 	{
 		this.setUnlocalizedName(QuestionablyImmersive.MODID+"."+name);
 		this.setHasSubtypes(subNames!=null&&subNames.length>0);
@@ -27,7 +27,7 @@ public class ItemQEBase extends Item implements IColouredItem
 		this.subNames = subNames!=null&&subNames.length>0?subNames:null;
 		this.isMetaHidden = new boolean[this.subNames!=null?this.subNames.length:1];
 		//QuestionablyImmersive.register(this, name);
-		QEContent.registeredIPItems.add(this);
+		QIContent.registeredIPItems.add(this);
 	}
 
 	public String[] getSubNames()
@@ -60,14 +60,14 @@ public class ItemQEBase extends Item implements IColouredItem
 		return this.getUnlocalizedName();
 	}
 
-	public ItemQEBase setMetaHidden(int... meta)
+	public ItemQIBase setMetaHidden(int... meta)
 	{
 		for(int i : meta)
 			if(i>=0 && i<this.isMetaHidden.length)
 				this.isMetaHidden[i] = true;
 		return this;
 	}
-	public ItemQEBase setMetaUnhidden(int... meta)
+	public ItemQIBase setMetaUnhidden(int... meta)
 	{
 		for(int i : meta)
 			if(i>=0 && i<this.isMetaHidden.length)
@@ -79,7 +79,7 @@ public class ItemQEBase extends Item implements IColouredItem
 		return this.isMetaHidden[Math.max(0, Math.min(meta, this.isMetaHidden.length-1))];
 	}
 	
-	public ItemQEBase setRegisterSubModels(boolean register)
+	public ItemQIBase setRegisterSubModels(boolean register)
 	{
 		this.registerSubModels = register;
 		return this;

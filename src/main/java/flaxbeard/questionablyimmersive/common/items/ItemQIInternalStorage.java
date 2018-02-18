@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.api.tool.IInternalStorageItem;
 import blusunrize.immersiveengineering.common.util.IELogger;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
-import flaxbeard.questionablyimmersive.common.util.QEItemStackHandler;
+import flaxbeard.questionablyimmersive.common.util.QIItemStackHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
@@ -21,9 +21,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 
 import javax.annotation.Nullable;
 
-public abstract class ItemQEInternalStorage extends ItemQEBase implements IInternalStorageItem
+public abstract class ItemQIInternalStorage extends ItemQIBase implements IInternalStorageItem
 {
-	public ItemQEInternalStorage(String name, int stackSize, String... subNames)
+	public ItemQIInternalStorage(String name, int stackSize, String... subNames)
 	{
 		super(name, stackSize, subNames);
 	}
@@ -32,7 +32,7 @@ public abstract class ItemQEInternalStorage extends ItemQEBase implements IInter
 
 	@Nullable
 	public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
-		return !stack.isEmpty() ? new QEItemStackHandler(stack) : null;
+		return !stack.isEmpty() ? new QIItemStackHandler(stack) : null;
 	}
 
 	public void setContainedItems(ItemStack stack, NonNullList<ItemStack> inventory) {
@@ -53,8 +53,8 @@ public abstract class ItemQEInternalStorage extends ItemQEBase implements IInter
 
 	public NonNullList<ItemStack> getContainedItems(ItemStack stack) {
 		IItemHandler handler = (IItemHandler)stack.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, (EnumFacing)null);
-		if (handler instanceof QEItemStackHandler) {
-			return ((QEItemStackHandler)handler).getContainedItems();
+		if (handler instanceof QIItemStackHandler) {
+			return ((QIItemStackHandler)handler).getContainedItems();
 		} else if (handler == null) {
 			IELogger.info("No valid inventory handler found for " + stack);
 			return NonNullList.create();

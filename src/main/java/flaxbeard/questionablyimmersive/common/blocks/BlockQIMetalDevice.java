@@ -2,7 +2,8 @@ package flaxbeard.questionablyimmersive.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import flaxbeard.questionablyimmersive.common.blocks.metal.*;
-import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QEMetalDevice;
+import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalDevice;
+import flaxbeard.questionablyimmersive.common.util.RadioHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -19,15 +20,15 @@ import net.minecraft.world.World;
 
 import java.util.Random;
 
-public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDevice>
+public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDevice>
 {
-	public BlockQEMetalDevice()
+	public BlockQIMetalDevice()
 	{
-		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QEMetalDevice.class), ItemBlockQEBase.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
+		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QIMetalDevice.class), ItemBlockMetalBlock.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;
-		this.setNotNormalBlock(BlockTypes_QEMetalDevice.GAUGE.getMeta());
+		this.setNotNormalBlock(BlockTypes_QIMetalDevice.GAUGE.getMeta());
 
 	}
 
@@ -53,7 +54,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
-		switch(BlockTypes_QEMetalDevice.values()[meta])
+		switch(BlockTypes_QIMetalDevice.values()[meta])
 		{
 			case GAUGE:
 				return new TileEntityGauge();
@@ -79,7 +80,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
 		int meta = this.getMetaFromState(state);
-		switch(BlockTypes_QEMetalDevice.values()[meta])
+		switch(BlockTypes_QIMetalDevice.values()[meta])
 		{
 			case GAUGE:
 				return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
@@ -99,7 +100,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos)
 	{
 		int meta = this.getMetaFromState(state);
-		switch(BlockTypes_QEMetalDevice.values()[meta])
+		switch(BlockTypes_QIMetalDevice.values()[meta])
 		{
 			case GAUGE:
 				TileEntity te = world.getTileEntity(pos);
@@ -128,7 +129,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	@Override
 	public int getWeakPower(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
 	{
-		if (this.getMetaFromState(blockState) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		if (this.getMetaFromState(blockState) == BlockTypes_QIMetalDevice.RADIO.getMeta())
 		{
 			TileEntity te = blockAccess.getTileEntity(pos);
 			if (te instanceof TileEntityRadio)
@@ -150,7 +151,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	@Override
 	public boolean canProvidePower(IBlockState state)
 	{
-		if (this.getMetaFromState(state) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		if (this.getMetaFromState(state) == BlockTypes_QIMetalDevice.RADIO.getMeta())
 		{
 			return true;
 		}
@@ -161,7 +162,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos)
 	{
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
-		if (this.getMetaFromState(state) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		if (this.getMetaFromState(state) == BlockTypes_QIMetalDevice.RADIO.getMeta())
 		{
 			updatePower(world, pos);
 		}
@@ -171,7 +172,7 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
 	{
 		super.updateTick(world, pos, state, rand);
-		if (this.getMetaFromState(state) == BlockTypes_QEMetalDevice.RADIO.getMeta())
+		if (this.getMetaFromState(state) == BlockTypes_QIMetalDevice.RADIO.getMeta())
 		{
 			updatePower(world, pos);
 		}
@@ -183,9 +184,9 @@ public class BlockQEMetalDevice extends BlockQETileProvider<BlockTypes_QEMetalDe
 		if (!world.isRemote && te instanceof TileEntityRadio)
 		{
 			TileEntityRadio radio = ((TileEntityRadio) te);
-			if (!radio.receiveMode && radio.network != null)
+			if (!radio.receiveMode)
 			{
-				radio.network.updatePower(pos);
+				RadioHelper.getNetwork(world.provider.getDimension(), radio.frequency).updatePower(pos);
 			}
 		}
 	}

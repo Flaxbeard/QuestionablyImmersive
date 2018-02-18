@@ -26,12 +26,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.List;
 import java.util.Locale;
 
-public class ItemBlockQEBase extends ItemBlock
+public class ItemBlockQIBase extends ItemBlock
 {
-	public ItemBlockQEBase(Block b)
+	public ItemBlockQIBase(Block b)
 	{
 		super(b);
-		if(((BlockQEBase)b).enumValues.length>1)
+		if(((BlockQIBase)b).enumValues.length>1)
 			setHasSubtypes(true);
 	}
 	
@@ -51,7 +51,7 @@ public class ItemBlockQEBase extends ItemBlock
 	@Override
 	public String getUnlocalizedName(ItemStack stack)
 	{
-		return ((BlockQEBase) this.block).getUnlocalizedName(stack);
+		return ((BlockQIBase) this.block).getUnlocalizedName(stack);
 	}
 
 	@Override
@@ -64,10 +64,10 @@ public class ItemBlockQEBase extends ItemBlock
 	@Override
 	public void addInformation(ItemStack stack, World worldIn, List<String> list, ITooltipFlag advInfo)
 	{
-		if(((BlockQEBase)block).hasFlavour(stack))
+		if(((BlockQIBase)block).hasFlavour(stack))
 		{
-			String subName = ((BlockQEBase)this.block).getStateFromMeta(stack.getItemDamage()).getValue(((BlockQEBase)this.block).property).toString().toLowerCase(Locale.US);
-			String flavourKey = "desc." + QuestionablyImmersive.MODID + ".flavor." + ((BlockQEBase)this.block).name+"."+subName;
+			String subName = ((BlockQIBase)this.block).getStateFromMeta(stack.getItemDamage()).getValue(((BlockQIBase)this.block).property).toString().toLowerCase(Locale.US);
+			String flavourKey = "desc." + QuestionablyImmersive.MODID + ".flavor." + ((BlockQIBase)this.block).name+"."+subName;
 			list.add(TextFormatting.GRAY.toString()+ I18n.format(flavourKey));
 		}
 		super.addInformation(stack, worldIn, list, advInfo);
@@ -85,12 +85,12 @@ public class ItemBlockQEBase extends ItemBlock
 	@Override
 	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState)
 	{
-		if(!((BlockQEBase)this.block).canIEBlockBePlaced(world, pos, newState, side, hitX,hitY,hitZ, player, stack))
+		if(!((BlockQIBase)this.block).canIEBlockBePlaced(world, pos, newState, side, hitX,hitY,hitZ, player, stack))
 			return false;
 		boolean ret = super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 		if(ret)
 		{
-			((BlockQEBase)this.block).onIEBlockPlacedBy(world, pos, newState, side, hitX,hitY,hitZ, player, stack);
+			((BlockQIBase)this.block).onIEBlockPlacedBy(world, pos, newState, side, hitX,hitY,hitZ, player, stack);
 		}
 		return ret;
 	}
@@ -134,7 +134,7 @@ public class ItemBlockQEBase extends ItemBlock
 	}
 	private boolean canBlockBePlaced(World w, BlockPos pos, EnumFacing side, ItemStack stack)
 	{
-		BlockQEBase blockIn = (BlockQEBase) this.block;
+		BlockQIBase blockIn = (BlockQIBase) this.block;
 		Block block = w.getBlockState(pos).getBlock();
 		AxisAlignedBB axisalignedbb = blockIn.getCollisionBoundingBox( blockIn.getStateFromMeta(stack.getItemDamage()), w, pos);
 		if (axisalignedbb != null && !w.checkNoEntityCollision(axisalignedbb.offset(pos), null)) return false;

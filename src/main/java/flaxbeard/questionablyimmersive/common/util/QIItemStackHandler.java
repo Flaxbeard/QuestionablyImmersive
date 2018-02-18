@@ -5,7 +5,7 @@
 
 package flaxbeard.questionablyimmersive.common.util;
 
-import flaxbeard.questionablyimmersive.common.items.ItemQEInternalStorage;
+import flaxbeard.questionablyimmersive.common.items.ItemQIInternalStorage;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -19,14 +19,14 @@ import net.minecraftforge.items.ItemStackHandler;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class QEItemStackHandler extends ItemStackHandler implements ICapabilityProvider {
+public class QIItemStackHandler extends ItemStackHandler implements ICapabilityProvider {
 	private boolean first = true;
 	private ItemStack stack;
 	@Nonnull
 	private Runnable onChange = () -> {
 	};
 
-	public QEItemStackHandler(ItemStack stack) {
+	public QIItemStackHandler(ItemStack stack) {
 		this.stack = stack;
 	}
 
@@ -62,7 +62,7 @@ public class QEItemStackHandler extends ItemStackHandler implements ICapabilityP
 	@Nullable
 	public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
 		if (this.first) {
-			int idealSize = ((ItemQEInternalStorage)this.stack.getItem()).getSlotCount(this.stack);
+			int idealSize = ((ItemQIInternalStorage)this.stack.getItem()).getSlotCount(this.stack);
 			NonNullList<ItemStack> newList = NonNullList.withSize(idealSize, ItemStack.EMPTY);
 
 			for(int i = 0; i < Math.min(this.stacks.size(), idealSize); ++i) {

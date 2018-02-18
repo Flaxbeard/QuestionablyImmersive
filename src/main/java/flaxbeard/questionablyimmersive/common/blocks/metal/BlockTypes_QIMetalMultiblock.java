@@ -1,17 +1,17 @@
 package flaxbeard.questionablyimmersive.common.blocks.metal;
 
-import flaxbeard.questionablyimmersive.common.blocks.BlockQEBase;
+import flaxbeard.questionablyimmersive.common.blocks.BlockQIBase;
 import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
 
-public enum BlockTypes_QEMetalMultiblock implements IStringSerializable, BlockQEBase.IBlockEnum
+public enum BlockTypes_QIMetalMultiblock implements IStringSerializable, BlockQIBase.IBlockEnum
 {
 	MORTAR(false),
 	MORTAR_PARENT(false);
 
 	private boolean needsCustomState;
-	BlockTypes_QEMetalMultiblock(boolean needsCustomState)
+	BlockTypes_QIMetalMultiblock(boolean needsCustomState)
 	{
 		this.needsCustomState = needsCustomState;
 	}

@@ -9,12 +9,12 @@ import flaxbeard.questionablyimmersive.client.page.ManualPageBigMultiblock;
 import flaxbeard.questionablyimmersive.client.render.MultiblockMortarRenderer;
 import flaxbeard.questionablyimmersive.client.render.TileGaugeRenderer;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
-import flaxbeard.questionablyimmersive.common.QEContent;
+import flaxbeard.questionablyimmersive.common.QIContent;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
-import flaxbeard.questionablyimmersive.common.items.ItemQEBase;
+import flaxbeard.questionablyimmersive.common.items.ItemQIBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -82,7 +82,7 @@ public class ClientProxy extends CommonProxy
 	public static void registerModels(ModelRegistryEvent evt)
 	{
 		//Going through registered stuff at the end of preInit, because of compat modules possibly adding items
-		for (Block block : QEContent.registeredIPBlocks)
+		for (Block block : QIContent.registeredIPBlocks)
 		{
 			Item blockItem = Item.getItemFromBlock(block);
 			final ResourceLocation loc = Block.REGISTRY.getNameForObject(block);
@@ -120,11 +120,11 @@ public class ClientProxy extends CommonProxy
 					ModelLoader.setCustomModelResourceLocation(blockItem, 0, new ModelResourceLocation(loc, "inventory"));
 		}
 
-		for(Item item : QEContent.registeredIPItems)
+		for(Item item : QIContent.registeredIPItems)
 		{
-			if(item instanceof ItemQEBase)
+			if(item instanceof ItemQIBase)
 			{
-				ItemQEBase ipMetaItem = (ItemQEBase) item;
+				ItemQIBase ipMetaItem = (ItemQIBase) item;
 				if(ipMetaItem.registerSubModels && ipMetaItem.getSubNames() != null && ipMetaItem.getSubNames().length > 0)
 				{
 					for(int meta = 0; meta < ipMetaItem.getSubNames().length; meta++)

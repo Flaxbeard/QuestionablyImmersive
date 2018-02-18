@@ -19,9 +19,9 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BlockQEMultiblock<E extends Enum<E> & BlockQEBase.IBlockEnum> extends BlockQETileProvider<E>
+public abstract class BlockQIMultiblock<E extends Enum<E> & BlockQIBase.IBlockEnum> extends BlockQITileProvider<E>
 {
-	public BlockQEMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockQEBase> itemBlock, Object... additionalProperties)
+	public BlockQIMultiblock(String name, Material material, PropertyEnum<E> mainProperty, Class<? extends ItemBlockQIBase> itemBlock, Object... additionalProperties)
 	{
 		super(name, material, mainProperty, itemBlock, combineProperties(additionalProperties, IEProperties.FACING_HORIZONTAL,IEProperties.MULTIBLOCKSLAVE));
 	}

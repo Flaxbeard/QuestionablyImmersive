@@ -3,7 +3,7 @@ package flaxbeard.questionablyimmersive.common.blocks;
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QEMetalMultiblock;
+import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalMultiblock;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -19,11 +19,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.Properties;
 
-public class BlockQEMetalMultiblocks extends BlockQEMultiblock<BlockTypes_QEMetalMultiblock>
+public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMetalMultiblock>
 {
-	public BlockQEMetalMultiblocks()
+	public BlockQIMetalMultiblocks()
 	{
-		super("metal_multiblock",Material.IRON, PropertyEnum.create("type", BlockTypes_QEMetalMultiblock.class), ItemBlockQEBase.class, IEProperties.DYNAMICRENDER,IEProperties.BOOLEANS[0],Properties.AnimationProperty,IEProperties.OBJ_TEXTURE_REMAP);
+		super("metal_multiblock",Material.IRON, PropertyEnum.create("type", BlockTypes_QIMetalMultiblock.class), ItemBlockQIBase.class, IEProperties.DYNAMICRENDER,IEProperties.BOOLEANS[0],Properties.AnimationProperty,IEProperties.OBJ_TEXTURE_REMAP);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		this.setAllNotNormalBlock();
@@ -38,15 +38,15 @@ public class BlockQEMetalMultiblocks extends BlockQEMultiblock<BlockTypes_QEMeta
 	@Override
 	public String getCustomStateMapping(int meta, boolean itemBlock)
 	{
-		if(BlockTypes_QEMetalMultiblock.values()[meta].needsCustomState())
-			return BlockTypes_QEMetalMultiblock.values()[meta].getCustomState();
+		if(BlockTypes_QIMetalMultiblock.values()[meta].needsCustomState())
+			return BlockTypes_QIMetalMultiblock.values()[meta].getCustomState();
 		return null;
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta)
 	{
-		switch(BlockTypes_QEMetalMultiblock.values()[meta])
+		switch(BlockTypes_QIMetalMultiblock.values()[meta])
 		{
 			case MORTAR:
 				return new TileEntityMortar();
