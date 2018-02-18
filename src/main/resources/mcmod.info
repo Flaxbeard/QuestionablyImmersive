@@ -1,0 +1,15 @@
+[
+{
+  "modid": "questionablyimmersive",
+  "name": "Questionably Immersive",
+  "description": "Adds oil and oil processing features to Immersive Engineering.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/Flaxbeard/ImmersivePetroleum",
+  "updateUrl": "",
+  "authorList": ["Flaxbeard"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": []
+}
+]
