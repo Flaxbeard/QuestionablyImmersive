@@ -9,17 +9,32 @@ import javafx.util.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class RadioHelper
 {
+
+	public static void subscribeTile(World world, int frequency, BlockPos pos)
+	{
+		RadioNetwork network = getNetwork(world.provider.getDimension(), frequency);
+		network.subscribeTile(pos);
+	}
+
+	public static void unsubscribeTile(World world, int frequency, BlockPos pos)
+	{
+		RadioNetwork network = getNetwork(world.provider.getDimension(), frequency);
+		network.unsubscribeTile(pos);
+	}
+
+	public interface IRadioSubscriber
+	{
+		void notifyTargetChange();
+	}
 
 	public static class RadioNetwork
 	{
@@ -32,10 +47,17 @@ public class RadioHelper
 			this.frequency = frequency;
 		}
 
-		List<BlockPos> recievers = new ArrayList<>();
+		Set<BlockPos> recievers = new HashSet<>();
+		Set<BlockPos> listeners = new HashSet<>();
 		Map<BlockPos, Integer> broadcasters = new HashMap<>();
 		int maxPower = 0;
 		private boolean portableRadioOn = false;
+		private Vec3d targetLocation = null;
+
+		public Vec3d getTargetLocation()
+		{
+			return targetLocation;
+		}
 
 		private void recalculatePower()
 		{
@@ -95,6 +117,12 @@ public class RadioHelper
 			NBTTagCompound compound = new NBTTagCompound();
 			compound.setInteger("maxPower", maxPower);
 			compound.setBoolean("portableRadioOn", portableRadioOn);
+			if (targetLocation != null)
+			{
+				compound.setDouble("posX", targetLocation.x);
+				compound.setDouble("posY", targetLocation.y);
+				compound.setDouble("posZ", targetLocation.z);
+			}
 			return compound;
 		}
 
@@ -102,13 +130,47 @@ public class RadioHelper
 		{
 			this.maxPower = compound.getInteger("maxPower");
 			this.portableRadioOn = compound.getBoolean("portableRadioOn");
+			if (compound.hasKey("posX"))
+			{
+				targetLocation = new Vec3d(
+						compound.getDouble("posX"),
+						compound.getDouble("posY"),
+						compound.getDouble("posZ")
+				);
+			}
+			else
+			{
+				targetLocation = null;
+			}
 		}
 
 		public void togglePortableRadio()
 		{
-			System.out.println(FMLCommonHandler.instance().getEffectiveSide() + " " + world + " " + frequency + " " + recievers.size());
 			portableRadioOn = !portableRadioOn;
 			recalculatePower();
+		}
+
+		public void subscribeTile(BlockPos pos)
+		{
+			listeners.add(pos);
+		}
+
+		public void unsubscribeTile(BlockPos pos)
+		{
+			listeners.remove(pos);
+		}
+
+		public void setTargetLocation(Vec3d position)
+		{
+			targetLocation = position;
+			for (BlockPos pos : listeners)
+			{
+				TileEntity te = getWorld().getTileEntity(pos);
+				if (te instanceof IRadioSubscriber)
+				{
+					((IRadioSubscriber) te).notifyTargetChange();
+				}
+			}
 		}
 	}
 
@@ -116,6 +178,12 @@ public class RadioHelper
 	{
 		RadioNetwork net = getNetwork(world.provider.getDimension(), frequency);
 		net.togglePortableRadio();
+	}
+
+	public static void setTargetLocation(World world, int frequency, Vec3d position)
+	{
+		RadioNetwork net = getNetwork(world.provider.getDimension(), frequency);
+		net.setTargetLocation(position);
 	}
 
 	public static Map<Pair<Integer, Integer>, RadioNetwork> networks = new HashMap<>();

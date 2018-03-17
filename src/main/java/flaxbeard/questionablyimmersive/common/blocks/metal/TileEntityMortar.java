@@ -11,9 +11,12 @@ import blusunrize.immersiveengineering.common.util.IESounds;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
+import flaxbeard.questionablyimmersive.api.ICoordinateProvider;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
+import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import flaxbeard.questionablyimmersive.common.items.ItemPunchcard;
+import flaxbeard.questionablyimmersive.common.util.RadioHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -32,34 +35,43 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar, IMultiblockRecipe> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IGuiTile, IEBlockInterfaces.IPlayerInteraction
+public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar, IMultiblockRecipe> implements IAdvancedSelectionBounds, IAdvancedCollisionBounds, IGuiTile, IEBlockInterfaces.IPlayerInteraction, RadioHelper.IRadioSubscriber
 {
 	@Override
 	public boolean interact(EnumFacing side, EntityPlayer player, EnumHand hand, ItemStack heldItem, float hitX, float hitY, float hitZ)
 	{
-		int blocksPerLevel = structureDimensions[1] * structureDimensions[2];
-		int h = (pos / blocksPerLevel);
-		int l = (pos % blocksPerLevel / structureDimensions[2]);
-		int w = (pos % structureDimensions[2]);
 		System.out.println(isDummy() + " " + pos + " " + getOrigin());
 
 		TileEntityMortar master = master();
-		if (heldItem.getItem() instanceof ItemPunchcard && ItemNBTHelper.hasKey(heldItem, "posX") && master != null)
+		if (master != null && master.isStackValid(1, heldItem))
 		{
-			master.targetPos = new BlockPos(
-					ItemNBTHelper.getInt(heldItem, "posX"),
-					ItemNBTHelper.getInt(heldItem, "posY"),
-					ItemNBTHelper.getInt(heldItem, "posZ")
-			);
+			ItemStack toDrop = master.inventory.get(1).copy();
+
+			ItemStack toAdd = heldItem.copy();
+			toAdd.setCount(1);
+
+			master.inventory.set(1, toAdd);
+			heldItem.shrink(1);
+
+			if (!toDrop.isEmpty())
+			{
+				if (!player.addItemStackToInventory(toDrop))
+				{
+					player.dropItem(toDrop, false);
+				}
+			}
+			return true;
 		}
 		return false;
 	}
 
 	public NonNullList<ItemStack> inventory = NonNullList.withSize(2, ItemStack.EMPTY);
+
 
 	public static class TileEntityMortarParent extends TileEntityMortar
 	{
@@ -92,7 +104,7 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 
 	public int reloadTicks = 0;
 	private boolean constantlyFiring = false;
-	public BlockPos targetPos = getPos();
+	public Vec3d targetPos = null;
 	public float prevRotation;
 	public float rotation;
 	private boolean weaponMode = true;
@@ -103,11 +115,20 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 		super.readCustomNBT(nbt, descPacket);
 		reloadTicks = nbt.getInteger("reloadTicks");
 		constantlyFiring = nbt.getBoolean("consistentlyFiring");
-		targetPos = new BlockPos(
-				nbt.getInteger("posX"),
-				nbt.getInteger("posY"),
-				nbt.getInteger("posZ")
-		);
+
+		if (nbt.hasKey("posX"))
+		{
+			targetPos = new Vec3d(
+					nbt.getDouble("posX"),
+					nbt.getDouble("posY"),
+					nbt.getDouble("posZ")
+			);
+		}
+		else
+		{
+			targetPos = null;
+		}
+
 		rotation = nbt.getFloat("rotation");
 		if (!descPacket)
 			inventory = Utils.readInventory(nbt.getTagList("inventory", 10), 6);
@@ -120,19 +141,63 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 		nbt.setInteger("reloadTicks", reloadTicks);
 		nbt.setBoolean("consistentlyFiring", constantlyFiring);
 		nbt.setFloat("rotation", rotation);
-		nbt.setInteger("posX", targetPos.getX());
-		nbt.setInteger("posY", targetPos.getY());
-		nbt.setInteger("posZ", targetPos.getZ());
+		if (targetPos != null) {
+			nbt.setDouble("posX", targetPos.x);
+			nbt.setDouble("posY", targetPos.y);
+			nbt.setDouble("posZ", targetPos.z);
+		}
+
 
 		if (!descPacket)
 			nbt.setTag("inventory", Utils.writeInventory(inventory));
+	}
+
+	private int subscribedFrequency = -1;
+	private boolean shouldShoot = false;
+
+	@Override
+	public void notifyTargetChange()
+	{
+		shouldShoot = true;
 	}
 
 	@Override
 	public void update()
 	{
 		super.update();
-		rotation = (float) Math.toDegrees(Math.atan2(targetPos.getX() - getPos().getX(), targetPos.getZ() - getPos().getZ())) - 90f;
+
+		int lastSubscribedFrequency = subscribedFrequency;
+		subscribedFrequency = -1;
+		targetPos = null;
+		if (!inventory.get(1).isEmpty())
+		{
+			if (inventory.get(1).getItem() instanceof ICoordinateProvider)
+			{
+				targetPos = ((ICoordinateProvider) inventory.get(1).getItem()).getCoordinate(world, inventory.get(1));
+				if (inventory.get(1).getItem() instanceof ItemPortableRadio)
+				{
+					this.subscribedFrequency = ItemPortableRadio.getFrequency(inventory.get(1));
+				}
+			}
+		}
+
+		if (subscribedFrequency != lastSubscribedFrequency)
+		{
+			if (subscribedFrequency == -1)
+			{
+				RadioHelper.unsubscribeTile(world, lastSubscribedFrequency, getPos());
+			}
+			else
+			{
+				RadioHelper.subscribeTile(world, subscribedFrequency, getPos());
+			}
+		}
+
+
+		if (targetPos != null)
+		{
+			rotation = (float) Math.toDegrees(Math.atan2(targetPos.x - getPos().getX(), targetPos.z - getPos().getZ())) - 90f;
+		}
 
 		if (world.isRemote && constantlyFiring && reloadTicks == 0)
 		{
@@ -148,50 +213,59 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 			reloadTicks--;
 		}
 
-		if (world.isRemote || isDummy())
+		if (world.isRemote || isDummy() || isRSDisabled())
 			return;
 
 		boolean update = false;
 
 		if (reloadTicks == 0)
 		{
-			if (!inventory.get(0).isEmpty())
+			if (targetPos != null && (!(inventory.get(1).getItem() instanceof ItemPortableRadio) || shouldShoot))
 			{
-				int fireCount = Math.min(weaponMode ? 1 : 32, inventory.get(0).getCount());
-				ItemStack toFire = inventory.get(0).copy();
-				toFire.setCount(fireCount);
-				inventory.get(0).shrink(fireCount);
-
-				Vec3i basePositionBlock = getPos().offset(facing);
-				Vec3d basePosition = new Vec3d(basePositionBlock.getX() + .5f, basePositionBlock.getY() + 10F/16f, basePositionBlock.getZ() + .5f);
-
-				double rot = Math.toRadians(80);
-				Vec3d facing2 = new Vec3d(
-						-Math.cos(rot) * -Math.cos(Math.toRadians(rotation)),
-						Math.sin(rot),
-						-Math.cos(rot) * Math.sin(Math.toRadians(rotation))
-				);
-				facing2.normalize();
-				Vec3d facing = new Vec3d(-Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation)));
-				facing.normalize();
-
-				Vec3d barrelPosition = basePosition.add(facing2.scale(6.25f).add(facing.scale(.5f)));
-
-				EntityItem itemEntity = new EntityMortarItem(
-						world,
-						barrelPosition.x, barrelPosition.y, barrelPosition.z,
-						toFire,
-						targetPos.getX() + .5f, targetPos.getZ() + .5f,
-						facing2.scale(6 / facing2.y).x,
-						facing2.scale(6 / facing2.y).z,
-						weaponMode
-				);
-				world.spawnEntity(itemEntity);
-				reloadTicks = 20;
-
-				if (!constantlyFiring)
+				shouldShoot = false;
+				if (!inventory.get(0).isEmpty())
 				{
-					constantlyFiring = true;
+					int fireCount = Math.min(weaponMode ? 1 : 32, inventory.get(0).getCount());
+					ItemStack toFire = inventory.get(0).copy();
+					toFire.setCount(fireCount);
+					inventory.get(0).shrink(fireCount);
+
+					Vec3i basePositionBlock = getPos().offset(facing);
+					Vec3d basePosition = new Vec3d(basePositionBlock.getX() + .5f, basePositionBlock.getY() + 10F/16f, basePositionBlock.getZ() + .5f);
+
+					double rot = Math.toRadians(80);
+					Vec3d facing2 = new Vec3d(
+							-Math.cos(rot) * -Math.cos(Math.toRadians(rotation)),
+							Math.sin(rot),
+							-Math.cos(rot) * Math.sin(Math.toRadians(rotation))
+					);
+					facing2.normalize();
+					Vec3d facing = new Vec3d(-Math.cos(Math.toRadians(rotation)), 0, Math.sin(Math.toRadians(rotation)));
+					facing.normalize();
+
+					Vec3d barrelPosition = basePosition.add(facing2.scale(6.25f).add(facing.scale(.5f)));
+
+					EntityItem itemEntity = new EntityMortarItem(
+							world,
+							barrelPosition.x, barrelPosition.y, barrelPosition.z,
+							toFire,
+							targetPos.x + .5f, targetPos.z + .5f,
+							facing2.scale(6 / facing2.y).x,
+							facing2.scale(6 / facing2.y).z,
+							weaponMode
+					);
+					world.spawnEntity(itemEntity);
+					reloadTicks = 20;
+
+					if (!constantlyFiring)
+					{
+						constantlyFiring = true;
+						update = true;
+					}
+				}
+				else if (constantlyFiring)
+				{
+					constantlyFiring = false;
 					update = true;
 				}
 			}
@@ -201,6 +275,7 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 				update = true;
 			}
 		}
+
 
 		if (update)
 		{
@@ -291,6 +366,9 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 	@Override
 	public boolean isStackValid(int slot, ItemStack stack)
 	{
+		if (slot == 1) {
+			return stack.getItem() instanceof ICoordinateProvider;
+		}
 		return true;
 	}
 
@@ -341,7 +419,7 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 	@Override
 	public int getGuiID()
 	{
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -432,5 +510,15 @@ public class TileEntityMortar extends TileEntityMultiblockMetal<TileEntityMortar
 			return null;
 		}
 		return super.getCapability(capability, facing);
+	}
+
+	@Override
+	public void invalidate()
+	{
+		super.invalidate();
+		if (subscribedFrequency != -1)
+		{
+			RadioHelper.unsubscribeTile(world, subscribedFrequency, getPos());
+		}
 	}
 }

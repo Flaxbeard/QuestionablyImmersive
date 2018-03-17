@@ -1,11 +1,13 @@
 package flaxbeard.questionablyimmersive.common;
 
-import blusunrize.immersiveengineering.ImmersiveEngineering;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
+import flaxbeard.questionablyimmersive.client.gui.GuiMortar;
 import flaxbeard.questionablyimmersive.client.gui.GuiTuneRadio;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.gui.ContainerMortar;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,6 +64,11 @@ public class CommonProxy implements IGuiHandler
 			{
 				Object gui = null;
 
+				if (ID == 1 && te instanceof TileEntityMortar)
+				{
+					gui = new ContainerMortar(player.inventory, (TileEntityMortar) te);
+				}
+
 				if(gui!=null)
 					((IGuiTile)te).onGuiOpened(player, false);
 				return gui;
@@ -101,6 +108,11 @@ public class CommonProxy implements IGuiHandler
 				{
 					gui = new GuiTuneRadio((TileEntityRadio) te);
 				}
+				else if (ID == 1 && te instanceof TileEntityMortar)
+				{
+					gui = new GuiMortar(player.inventory, (TileEntityMortar) te);
+				}
+
 
 				return gui;
 			}

@@ -2,6 +2,7 @@ package flaxbeard.questionablyimmersive.common.items;
 
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.questionablyimmersive.api.ICoordinateProvider;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.util.RadioHelper;
@@ -15,13 +16,15 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ItemPortableRadio extends ItemQIBase implements IEItemInterfaces.IGuiItem
+public class ItemPortableRadio extends ItemQIBase implements IEItemInterfaces.IGuiItem, ICoordinateProvider
 {
 
 	public ItemPortableRadio(String name)
@@ -38,6 +41,18 @@ public class ItemPortableRadio extends ItemQIBase implements IEItemInterfaces.IG
 		if (worldIn != null)
 		{
 			tooltip.add("Current power " + RadioHelper.getPower(worldIn.provider.getDimension(), getFrequency(stack)) + "/15");
+			RadioHelper.RadioNetwork net = RadioHelper.getNetwork(worldIn.provider.getDimension(), getFrequency(stack));
+
+			Vec3d targetLocation = net.getTargetLocation();
+
+			if (targetLocation != null)
+			{
+				tooltip.add("Aimed at "
+						+ "x: " + Math.round(targetLocation.x)
+						+ " y: " + Math.round(targetLocation.y)
+						+ " z: " + Math.round(targetLocation.z)
+				);
+			}
 		}
 	}
 
@@ -83,6 +98,18 @@ public class ItemPortableRadio extends ItemQIBase implements IEItemInterfaces.IG
 		{
 			if (!world.isRemote)
 			{
+				Vec3d look = player.getPositionEyes(1F);
+				RayTraceResult traceResult = world.rayTraceBlocks(
+						look,
+						look.add(player.getLookVec().scale(100))
+				);
+				if (traceResult != null && traceResult.typeOfHit != RayTraceResult.Type.MISS)
+				{
+					//System.out.println(traceResult.hitVec);
+					RadioHelper.setTargetLocation(world, getFrequency(stack), traceResult.hitVec);
+				}
+
+
 				RadioHelper.togglePortableRadio(world, getFrequency(stack));
 			}
 		}
@@ -108,5 +135,13 @@ public class ItemPortableRadio extends ItemQIBase implements IEItemInterfaces.IG
 		{
 			ItemNBTHelper.setInt(stack, "frequency", station);
 		}
+	}
+
+	@Override
+	public Vec3d getCoordinate(World world, ItemStack stack)
+	{
+		RadioHelper.RadioNetwork net = RadioHelper.getNetwork(world.provider.getDimension(), getFrequency(stack));
+
+		return net.getTargetLocation();
 	}
 }

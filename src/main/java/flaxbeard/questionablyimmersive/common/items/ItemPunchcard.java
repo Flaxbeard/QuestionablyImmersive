@@ -2,6 +2,7 @@ package flaxbeard.questionablyimmersive.common.items;
 
 import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
+import flaxbeard.questionablyimmersive.api.ICoordinateProvider;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +11,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -17,12 +19,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
-public class ItemPunchcard extends ItemQIBase
+public class ItemPunchcard extends ItemQIBase implements ICoordinateProvider
 {
 
 	public ItemPunchcard(String name)
 	{
 		super(name, 64, "unpunched", "punched");
+		setMetaHidden(1);
 	}
 
 
@@ -78,5 +81,19 @@ public class ItemPunchcard extends ItemQIBase
 			return EnumActionResult.SUCCESS;
 		}
 		return EnumActionResult.PASS;
+	}
+
+	@Override
+	public Vec3d getCoordinate(World world, ItemStack stack)
+	{
+		if (ItemNBTHelper.hasKey(stack, "posX"))
+		{
+			return new Vec3d(
+					ItemNBTHelper.getInt(stack, "posX"),
+					ItemNBTHelper.getInt(stack, "posY"),
+					ItemNBTHelper.getInt(stack, "posZ")
+			);
+		}
+		return null;
 	}
 }

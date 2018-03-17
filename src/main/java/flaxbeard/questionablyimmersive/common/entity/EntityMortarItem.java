@@ -89,6 +89,37 @@ public class EntityMortarItem extends EntityItem
 		weapon = compound.getBoolean("weapon");
 	}
 
+	public void setGoingDown()
+	{
+		if (weapon)
+		{
+			IMortarWeaponHandler handler = getHandler(this.getItem());
+			if (handler != null)
+			{
+				handler.handleItem(getItem(), world, xTarget, world.getHeight(), zTarget);
+				setDead();
+			}
+			else
+			{
+				setPosition(xTarget + (world.rand.nextFloat() * 4f) - 2f, world.getHeight(), zTarget + (world.rand.nextFloat() * 4f) - 2f);
+				motionX = motionY = motionZ = 0;
+				motionY = -3F;
+				momentum = 4f;
+				goingDown = true;
+				goingUp = false;
+			}
+		}
+		else
+		{
+			setPosition(xTarget, world.getHeight(), zTarget);
+			motionX = motionY = motionZ = 0;
+			motionY = -3F;
+			momentum = 4f;
+			goingDown = true;
+			goingUp = false;
+		}
+	}
+
 	@Override
 	public void onUpdate()
 	{
@@ -108,33 +139,7 @@ public class EntityMortarItem extends EntityItem
 			{
 				if (posY > world.getHeight() + 10)
 				{
-					if (weapon)
-					{
-						IMortarWeaponHandler handler = getHandler(this.getItem());
-						if (handler != null)
-						{
-							handler.handleItem(getItem(), world, xTarget, posY, zTarget);
-							setDead();
-						}
-						else
-						{
-							setPosition(xTarget + (world.rand.nextFloat() * 4f) - 2f, posY, zTarget + (world.rand.nextFloat() * 4f) - 2f);
-							motionX = motionY = motionZ = 0;
-							motionY = -3F;
-							momentum = 4f;
-							goingDown = true;
-							goingUp = false;
-						}
-					}
-					else
-					{
-						setPosition(xTarget, posY, zTarget);
-						motionX = motionY = motionZ = 0;
-						motionY = -3F;
-						momentum = 4f;
-						goingDown = true;
-						goingUp = false;
-					}
+					setGoingDown();
 				}
 			}
 		}
