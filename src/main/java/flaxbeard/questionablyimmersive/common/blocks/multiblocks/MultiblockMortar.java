@@ -102,7 +102,7 @@ public class MultiblockMortar implements IMultiblock
 	@Override
 	public String getUniqueName()
 	{
-		return "IP:Mortar";
+		return "QI:Mortar";
 	}
 
 	@Override

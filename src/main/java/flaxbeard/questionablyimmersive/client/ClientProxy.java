@@ -6,12 +6,15 @@ import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.client.page.ManualPageBigMultiblock;
+import flaxbeard.questionablyimmersive.client.render.MultiblockCokeOvenBatteryRenderer;
 import flaxbeard.questionablyimmersive.client.render.MultiblockMortarRenderer;
 import flaxbeard.questionablyimmersive.client.render.TileGaugeRenderer;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
 import flaxbeard.questionablyimmersive.common.QIContent;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
+import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
 import flaxbeard.questionablyimmersive.common.items.ItemQIBase;
@@ -185,9 +188,11 @@ public class ClientProxy extends CommonProxy
 
 
 		ManualHelper.addEntry("memes", CAT_QE,
-				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockMortar.instance));
+				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockMortar.instance),
+				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockCokeOvenBattery.instance));
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGauge.class, new TileGaugeRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMortar.TileEntityMortarParent.class, new MultiblockMortarRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent.class, new MultiblockCokeOvenBatteryRenderer());
 
 	}
 

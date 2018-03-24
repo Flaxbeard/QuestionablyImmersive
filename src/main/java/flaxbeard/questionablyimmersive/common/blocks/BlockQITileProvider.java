@@ -73,7 +73,7 @@ public abstract class BlockQITileProvider<E extends Enum<E> & BlockQIBase.IBlock
 					if (h.getStackInSlot(i)!=null)
 					{
 						spawnAsEntity(world, pos, h.getStackInSlot(i));
-						((IEInventoryHandler) h).setStackInSlot(i, null);
+						((IEInventoryHandler) h).setStackInSlot(i, ItemStack.EMPTY);
 					}
 		}
 		if(tile instanceof IHasDummyBlocks)

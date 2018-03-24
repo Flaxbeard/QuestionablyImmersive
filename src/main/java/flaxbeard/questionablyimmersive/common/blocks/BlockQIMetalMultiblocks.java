@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.common.blocks.TileEntityMultiblockPart;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
 import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalMultiblock;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
@@ -52,6 +53,10 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 				return new TileEntityMortar();
 			case MORTAR_PARENT:
 				return new TileEntityMortar.TileEntityMortarParent();
+			case COKE_OVEN_BATTERY:
+				return new TileEntityCokeOvenBattery();
+			case COKE_OVEN_BATTERY_PARENT:
+				return new TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent();
 		}
 		return null;
 	}
@@ -65,7 +70,7 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 			TileEntityMultiblockPart tile = (TileEntityMultiblockPart)te;
 			if(tile instanceof TileEntityMultiblockMetal && ((TileEntityMultiblockMetal) tile).isRedstonePos())
 				return true;
-			
+
 		}
 		return super.isSideSolid(state, world, pos, side);
 	}
@@ -77,7 +82,7 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 	{
 		return true;
 	}
-	
+
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
 	{
@@ -107,7 +112,7 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 				entityIn.motionY=.2;
 		}
 	}
-	
+
 	@Deprecated
 	public EnumBlockRenderType getRenderType(IBlockState state)
 	{

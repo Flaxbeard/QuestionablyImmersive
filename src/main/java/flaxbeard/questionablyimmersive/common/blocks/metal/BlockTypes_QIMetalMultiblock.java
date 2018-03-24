@@ -7,15 +7,17 @@ import java.util.Locale;
 
 public enum BlockTypes_QIMetalMultiblock implements IStringSerializable, BlockQIBase.IBlockEnum
 {
-	MORTAR(false),
-	MORTAR_PARENT(false);
+    MORTAR(false),
+    MORTAR_PARENT(false),
+    COKE_OVEN_BATTERY(false),
+    COKE_OVEN_BATTERY_PARENT(false);
 
-	private boolean needsCustomState;
+    private boolean needsCustomState;
 	BlockTypes_QIMetalMultiblock(boolean needsCustomState)
 	{
 		this.needsCustomState = needsCustomState;
 	}
-	
+
 	@Override
 	public String getName()
 	{
@@ -31,7 +33,7 @@ public enum BlockTypes_QIMetalMultiblock implements IStringSerializable, BlockQI
 	{
 		return false;
 	}
-	
+
 	public boolean needsCustomState()
 	{
 		return this.needsCustomState;

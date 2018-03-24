@@ -5,9 +5,11 @@ import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQIMetalDevice;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQIBase;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQIMetalMultiblocks;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
@@ -98,8 +100,11 @@ public class QIContent
 		registerTile(TileEntityMortar.TileEntityMortarParent.class);
 		registerTile(TileEntityGauge.class);
 		registerTile(TileEntityRadio.class);
+		registerTile(TileEntityCokeOvenBattery.class);
+		registerTile(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent.class);
 
 		MultiblockHandler.registerMultiblock(MultiblockMortar.instance);
+		MultiblockHandler.registerMultiblock(MultiblockCokeOvenBattery.instance);
 
 	}
 	
