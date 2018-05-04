@@ -3,10 +3,13 @@ package flaxbeard.questionablyimmersive.common;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IGuiTile;
 import blusunrize.immersiveengineering.common.items.IEItemInterfaces;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
+import flaxbeard.questionablyimmersive.client.gui.GuiCokeOvenBattery;
 import flaxbeard.questionablyimmersive.client.gui.GuiMortar;
 import flaxbeard.questionablyimmersive.client.gui.GuiTuneRadio;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.gui.ContainerCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.gui.ContainerMortar;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import net.minecraft.entity.Entity;
@@ -29,7 +32,7 @@ public class CommonProxy implements IGuiHandler
 	public void preInitEnd() {}
 	public void init() {}
 	public void postInit() {}
-	
+
 	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull EntityPlayer player, @Nonnull T tile)
 	{
 		player.openGui(QuestionablyImmersive.INSTANCE, tile.getGuiID(), tile.getWorld(), tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
@@ -43,7 +46,7 @@ public class CommonProxy implements IGuiHandler
 		IEItemInterfaces.IGuiItem gui = (IEItemInterfaces.IGuiItem)stack.getItem();
 		player.openGui(QuestionablyImmersive.INSTANCE, 100 * slot.ordinal() + gui.getGuiID(stack), player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
 	}
-	
+
 	@Override
 	public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z)
 	{
@@ -67,6 +70,10 @@ public class CommonProxy implements IGuiHandler
 				if (ID == 1 && te instanceof TileEntityMortar)
 				{
 					gui = new ContainerMortar(player.inventory, (TileEntityMortar) te);
+				}
+				else if (ID == 2 && te instanceof TileEntityCokeOvenBattery)
+				{
+					gui = new ContainerCokeOvenBattery(player.inventory, (TileEntityCokeOvenBattery) te);
 				}
 
 				if(gui!=null)
@@ -112,7 +119,10 @@ public class CommonProxy implements IGuiHandler
 				{
 					gui = new GuiMortar(player.inventory, (TileEntityMortar) te);
 				}
-
+				else if (ID == 2 && te instanceof TileEntityCokeOvenBattery)
+				{
+					gui = new GuiCokeOvenBattery(player.inventory, (TileEntityCokeOvenBattery) te);
+				}
 
 				return gui;
 			}
@@ -122,7 +132,7 @@ public class CommonProxy implements IGuiHandler
 
 	public void renderTile(TileEntity te) {}
 	public void handleEntitySound(SoundEvent soundEvent, Entity e, boolean active, float volume, float pitch)
-	{		
+	{
 	}
 
 	public void drawUpperHalfSlab(ItemStack stack) {

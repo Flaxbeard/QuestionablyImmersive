@@ -8,7 +8,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntitySampleDrill
 import blusunrize.immersiveengineering.common.items.ItemCoresample;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
-import flaxbeard.questionablyimmersive.common.Config.IPConfig;
+import flaxbeard.questionablyimmersive.common.Config.QIConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -39,98 +39,6 @@ import java.util.List;
 public class EventHandler
 {
 
-	@SideOnly(Side.CLIENT)
-	@SubscribeEvent
-	public static void renderLast(RenderWorldLastEvent event)
-	{
-		GlStateManager.pushMatrix();
-		Minecraft mc = Minecraft.getMinecraft();
-		if (IPConfig.sample_displayBorder && mc.player != null)
-		{
-			ItemStack mainItem = mc.player.getHeldItemMainhand();
-			ItemStack secondItem = mc.player.getHeldItemOffhand();
-
-			boolean main = !mainItem.isEmpty() && mainItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(mainItem, "coords");
-			boolean off = !secondItem.isEmpty() && secondItem.getItem() instanceof ItemCoresample && ItemNBTHelper.hasKey(secondItem, "coords");
-
-			boolean chunkBorders = false;
-			for(EnumHand hand : EnumHand.values())
-				if(OreDictionary.itemMatches(new ItemStack(IEContent.blockMetalDevice1,1, BlockTypes_MetalDevice1.SAMPLE_DRILL.getMeta()), ClientUtils.mc().player.getHeldItem(hand),true))
-				{
-					chunkBorders = true;
-					break;
-				}
-			if(!chunkBorders && ClientUtils.mc().objectMouseOver!=null && ClientUtils.mc().objectMouseOver.typeOfHit==Type.BLOCK && ClientUtils.mc().world.getTileEntity(ClientUtils.mc().objectMouseOver.getBlockPos()) instanceof TileEntitySampleDrill)
-				chunkBorders = true;
-
-			ItemStack target = main ? mainItem : secondItem;
-
-			if (!chunkBorders && (main || off))
-			{
-
-				int[] coords = ItemNBTHelper.getIntArray(target, "coords");
-
-				//World world = DimensionManager.getWorld(coords[0]);
-				//if (world.provider.getDimension() == mc.player.worldObj.provider.getDimension())
-				//{
-					EntityPlayer player = mc.player;
-					renderChunkBorder(coords[1] << 4, coords[2] << 4);
-				//}
-			}
-		}
-		GlStateManager.popMatrix();
-
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void renderChunkBorder(int chunkX, int chunkZ)
-	{
-		EntityPlayer player = ClientUtils.mc().player;
-
-		double px = TileEntityRendererDispatcher.staticPlayerX;
-		double py = TileEntityRendererDispatcher.staticPlayerY;
-		double pz = TileEntityRendererDispatcher.staticPlayerZ;
-		int y = Math.min((int)player.posY-2,player.getEntityWorld().getChunkFromBlockCoords(new BlockPos(chunkX, 0, chunkZ)).getLowestHeight());
-		float h = (float)Math.max(32, player.posY-y+4);
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder vertexbuffer = tessellator.getBuffer();
-
-		GlStateManager.disableTexture2D();
-		GlStateManager.enableBlend();
-		GlStateManager.disableCull();
-		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-		GlStateManager.shadeModel(GL11.GL_SMOOTH);
-		float r = Lib.COLOUR_F_ImmersiveOrange[0];
-		float g = Lib.COLOUR_F_ImmersiveOrange[1];
-		float b = Lib.COLOUR_F_ImmersiveOrange[2];
-		vertexbuffer.setTranslation(chunkX-px, y+2-py, chunkZ-pz);
-		GlStateManager.glLineWidth(5f);
-		vertexbuffer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-		vertexbuffer.pos( 0,0, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,h, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,0, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,h, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,0,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,h,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,0,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,h,16).color(r,g,b,.375f).endVertex();
-
-		vertexbuffer.pos( 0,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,2,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos( 0,2,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2,16).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2, 0).color(r,g,b,.375f).endVertex();
-		vertexbuffer.pos(16,2,16).color(r,g,b,.375f).endVertex();
-		tessellator.draw();
-		vertexbuffer.setTranslation(0, 0, 0);
-		GlStateManager.shadeModel(GL11.GL_FLAT);
-		GlStateManager.enableCull();
-		GlStateManager.disableBlend();
-		GlStateManager.enableTexture2D();
-	}
-	
 	@SubscribeEvent
 	public static void onEntityJoiningWorld(EntityJoinWorldEvent event)
 	{

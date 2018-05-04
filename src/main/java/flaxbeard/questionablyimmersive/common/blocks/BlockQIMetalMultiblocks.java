@@ -57,6 +57,8 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 				return new TileEntityCokeOvenBattery();
 			case COKE_OVEN_BATTERY_PARENT:
 				return new TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent();
+			case COKE_OVEN_BATTERY_RENDERED:
+				return new TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart();
 		}
 		return null;
 	}
@@ -65,10 +67,10 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 	public boolean isSideSolid(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if(te instanceof TileEntityMultiblockPart)
+		if (te instanceof TileEntityMultiblockPart)
 		{
 			TileEntityMultiblockPart tile = (TileEntityMultiblockPart)te;
-			if(tile instanceof TileEntityMultiblockMetal && ((TileEntityMultiblockMetal) tile).isRedstonePos())
+			if (tile instanceof TileEntityMultiblockMetal && ((TileEntityMultiblockMetal) tile).isRedstonePos())
 				return true;
 
 		}

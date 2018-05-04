@@ -12,6 +12,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.BlockTypes_MetalDevic
 import blusunrize.immersiveengineering.common.blocks.wooden.BlockTypes_WoodenDecoration;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
+import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.common.QIContent;
 import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalMultiblock;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
@@ -26,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -163,7 +165,12 @@ public class MultiblockCokeOvenBattery implements IMultiblock
 	@SideOnly(Side.CLIENT)
 	public void renderFormedStructure()
 	{
+		if (te == null)
+		{
+			te = new TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent();
+		}
 
+		QuestionablyImmersive.proxy.renderTile((TileEntity) te);
 	}
 
 	@Override
@@ -192,7 +199,6 @@ public class MultiblockCokeOvenBattery implements IMultiblock
 			mirror = true;
 			b = structureCheck(world, pos, side, mirror);
 		}
-		System.out.println(b);
 		if (b == -1)
 			return false;
 
@@ -207,6 +213,11 @@ public class MultiblockCokeOvenBattery implements IMultiblock
 				{
 					world.setBlockState(pos2, QIContent.blockMetalMultiblock.getStateFromMeta(
 							BlockTypes_QIMetalMultiblock.COKE_OVEN_BATTERY_PARENT.getMeta()));
+				}
+				else if (w == 0 && h == 0 && l % 5 == 0)
+				{
+					world.setBlockState(pos2, QIContent.blockMetalMultiblock.getStateFromMeta(
+							BlockTypes_QIMetalMultiblock.COKE_OVEN_BATTERY_RENDERED.getMeta()));
 				}
 				else
 				{
@@ -232,6 +243,7 @@ public class MultiblockCokeOvenBattery implements IMultiblock
 							(side == EnumFacing.NORTH ? -l : side == EnumFacing.SOUTH ? l : side == EnumFacing.EAST ? ww : -ww)
 					};
 					tile.ovenLength = b;
+					tile.tank = new FluidTank(b * 6000);
 					tile.ovenIndex = l;
 					tile.mirrored = mirror;
 					tile.markDirty();
@@ -240,13 +252,13 @@ public class MultiblockCokeOvenBattery implements IMultiblock
 				if (curr instanceof TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent)
 				{
 					TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent tile = (TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent) curr;
-					tile.inventory = NonNullList.withSize(b, ItemStack.EMPTY);
+					tile.inventory = NonNullList.withSize(b + 2, ItemStack.EMPTY);
 					tile.insertionHandlers = new IEInventoryHandler[b];
 					for (int i = 0; i < b; i++)
 					{
-						boolean[] insert = new boolean[b];
-						insert[i] = true;
-						tile.insertionHandlers[i] = new IEInventoryHandler(b, tile, 0, insert, new boolean[b]);
+						boolean[] insert = new boolean[b + 2];
+						insert[i + 2] = true;
+						tile.insertionHandlers[i] = new IEInventoryHandler(b + 2, tile, 0, insert, new boolean[b]);
 					}
 					tile.process = new int[b];
 					tile.processMax = new int[b];

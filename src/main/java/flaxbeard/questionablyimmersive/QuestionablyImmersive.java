@@ -1,5 +1,6 @@
 package flaxbeard.questionablyimmersive;
 
+import blusunrize.immersiveengineering.common.IEContent;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
 import flaxbeard.questionablyimmersive.common.QIContent;
 import flaxbeard.questionablyimmersive.common.QISaveData;
@@ -67,13 +68,13 @@ public class QuestionablyImmersive
 		@Override
 		public ItemStack getTabIconItem()
 		{
-			return new ItemStack(Items.APPLE);
+			return new ItemStack(IEContent.itemTool);
 		}
 		
 		@Override
 		public ItemStack getIconItemStack()
 		{
-			return new ItemStack(Items.APPLE);
+			return new ItemStack(IEContent.itemTool);
 		}
 		
 		@Override

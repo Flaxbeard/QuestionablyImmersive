@@ -38,7 +38,7 @@ public class ItemQIBase extends Item implements IColouredItem
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> list)
 	{
-		if (this.isInCreativeTab(tab))
+		if (this.isInCreativeTab(tab) && false)
 			if (getSubNames() != null)
 			{
 				for (int i = 0; i < getSubNames().length; i++)

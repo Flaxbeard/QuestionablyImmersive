@@ -10,6 +10,11 @@ import net.minecraft.entity.Entity;
 public class ModelCokeOvenBattery extends ModelBase
 {
 	public ModelRenderer base;
+	public ModelRenderer oven0;
+	public ModelRenderer oven1;
+	public ModelRenderer oven2;
+
+
 	public ModelRenderer door;
 	public ModelRenderer piston;
 	public ModelRenderer cokeBlock;
@@ -23,16 +28,22 @@ public class ModelCokeOvenBattery extends ModelBase
 		this.textureWidth = 256;
 		this.textureHeight = 256;
 		this.mirror = mirror;
-		
+
 		refresh();
 	}
-	
+
 	public void refresh()
 	{
 		this.textureWidth = 256;
 		this.textureHeight = 256;
 		base = new ModelRenderer(this, 0, 0);
-		base.addBox(0, 0, 0, 16, 64, 16 * 3 - 2);
+
+		oven0 = new ModelRenderer(this, 0, 0);
+		oven0.addBox(0, 0, 0, 16, 64, 16 * 3 - 2);
+		oven1 = new ModelRenderer(this, 0, 110);
+		oven1.addBox(0, 0, 0, 16, 64, 16 * 3 - 2);
+		oven2 = new ModelRenderer(this, 124, 110);
+		oven2.addBox(0, 0, 0, 16, 64, 16 * 3 - 2);
 
 		ModelRenderer hinge1 = new ModelRenderer(this, 0, 0);
 		hinge1.setRotationPoint(2, 3, 46);
@@ -44,12 +55,12 @@ public class ModelCokeOvenBattery extends ModelBase
 		hinge2.addBox(0, 0, 0, 2, 1, 1);
 		base.addChild(hinge2);
 
-		ModelRenderer wall1 = new ModelRenderer(this, 124, 0);
+		ModelRenderer wall1 = new ModelRenderer(this, 132, 0);
 		wall1.setRotationPoint(0, 0, 46);
 		wall1.addBox(0, 0, 0, 2, 64, 2);
 		base.addChild(wall1);
 
-		ModelRenderer wall2 = new ModelRenderer(this, 132, 0);
+		ModelRenderer wall2 = new ModelRenderer(this, 124, 0);
 		wall2.setRotationPoint(14, 0, 46);
 		wall2.addBox(0, 0, 0, 2, 64, 2);
 		base.addChild(wall2);
@@ -71,7 +82,7 @@ public class ModelCokeOvenBattery extends ModelBase
 		cokeBlock.setRotationPoint(4, 6, 37.99f);
 		cokeBlock.addBox(0, 0, 0, 8, 50, 8);
 	}
-	
+
 	@Override
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
@@ -80,6 +91,8 @@ public class ModelCokeOvenBattery extends ModelBase
 
 	public void render(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent battery, int index, float f5)
 	{
+
+
 		if (Minecraft.getMinecraft().player != null && Minecraft.getMinecraft().player.isSneaking()) {
 			if (!wasSneaking) {
 				refresh();
@@ -88,12 +101,26 @@ public class ModelCokeOvenBattery extends ModelBase
 		} else {
 			wasSneaking = false;
 		}
+
+		if (index == 0)
+		{
+			this.oven1.render(f5);
+		}
+		else if ((battery != null && index == battery.ovenLength - 1) || (battery == null && index == 5))
+		{
+			this.oven2.render(f5);
+		}
+		else
+		{
+			this.oven0.render(f5);
+		}
+
 		this.base.render(f5);
 		cokeBlock.setRotationPoint(4, 4, 37.99f);
 		if (Minecraft.getMinecraft().player != null)
 		{
 			float t = 0;
-			if (battery.active[index])
+			if (battery != null && battery.active[index])
 			{
 				if (battery.processMax[index] > 0 && battery.process[index] < 50)
 				{
@@ -107,7 +134,7 @@ public class ModelCokeOvenBattery extends ModelBase
 			float progress = t;
 
 			double doorOpenPercent = 0;
-			float cokeMovePercent = Math.min(35, progress - 15f) / 35f;
+			float cokeMovePercent = (Math.min(35, progress - 15f) / 35f) * 6f;
 
 			if (progress <= 15f)
 			{
@@ -122,21 +149,21 @@ public class ModelCokeOvenBattery extends ModelBase
 			}
 			else if (progress <= 30f)
 			{
-				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent * 6f);
+				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 				cokeBlock.render(f5);
 				doorOpenPercent = 1f - Math.cos((progress - 15f) * Math.PI / 30f);
 			}
 			else if (progress <= 50f)
 			{
 				doorOpenPercent = 1;
-				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent * 6f);
+				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 				cokeBlock.render(f5);
 			}
 			else if (progress <= 55f)
 			{
 				if (progress <= 51f)
 				{
-					cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent * 6f);
+					cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 					cokeBlock.render(f5);
 				}
 				doorOpenPercent = 1;

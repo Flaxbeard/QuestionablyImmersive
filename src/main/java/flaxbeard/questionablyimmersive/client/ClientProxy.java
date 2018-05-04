@@ -1,11 +1,12 @@
 package flaxbeard.questionablyimmersive.client;
 
 import blusunrize.immersiveengineering.api.ManualHelper;
+import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
+import blusunrize.lib.manual.ManualPages;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
-import flaxbeard.questionablyimmersive.client.page.ManualPageBigMultiblock;
 import flaxbeard.questionablyimmersive.client.render.MultiblockCokeOvenBatteryRenderer;
 import flaxbeard.questionablyimmersive.client.render.MultiblockMortarRenderer;
 import flaxbeard.questionablyimmersive.client.render.TileGaugeRenderer;
@@ -15,7 +16,6 @@ import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBat
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockCokeOvenBattery;
-import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
 import flaxbeard.questionablyimmersive.common.items.ItemQIBase;
 import net.minecraft.block.Block;
@@ -55,7 +55,7 @@ import java.util.Locale;
 @Mod.EventBusSubscriber(value = Side.CLIENT, modid = QuestionablyImmersive.MODID)
 public class ClientProxy extends CommonProxy
 {
-	public static final String CAT_QE = "qe";
+	public static final String CAT_QI = "qi";
 	
 	@Override
 	public void preInit()
@@ -187,12 +187,14 @@ public class ClientProxy extends CommonProxy
 	{
 
 
-		ManualHelper.addEntry("memes", CAT_QE,
-				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockMortar.instance),
-				new ManualPageBigMultiblock(ManualHelper.getManual(), MultiblockCokeOvenBattery.instance));
+		ManualHelper.addEntry("cokeOvenBattery", CAT_QI,
+				new ManualPages.Text(ManualHelper.getManual(), "cokeOvenBattery0"),
+				new ManualPageMultiblock(ManualHelper.getManual(), "cokeOvenBattery1", MultiblockCokeOvenBattery.instance),
+				new ManualPages.Text(ManualHelper.getManual(), "cokeOvenBattery2")
+		);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGauge.class, new TileGaugeRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMortar.TileEntityMortarParent.class, new MultiblockMortarRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent.class, new MultiblockCokeOvenBatteryRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart.class, new MultiblockCokeOvenBatteryRenderer());
 
 	}
 
@@ -240,7 +242,6 @@ public class ClientProxy extends CommonProxy
 
 
 		TileEntitySpecialRenderer<TileEntity> tesr = TileEntityRendererDispatcher.instance.getRenderer((TileEntity) te);
-
 		tesr.render(te, 0, 0, 0, 0, 0, 0);
 		GlStateManager.popMatrix();
 	}

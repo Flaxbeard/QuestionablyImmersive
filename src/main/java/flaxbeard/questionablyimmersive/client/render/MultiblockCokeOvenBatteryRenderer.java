@@ -13,21 +13,22 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class MultiblockCokeOvenBatteryRenderer extends TileEntitySpecialRenderer<TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent>
+public class MultiblockCokeOvenBatteryRenderer extends TileEntitySpecialRenderer<TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart>
 {
 	private static ModelCokeOvenBattery model = new ModelCokeOvenBattery(false);
 	private static ModelCokeOvenBattery modelM = new ModelCokeOvenBattery(true);
 
 	private static String texture = "questionablyimmersive:textures/models/coke_oven_battery.png";
+	private static String textureOff = "questionablyimmersive:textures/models/coke_oven_battery_off.png";
 
 	@Override
-	public void render(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
+	public void render(TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart te, double x, double y, double z, float partialTicks, int destroyStage, float alpha)
 	{
 		if (te != null)
 		{
 			GlStateManager.pushMatrix();
 			GlStateManager.translate(x, y - 1, z);
-	
+
 			EnumFacing rotation = te.facing;
 
 			float rotationMod = 0;
@@ -54,8 +55,6 @@ public class MultiblockCokeOvenBatteryRenderer extends TileEntitySpecialRenderer
 			}
 			GlStateManager.translate(0, 0, -2);
 
-			
-			ClientUtils.bindTexture(texture);
 
 			if (te.mirrored)
 			{
@@ -63,15 +62,45 @@ public class MultiblockCokeOvenBatteryRenderer extends TileEntitySpecialRenderer
 				GlStateManager.rotate(180, 0, 1, 0);
 			}
 
-			for (int i = 0; i < te.ovenLength; i++) {
-				GlStateManager.pushMatrix();
-				GlStateManager.translate(te.mirrored ? (te.ovenLength - i - 1) : i, 0 , 0 );
-				model.render(te, i, 0.0625F);
-				GlStateManager.popMatrix();;
+			if (te.ovenLength == 0)
+			{
+				GlStateManager.translate(-3, 0, 1);
+				ClientUtils.bindTexture(texture);
+				for (int i = 0; i < 6; i++)
+				{
+					GlStateManager.pushMatrix();
+					GlStateManager.translate(i, 0 , 0 );
+					model.render(null, i, 0.0625F);
+					GlStateManager.popMatrix();
+				}
+			}
+			else
+			{
+				for (int i = te.ovenIndex; i < Math.min(te.ovenIndex + 5, te.ovenLength); i++)
+				{
+					GlStateManager.pushMatrix();
+					int ovenTest = i - te.ovenIndex;
+					GlStateManager.translate(te.mirrored ? (te.ovenLength - ovenTest - 1) : ovenTest, 0 , 0 );
+
+					TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent parent = (TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent) te.master();
+					if (parent != null && i < parent.active.length && parent.active[i])
+					{
+						ClientUtils.bindTexture(texture);
+					}
+					else
+					{
+						ClientUtils.bindTexture(textureOff);
+					}
+					model.render(parent, i, 0.0625F);
+					GlStateManager.popMatrix();
+				}
 			}
 
+
+
+
 			GlStateManager.popMatrix();
-			
+
 		}
 	}
 

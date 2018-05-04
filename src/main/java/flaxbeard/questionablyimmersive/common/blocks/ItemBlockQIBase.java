@@ -45,7 +45,7 @@ public class ItemBlockQIBase extends ItemBlock
 	@Override
 	public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> itemList)
 	{
-		if (this.isInCreativeTab(tab))
+		if (this.isInCreativeTab(tab) && false)
 			this.block.getSubBlocks(tab, itemList);
 	}
 	@Override

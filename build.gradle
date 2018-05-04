@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.0.0"
+version = "0.1.0"
 group= "flaxbeard.questionablyimmersive"
 archivesBaseName = "questionablyimmersive"
 
@@ -21,7 +21,7 @@ compileJava {
 }
 
 minecraft {
-    version = "14.23.1.2582"
+    version = "14.23.3.2655"
     runDir = "run"
     
     // the mappings can be changed at any time, and must be in the following format.
