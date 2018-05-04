@@ -187,6 +187,7 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 			if (!radio.receiveMode)
 			{
 				RadioHelper.getNetwork(world.provider.getDimension(), radio.frequency).updatePower(pos);
+				System.out.println(RadioHelper.getNetwork(world.provider.getDimension(), radio.frequency));
 			}
 		}
 	}

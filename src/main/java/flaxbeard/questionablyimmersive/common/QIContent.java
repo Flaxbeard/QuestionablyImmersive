@@ -104,7 +104,7 @@ public class QIContent
 		registerTile(TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart.class);
 		registerTile(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent.class);
 
-		//MultiblockHandler.registerMultiblock(MultiblockMortar.instance);
+		MultiblockHandler.registerMultiblock(MultiblockMortar.instance);
 		MultiblockHandler.registerMultiblock(MultiblockCokeOvenBattery.instance);
 
 	}
