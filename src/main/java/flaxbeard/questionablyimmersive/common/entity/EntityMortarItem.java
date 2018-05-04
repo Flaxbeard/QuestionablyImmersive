@@ -1,11 +1,11 @@
 package flaxbeard.questionablyimmersive.common.entity;
 
+import flaxbeard.questionablyimmersive.common.util.Pair;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -157,23 +157,23 @@ public class EntityMortarItem extends EntityItem
 		lastY = posY;
 	}
 
-	private static Map<Tuple<Item, Integer>, IMortarWeaponHandler> map = new HashMap<>();
+	private static Map<Pair<Item, Integer>, IMortarWeaponHandler> map = new HashMap<>();
 
 	public static void registerHandler(Item item, int meta, IMortarWeaponHandler handler)
 	{
-		map.put(new Tuple<>(item, meta), handler);
+		map.put(new Pair<>(item, meta), handler);
 	}
 
 	private IMortarWeaponHandler getHandler(ItemStack item)
 	{
-		Tuple tuple = new Tuple<>(item.getItem(), item.getItemDamage());
-		if (map.containsKey(tuple))
+		Pair Pair = new Pair<>(item.getItem(), item.getItemDamage());
+		if (map.containsKey(Pair))
 		{
-			return map.get(tuple);
+			return map.get(Pair);
 		}
 
 
-		Tuple generic = new Tuple<>(item.getItem(), -1);
+		Pair generic = new Pair<>(item.getItem(), -1);
 		if (map.containsKey(generic))
 		{
 			return map.get(generic);
