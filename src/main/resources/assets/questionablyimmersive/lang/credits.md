@@ -1,1 +1,2 @@
 LOCALIZATION
+    - zh_CN: 3TUSK
