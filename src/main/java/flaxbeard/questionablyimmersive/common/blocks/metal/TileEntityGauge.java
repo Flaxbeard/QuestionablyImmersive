@@ -7,7 +7,6 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOve
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectionalTile;
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockMetal;
-import javafx.util.Pair;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
@@ -15,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -94,11 +94,11 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer)
 	{
-		Pair<String[], Float> data = getData(dataType);
-		return data.getKey();
+		Tuple<String[], Float> data = getData(dataType);
+		return data.getFirst();
 	}
 
-	public Pair<String[], Float> getData(int dataType)
+	public Tuple<String[], Float> getData(int dataType)
 	{
 		BlockPos offsetPos = pos.offset(facing);
 		IBlockState state = world.getBlockState(offsetPos);
@@ -108,7 +108,7 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 		{
 			case 0:
 				int power = world.getRedstonePower(offsetPos, facing);
-				return new Pair<>(
+				return new Tuple<>(
 						new String[]{
 								"Redstone Power",
 								Math.round(100 * power / 15f) + "% (" + power + "/15)"
@@ -121,7 +121,7 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 				{
 					comparatorPower = state.getComparatorInputOverride(world, offsetPos);
 				}
-				return new Pair<>(
+				return new Tuple<>(
 						new String[]{
 								"Comparator Power",
 								Math.round(100 * comparatorPower / 15f) + "% (" + comparatorPower + "/15)"
@@ -171,7 +171,7 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 						}
 					}
 				}
-				return new Pair<>(
+				return new Tuple<>(
 						new String[]{
 								"Stored Fluid",
 								Math.round(100 * waterLevel) + "% (" + Math.round(fill) + "/" + Math.round(capacity) + " mB)"
@@ -213,7 +213,7 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 						}
 					}
 				}
-				return new Pair<>(
+				return new Tuple<>(
 						new String[]{
 								"Stored Flux",
 								Math.round(100 * powerLevel) + "% (" + Math.round(fill) + "/" + Math.round(capacity) + " Flux)"
@@ -221,7 +221,7 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 						powerLevel
 				);
 		}
-		return new Pair<>(new String[0], 0f);
+		return new Tuple<>(new String[0], 0f);
 	}
 
 	private TileEntity getProperTE(BlockPos offsetPos)
@@ -257,7 +257,7 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 
 	public float getRotation()
 	{
-		return getData(dataType).getValue();
+		return getData(dataType).getSecond();
 	}
 
 

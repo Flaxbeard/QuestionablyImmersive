@@ -5,16 +5,19 @@ import flaxbeard.questionablyimmersive.common.QISaveData;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.network.QIPacketHandler;
 import flaxbeard.questionablyimmersive.common.network.UpdateRadioNetworkPacket;
-import javafx.util.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class RadioHelper
 {
@@ -186,7 +189,7 @@ public class RadioHelper
 		net.setTargetLocation(position);
 	}
 
-	public static Map<Pair<Integer, Integer>, RadioNetwork> networks = new HashMap<>();
+	public static Map<Tuple<Integer, Integer>, RadioNetwork> networks = new HashMap<>();
 
 	public static void addRadio(TileEntityRadio te)
 	{
@@ -221,7 +224,7 @@ public class RadioHelper
 
 	public static RadioNetwork getNetwork(int dimension, int frequency)
 	{
-		Pair<Integer, Integer> station = new Pair<>(dimension, frequency);
+		Tuple<Integer, Integer> station = new Tuple<>(dimension, frequency);
 		if (!networks.containsKey(station))
 		{
 			networks.put(station, new RadioNetwork(dimension, frequency));

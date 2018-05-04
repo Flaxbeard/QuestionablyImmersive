@@ -1,9 +1,9 @@
 package flaxbeard.questionablyimmersive.common;
 
 import flaxbeard.questionablyimmersive.common.util.RadioHelper;
-import javafx.util.Pair;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,11 +39,11 @@ public class QISaveData extends WorldSavedData
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt)
 	{
 		NBTTagList radioList = new NBTTagList();
-		for (Pair<Integer, Integer> station : RadioHelper.networks.keySet())
+		for (Tuple<Integer, Integer> station : RadioHelper.networks.keySet())
 		{
 			NBTTagCompound tag = new NBTTagCompound();
-			tag.setInteger("world", station.getKey());
-			tag.setInteger("frequency", station.getValue());
+			tag.setInteger("world", station.getFirst());
+			tag.setInteger("frequency", station.getSecond());
 			tag.setTag("info", RadioHelper.networks.get(station).writeToNBT());
 			radioList.appendTag(tag);
 		}
