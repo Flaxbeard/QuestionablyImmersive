@@ -12,9 +12,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -25,8 +30,10 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
-public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTile, IEBlockInterfaces.IHammerInteraction, IBlockOverlayText
+public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTile, IEBlockInterfaces.IHammerInteraction, IBlockOverlayText, ITickable
 {
 	public EnumFacing facing = EnumFacing.NORTH;
 	public int dataType = 0;
@@ -36,6 +43,17 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 	{
 		facing = EnumFacing.getFront(nbt.getInteger("facing"));
 		dataType = nbt.getInteger("dataType");
+		dataTypeFromServer = dataType;
+		float data = nbt.getFloat("dataFromServer");
+		NBTTagList savedStrings = (NBTTagList) nbt.getTag("stringsFromServer");
+		String[] strings = new String[savedStrings.tagCount()];
+		for (int i = 0; i < savedStrings.tagCount(); i++)
+		{
+			strings[i] = savedStrings.getStringTagAt(i);
+		}
+		dataFromServer = new Pair<>(strings, data);
+		lastClientData = getData(dataType).getSecond();
+		canRelyOnServer = true;
 
 		if (descPacket)
 			this.markContainingBlockForUpdate(null);
@@ -46,6 +64,13 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 	{
 		nbt.setInteger("facing", facing.ordinal());
 		nbt.setInteger("dataType", dataType);
+		nbt.setFloat("dataFromServer", dataFromServer.getSecond());
+		NBTTagList savedStrings = new NBTTagList();
+		for (String str : dataFromServer.getFirst())
+		{
+			savedStrings.appendTag(new NBTTagString(str));
+		}
+		nbt.setTag("stringsFromServer", savedStrings);
 	}
 
 	@Override
@@ -94,8 +119,13 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 	@Override
 	public String[] getOverlayText(EntityPlayer player, RayTraceResult mop, boolean hammer)
 	{
-		Pair<String[], Float> data = getData(dataType);
+		Pair<String[], Float> data = getDataClient(dataType);
 		return data.getFirst();
+	}
+
+	public Pair<String[], Float> getDataClient(int dataType)
+	{
+		return dataToDisplay;
 	}
 
 	public Pair<String[], Float> getData(int dataType)
@@ -220,6 +250,55 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 						},
 						powerLevel
 				);
+			case 4:
+				float itemLevel = 0;
+				capacity = 0;
+				fill = 0;
+
+				if (te != null)
+				{
+					if (te instanceof TileEntityMultiblockMetal)
+					{
+						TileEntityMultiblockMetal mm = ((TileEntityMultiblockMetal) te);
+						NonNullList<ItemStack> itemStorage = mm.getInventory();
+						for (int i = 0; i < itemStorage.size(); i++)
+						{
+							capacity += mm.getSlotLimit(i);
+							fill += itemStorage.get(i).getCount();
+						}
+						itemLevel = fill / capacity;
+					}
+					else
+					{
+						IItemHandler itemCap = null;
+
+						if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing))
+						{
+							itemCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, facing);
+						}
+						else if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null))
+						{
+							itemCap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+						}
+
+						if (itemCap != null)
+						{
+							for (int i = 0; i < itemCap.getSlots(); i++)
+							{
+								capacity += itemCap.getSlotLimit(i);
+								fill += itemCap.getStackInSlot(i).getCount();
+							}
+							itemLevel = fill / capacity;
+						}
+					}
+				}
+				return new Pair<>(
+						new String[]{
+								"Stored Items",
+								Math.round(100 * itemLevel) + "% (" + Math.round(fill) + "/" + Math.round(capacity) + ")"
+						},
+						itemLevel
+				);
 		}
 		return new Pair<>(new String[0], 0f);
 	}
@@ -248,16 +327,21 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 	@Override
 	public boolean hammerUseSide(EnumFacing side, EntityPlayer player, float hitX, float hitY, float hitZ)
 	{
-		dataType = (dataType + 1) % 4;
+		dataType = (dataType + 1) % 5;
 		markContainingBlockForUpdate(null);
 		markDirty();
+		canRelyOnServer = false;
+		if (!world.isRemote)
+		{
+			this.dataFromServer = getData(dataType);
+		}
 		return true;
 	}
 
 
 	public float getRotation()
 	{
-		return getData(dataType).getSecond();
+		return getDataClient(dataType).getSecond();
 	}
 
 
@@ -283,4 +367,50 @@ public class TileEntityGauge extends TileEntityIEBase implements IDirectionalTil
 	}
 
 
+	private boolean canRelyOnServer = false;
+
+	private float lastClientData = 0;
+	private int ticks = 0;
+
+	private int dataTypeFromServer = 0;
+	private Pair<String[], Float> dataFromServer = new Pair<>(new String[0], 0f);
+	private Pair<String[], Float> dataToDisplay = new Pair<>(new String[0], 0f);
+
+	@Override
+	public void update()
+	{
+		if (!world.isRemote)
+		{
+			ticks++;
+			if (ticks % 20 == 0)
+			{
+				Pair<String[], Float> last = dataFromServer;
+				this.dataFromServer = getData(dataType);
+				if (!last.equals(dataFromServer))
+				{
+					this.markContainingBlockForUpdate(null);
+				}
+			}
+		}
+		else
+		{
+			if (!canRelyOnServer)
+			{
+				dataToDisplay = getData(dataType);
+			}
+			else
+			{
+				Pair<String[], Float> res = getData(dataType);
+				if (res.getSecond() != lastClientData || dataType != dataTypeFromServer)
+				{
+					canRelyOnServer = false;
+					dataToDisplay = res;
+				}
+				else
+				{
+					dataToDisplay = dataFromServer;
+				}
+			}
+		}
+	}
 }

@@ -1,5 +1,12 @@
 itemGroup.questionablyimmersive=Questionably Immersive
 
+
+tile.questionablyimmersive.metal_device.gauge.name=Gauge
+tile.questionablyimmersive.metal_device.radio.name=Redstone Radio
+item.immersivepetroleum.punchcard.unpunched.name=Unpunched Punchcard
+item.immersivepetroleum.punchcard.punched.name=Punchcard
+item.immersivepetroleum.radio.name=Portable Redstone Radio
+
 desc.immersiveengineering.info.multiblock.QI:CokeOvenBattery=Coke Oven Battery
 desc.immersiveengineering.info.multiblock.QI:Mortar=Railgun Mortar
 
