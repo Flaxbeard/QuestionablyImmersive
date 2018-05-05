@@ -1,6 +1,6 @@
 package flaxbeard.questionablyimmersive.client.gui;
 
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import flaxbeard.questionablyimmersive.common.network.QIPacketHandler;
 import flaxbeard.questionablyimmersive.common.network.TunePortableRadioPacket;

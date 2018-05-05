@@ -1,4 +1,4 @@
-package flaxbeard.questionablyimmersive.common.blocks.metal;
+package flaxbeard.questionablyimmersive.common.blocks.tile;
 
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockOverlayText;

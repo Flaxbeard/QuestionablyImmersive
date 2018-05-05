@@ -1,8 +1,13 @@
 package flaxbeard.questionablyimmersive.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import flaxbeard.questionablyimmersive.common.blocks.metal.*;
+import blusunrize.immersiveengineering.api.energy.IRotationAcceptor;
+import flaxbeard.questionablyimmersive.api.mechpower.IMechConnector;
+import flaxbeard.questionablyimmersive.api.mechpower.MechNetworkHelper;
 import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalDevice;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityAxle;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityGauge;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.util.RadioHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,11 +29,12 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 {
 	public BlockQIMetalDevice()
 	{
-		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QIMetalDevice.class), ItemBlockMetalBlock.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
+		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QIMetalDevice.class), ItemBlockMetalBlock.class, IEProperties.FACING_ALL);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;
 		this.setNotNormalBlock(BlockTypes_QIMetalDevice.GAUGE.getMeta());
+		this.setNotNormalBlock(BlockTypes_QIMetalDevice.AXLE.getMeta());
 
 	}
 
@@ -60,6 +66,8 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 				return new TileEntityGauge();
 			case RADIO:
 				return new TileEntityRadio();
+			case AXLE:
+				return new TileEntityAxle();
 		}
 		return null;
 	}
@@ -86,6 +94,8 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 				return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 			case RADIO:
 				return EnumBlockRenderType.MODEL;
+			case AXLE:
+				return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 		}
 		return EnumBlockRenderType.MODEL;
 	}
@@ -192,4 +202,19 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 		}
 	}
 
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+	{
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof TileEntityAxle)
+		{
+			TileEntity neighborTe = world.getTileEntity(neighbor);
+			if ((neighborTe instanceof IRotationAcceptor && !(neighborTe instanceof IMechConnector)) || MechNetworkHelper.getNetworkData(te.getWorld(), pos).getContainedAcceptors().contains(neighbor))
+			{
+				MechNetworkHelper.removeFromNetwork(te.getWorld(), pos);
+				MechNetworkHelper.getNetworkData(te.getWorld(), pos);
+			}
+		}
+		super.onNeighborChange(world, pos, neighbor);
+	}
 }

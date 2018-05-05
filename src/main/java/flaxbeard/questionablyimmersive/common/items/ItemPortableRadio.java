@@ -4,7 +4,7 @@ import blusunrize.immersiveengineering.common.items.IEItemInterfaces;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.questionablyimmersive.api.ICoordinateProvider;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.util.RadioHelper;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;

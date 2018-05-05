@@ -2,10 +2,8 @@ package flaxbeard.questionablyimmersive.client.gui;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.gui.ContainerCokeOvenBattery;
-import flaxbeard.questionablyimmersive.common.gui.ContainerMortar;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

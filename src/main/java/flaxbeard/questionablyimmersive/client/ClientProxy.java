@@ -3,18 +3,21 @@ package flaxbeard.questionablyimmersive.client;
 import blusunrize.immersiveengineering.api.ManualHelper;
 import blusunrize.immersiveengineering.api.ManualPageMultiblock;
 import blusunrize.immersiveengineering.client.IECustomStateMapper;
+import blusunrize.immersiveengineering.client.models.obj.IEOBJLoader;
 import blusunrize.immersiveengineering.common.IEContent;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IIEMetaBlock;
 import blusunrize.lib.manual.ManualPages;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.client.render.MultiblockCokeOvenBatteryRenderer;
 import flaxbeard.questionablyimmersive.client.render.MultiblockMortarRenderer;
+import flaxbeard.questionablyimmersive.client.render.TileAxleRenderer;
 import flaxbeard.questionablyimmersive.client.render.TileGaugeRenderer;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
 import flaxbeard.questionablyimmersive.common.QIContent;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityAxle;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityCokeOvenBattery;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityGauge;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
 import flaxbeard.questionablyimmersive.common.items.ItemQIBase;
@@ -40,6 +43,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -73,6 +77,7 @@ public class ClientProxy extends CommonProxy
 				return false;
 			}
 		});
+
 	}
 	
 	@Override
@@ -195,6 +200,7 @@ public class ClientProxy extends CommonProxy
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGauge.class, new TileGaugeRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMortar.TileEntityMortarParent.class, new MultiblockMortarRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart.class, new MultiblockCokeOvenBatteryRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityAxle.class, new TileAxleRenderer());
 
 	}
 

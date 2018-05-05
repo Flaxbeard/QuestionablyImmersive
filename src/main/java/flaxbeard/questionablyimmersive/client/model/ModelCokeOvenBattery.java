@@ -1,6 +1,6 @@
 package flaxbeard.questionablyimmersive.client.model;
 
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityCokeOvenBattery;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;

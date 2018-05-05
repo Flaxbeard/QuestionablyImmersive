@@ -2,7 +2,7 @@ package flaxbeard.questionablyimmersive.common.util;
 
 import flaxbeard.questionablyimmersive.common.QIContent;
 import flaxbeard.questionablyimmersive.common.QISaveData;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.network.QIPacketHandler;
 import flaxbeard.questionablyimmersive.common.network.UpdateRadioNetworkPacket;
 import net.minecraft.nbt.NBTTagCompound;

@@ -2,10 +2,8 @@ package flaxbeard.questionablyimmersive.common.gui;
 
 import blusunrize.immersiveengineering.common.gui.ContainerIEBase;
 import blusunrize.immersiveengineering.common.gui.IESlot;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
-import net.minecraft.entity.player.EntityPlayer;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityMortar;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 

@@ -1,6 +1,6 @@
 package flaxbeard.questionablyimmersive.client.gui;
 
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
+import flaxbeard.questionablyimmersive.common.blocks.tile.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.gui.ContainerMortar;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
