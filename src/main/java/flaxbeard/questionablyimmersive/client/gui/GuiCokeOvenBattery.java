@@ -136,8 +136,8 @@ public class GuiCokeOvenBattery extends GuiContainer
 
 			if ((x < -20 || x > 110) || (!drawSlots))
 			{
-				slot.xPos = -100;
-				slot.yPos = -100;
+				slot.xPos = -Integer.MAX_VALUE;
+				slot.yPos = -Integer.MAX_VALUE;
 			}
 			else
 			{

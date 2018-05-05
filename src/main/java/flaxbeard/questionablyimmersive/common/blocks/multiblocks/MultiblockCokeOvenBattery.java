@@ -316,14 +316,24 @@ public class MultiblockCokeOvenBattery implements IMultiblock
 	}
 
 	static final IngredientStack[] materials = new IngredientStack[]{
-			new IngredientStack("scaffoldingSteel", 11),
-			new IngredientStack("fenceTreatedWood", 6),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDevice1, 4, BlockTypes_MetalDevice1.FLUID_PIPE.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 1, BlockTypes_MetalDecoration0.RS_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta())),
-			new IngredientStack(new ItemStack(IEContent.blockMetalDecoration0, 2, BlockTypes_MetalDecoration0.HEAVY_ENGINEERING.getMeta())),
-			new IngredientStack("blockSteel", 2),
-			new IngredientStack("blockSheetmetalSteel", 4)};
+			new IngredientStack("scaffoldingSteel", 18),
+			new IngredientStack(new ItemStack(
+					IEContent.blockMetalDevice1,
+					6,
+					BlockTypes_MetalDevice1.FLUID_PIPE.getMeta()
+			)),
+			new IngredientStack("blockSheetmetalSteel", 24),
+			new IngredientStack(new ItemStack(
+					IEContent.blockMetalDecoration0,
+					12,
+					BlockTypes_MetalDecoration0.LIGHT_ENGINEERING.getMeta()
+			)),
+			new IngredientStack(new ItemStack(
+					Blocks.PISTON,
+					12
+			))
+	};
+
 	@Override
 	public IngredientStack[] getTotalMaterials()
 	{

@@ -93,7 +93,7 @@ public class TileEntityCokeOvenBattery extends TileEntityMultiblockMetal<TileEnt
 
 	public TileEntityCokeOvenBattery()
 	{
-		super(MultiblockCokeOvenBattery.Slice.instance, new int[]{4, 1, 3}, 16000, true);
+		super(MultiblockCokeOvenBattery.Slice.instance, new int[] {4, 1, 3}, 0, false);
 		inventory = NonNullList.withSize(ovenLength, ItemStack.EMPTY);
 		insertionHandlers = new IEInventoryHandler[ovenLength];
 		for (int i = 0; i < ovenLength; i++)
@@ -447,13 +447,13 @@ public class TileEntityCokeOvenBattery extends TileEntityMultiblockMetal<TileEnt
 	@Override
 	public int[] getEnergyPos()
 	{
-		return new int[]{20};
+		return new int[]{};
 	}
 
 	@Override
 	public int[] getRedstonePos()
 	{
-		return new int[]{18};
+		return new int[]{};
 	}
 
 	@Override
@@ -547,7 +547,7 @@ public class TileEntityCokeOvenBattery extends TileEntityMultiblockMetal<TileEnt
 	@Override
 	public IFluidTank[] getInternalTanks()
 	{
-		return null;
+		return new IFluidTank[] { tank };
 	}
 
 	@Override
