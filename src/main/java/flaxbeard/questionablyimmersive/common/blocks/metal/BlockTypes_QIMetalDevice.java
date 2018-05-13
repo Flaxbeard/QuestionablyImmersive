@@ -8,7 +8,8 @@ import java.util.Locale;
 public enum BlockTypes_QIMetalDevice implements IStringSerializable, BlockQIBase.IBlockEnum
 {
 	GAUGE,
-	RADIO;
+	RADIO,
+	EXTRUDER;
 
 	@Override
 	public String getName()

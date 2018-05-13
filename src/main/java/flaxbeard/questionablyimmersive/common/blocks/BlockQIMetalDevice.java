@@ -1,8 +1,10 @@
 package flaxbeard.questionablyimmersive.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
-import flaxbeard.questionablyimmersive.common.blocks.metal.*;
 import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalDevice;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityExtruder;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.util.RadioHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,7 +26,7 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 {
 	public BlockQIMetalDevice()
 	{
-		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QIMetalDevice.class), ItemBlockMetalBlock.class, IEProperties.FACING_ALL, IEProperties.MULTIBLOCKSLAVE);
+		super("metal_device", Material.IRON, PropertyEnum.create("type", BlockTypes_QIMetalDevice.class), ItemBlockMetalBlock.class, IEProperties.FACING_ALL);
 		setHardness(3.0F);
 		setResistance(15.0F);
 		lightOpacity = 0;
@@ -60,6 +62,8 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 				return new TileEntityGauge();
 			case RADIO:
 				return new TileEntityRadio();
+			case EXTRUDER:
+				return new TileEntityExtruder();
 		}
 		return null;
 	}
@@ -85,6 +89,8 @@ public class BlockQIMetalDevice extends BlockQITileProvider<BlockTypes_QIMetalDe
 			case GAUGE:
 				return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 			case RADIO:
+				return EnumBlockRenderType.MODEL;
+			case EXTRUDER:
 				return EnumBlockRenderType.MODEL;
 		}
 		return EnumBlockRenderType.MODEL;

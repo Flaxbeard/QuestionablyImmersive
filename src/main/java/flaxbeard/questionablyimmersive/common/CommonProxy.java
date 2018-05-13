@@ -12,6 +12,7 @@ import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.gui.ContainerCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.gui.ContainerMortar;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
+import flaxbeard.questionablyimmersive.common.util.QIFakePlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -20,9 +21,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class CommonProxy implements IGuiHandler
@@ -32,6 +37,17 @@ public class CommonProxy implements IGuiHandler
 	public void preInitEnd() {}
 	public void init() {}
 	public void postInit() {}
+
+	private static Map<Integer, FakePlayer> fakePlayerMap = new HashMap<Integer, FakePlayer>();
+	public FakePlayer getFakePlayer(World world)
+	{
+		int dim = world.provider.getDimension();
+		if (!fakePlayerMap.containsKey(dim))
+		{
+			fakePlayerMap.put(dim, new QIFakePlayer(world));
+		}
+		return fakePlayerMap.get(dim);
+	}
 
 	public static <T extends TileEntity & IGuiTile> void openGuiForTile(@Nonnull EntityPlayer player, @Nonnull T tile)
 	{
