@@ -5,12 +5,15 @@ import blusunrize.immersiveengineering.common.items.IEItemInterfaces;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.client.gui.GuiCokeOvenBattery;
 import flaxbeard.questionablyimmersive.client.gui.GuiMortar;
+import flaxbeard.questionablyimmersive.client.gui.GuiTriphammer;
 import flaxbeard.questionablyimmersive.client.gui.GuiTuneRadio;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityTriphammer;
 import flaxbeard.questionablyimmersive.common.gui.ContainerCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.gui.ContainerMortar;
+import flaxbeard.questionablyimmersive.common.gui.ContainerTriphammer;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -75,7 +78,10 @@ public class CommonProxy implements IGuiHandler
 				{
 					gui = new ContainerCokeOvenBattery(player.inventory, (TileEntityCokeOvenBattery) te);
 				}
-
+				else if (ID == 3 && te instanceof TileEntityTriphammer)
+				{
+					gui = new ContainerTriphammer(player.inventory, (TileEntityTriphammer) te);
+				}
 				if(gui!=null)
 					((IGuiTile)te).onGuiOpened(player, false);
 				return gui;
@@ -123,7 +129,10 @@ public class CommonProxy implements IGuiHandler
 				{
 					gui = new GuiCokeOvenBattery(player.inventory, (TileEntityCokeOvenBattery) te);
 				}
-
+				else if (ID == 3 && te instanceof TileEntityTriphammer)
+				{
+					gui = new GuiTriphammer(player.inventory, (TileEntityTriphammer) te);
+				}
 				return gui;
 			}
 		}

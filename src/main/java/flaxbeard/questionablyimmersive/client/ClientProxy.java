@@ -9,13 +9,16 @@ import blusunrize.lib.manual.ManualPages;
 import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.client.render.MultiblockCokeOvenBatteryRenderer;
 import flaxbeard.questionablyimmersive.client.render.MultiblockMortarRenderer;
+import flaxbeard.questionablyimmersive.client.render.MultiblockTriphammerRenderer;
 import flaxbeard.questionablyimmersive.client.render.TileGaugeRenderer;
 import flaxbeard.questionablyimmersive.common.CommonProxy;
 import flaxbeard.questionablyimmersive.common.QIContent;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityTriphammer;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockCokeOvenBattery;
+import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockTriphammer;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
 import flaxbeard.questionablyimmersive.common.items.ItemQIBase;
 import net.minecraft.block.Block;
@@ -192,9 +195,13 @@ public class ClientProxy extends CommonProxy
 				new ManualPageMultiblock(ManualHelper.getManual(), "cokeOvenBattery1", MultiblockCokeOvenBattery.instance),
 				new ManualPages.Text(ManualHelper.getManual(), "cokeOvenBattery2")
 		);
+		ManualHelper.addEntry("tripha", CAT_QI,
+				new ManualPageMultiblock(ManualHelper.getManual(), "tripha", MultiblockTriphammer.instance)
+		);
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityGauge.class, new TileGaugeRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityMortar.TileEntityMortarParent.class, new MultiblockMortarRenderer());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart.class, new MultiblockCokeOvenBatteryRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTriphammer.TileEntityTriphammerParent.class, new MultiblockTriphammerRenderer());
 
 	}
 

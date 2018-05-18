@@ -5,12 +5,10 @@ import flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQIMetalDevice;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQIBase;
 import flaxbeard.questionablyimmersive.common.blocks.BlockQIMetalMultiblocks;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityGauge;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
+import flaxbeard.questionablyimmersive.common.blocks.metal.*;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockMortar;
+import flaxbeard.questionablyimmersive.common.blocks.multiblocks.MultiblockTriphammer;
 import flaxbeard.questionablyimmersive.common.entity.EntityMortarItem;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import flaxbeard.questionablyimmersive.common.items.ItemPunchcard;
@@ -103,9 +101,11 @@ public class QIContent
 		registerTile(TileEntityCokeOvenBattery.class);
 		registerTile(TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart.class);
 		registerTile(TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent.class);
-
+		registerTile(TileEntityTriphammer.class);
+		registerTile(TileEntityTriphammer.TileEntityTriphammerParent.class);
 		MultiblockHandler.registerMultiblock(MultiblockMortar.instance);
 		MultiblockHandler.registerMultiblock(MultiblockCokeOvenBattery.instance);
+		MultiblockHandler.registerMultiblock(MultiblockTriphammer.instance);
 
 	}
 	

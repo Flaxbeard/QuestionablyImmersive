@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IDirectio
 import blusunrize.immersiveengineering.common.blocks.TileEntityIEBase;
 import blusunrize.immersiveengineering.common.util.ItemNBTHelper;
 import flaxbeard.questionablyimmersive.common.QIContent;
+import flaxbeard.questionablyimmersive.common.network.GUIUpdatePacket;
 import flaxbeard.questionablyimmersive.common.util.RadioHelper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TileEntityRadio extends TileEntityIEBase implements IDirectionalTile, IEBlockInterfaces.IHammerInteraction, IBlockOverlayText, IEBlockInterfaces.IGuiTile, IEBlockInterfaces.ITileDrop
+public class TileEntityRadio extends TileEntityIEBase implements IDirectionalTile, IEBlockInterfaces.IHammerInteraction, IBlockOverlayText, IEBlockInterfaces.IGuiTile, IEBlockInterfaces.ITileDrop, GUIUpdatePacket.IPacketReceiver
 {
 	public EnumFacing facing = EnumFacing.NORTH;
 	public boolean receiveMode = true;
@@ -219,6 +220,15 @@ public class TileEntityRadio extends TileEntityIEBase implements IDirectionalTil
 		if (ItemNBTHelper.hasKey(stack, "broadcast"))
 		{
 			setReceiveMode(false);
+		}
+	}
+
+	@Override
+	public void handlePacket(int messageId, NBTTagCompound data)
+	{
+		if (messageId == 0)
+		{
+			setFrequency(data.getInteger("station"));
 		}
 	}
 }

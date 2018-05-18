@@ -11,7 +11,9 @@ public enum BlockTypes_QIMetalMultiblock implements IStringSerializable, BlockQI
     MORTAR_PARENT(false),
     COKE_OVEN_BATTERY(false),
 	COKE_OVEN_BATTERY_PARENT(false),
-	COKE_OVEN_BATTERY_RENDERED(false);
+	COKE_OVEN_BATTERY_RENDERED(false),
+	TRIPHAMMER(false),
+	TRIPHAMMER_PARENT(false);
 
 	private boolean needsCustomState;
 	BlockTypes_QIMetalMultiblock(boolean needsCustomState)

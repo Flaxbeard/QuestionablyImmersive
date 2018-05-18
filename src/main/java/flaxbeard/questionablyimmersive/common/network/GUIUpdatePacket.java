@@ -3,55 +3,72 @@ package flaxbeard.questionablyimmersive.common.network;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-public class TuneRadioPacket implements IMessage
+public class GUIUpdatePacket implements IMessage
 {
-	public TuneRadioPacket() {}
+	public interface IPacketReceiver
+	{
+		void handlePacket(int messageId, NBTTagCompound data);
+	}
+
+	public GUIUpdatePacket() {}
 
 	public BlockPos pos;
-	public int newStation;
+	public int messageID;
+	public NBTTagCompound data;
 
-	public TuneRadioPacket(BlockPos pos, int newStation)
+	public GUIUpdatePacket( BlockPos pos, int messageID, NBTTagCompound data)
 	{
 		this.pos = pos;
-		this.newStation = newStation;
+		this.messageID = messageID;
+		this.data = data;
 	}
 
 	@Override
 	public void toBytes(ByteBuf buf)
 	{
-		buf.writeInt(newStation);
+		buf.writeInt(messageID);
 		buf.writeInt(pos.getX());
 		buf.writeInt(pos.getY());
 		buf.writeInt(pos.getZ());
-
+		ByteBufUtils.writeTag(buf, data);
 	}
 
 	@Override
 	public void fromBytes(ByteBuf buf)
 	{
-		newStation = buf.readInt();
+		messageID = buf.readInt();
 		pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+		data = ByteBufUtils.readTag(buf);
 	}
 
-	public static class Handler implements IMessageHandler<TuneRadioPacket, IMessage>
+	public static class Handler implements IMessageHandler<GUIUpdatePacket, IMessage>
 	{
 
 		@Override
-		public IMessage onMessage(TuneRadioPacket message, MessageContext ctx)
+		public IMessage onMessage(GUIUpdatePacket message, MessageContext ctx)
 		{
 			EntityPlayerMP player = ctx.getServerHandler().player;
 			DimensionManager.getWorld(player.world.provider.getDimension()).addScheduledTask(() -> {
-				TileEntity te = player.world.getTileEntity(message.pos);
-				if (te instanceof TileEntityRadio)
+				Container container = player.openContainer;
+				if (container instanceof IPacketReceiver)
 				{
-					((TileEntityRadio) te).setFrequency(message.newStation);
+					((IPacketReceiver) container).handlePacket(message.messageID, message.data);
+				}
+
+				TileEntity te = player.world.getTileEntity(message.pos);
+				if (te instanceof IPacketReceiver)
+				{
+					((IPacketReceiver) te).handlePacket(message.messageID, message.data);
 				}
 			});
 

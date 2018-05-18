@@ -6,6 +6,7 @@ import blusunrize.immersiveengineering.common.blocks.metal.TileEntityMultiblockM
 import flaxbeard.questionablyimmersive.common.blocks.metal.BlockTypes_QIMetalMultiblock;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
+import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityTriphammer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
@@ -59,6 +60,10 @@ public class BlockQIMetalMultiblocks extends BlockQIMultiblock<BlockTypes_QIMeta
 				return new TileEntityCokeOvenBattery.TileEntityCokeOvenBatteryParent();
 			case COKE_OVEN_BATTERY_RENDERED:
 				return new TileEntityCokeOvenBattery.TileEntityCokeOvenRenderedPart();
+			case TRIPHAMMER:
+				return new TileEntityTriphammer();
+			case TRIPHAMMER_PARENT:
+				return new TileEntityTriphammer.TileEntityTriphammerParent();
 		}
 		return null;
 	}

@@ -4,11 +4,12 @@ import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityRadio;
 import flaxbeard.questionablyimmersive.common.items.ItemPortableRadio;
 import flaxbeard.questionablyimmersive.common.network.QIPacketHandler;
 import flaxbeard.questionablyimmersive.common.network.TunePortableRadioPacket;
-import flaxbeard.questionablyimmersive.common.network.TuneRadioPacket;
+import flaxbeard.questionablyimmersive.common.network.GUIUpdatePacket;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -133,7 +134,9 @@ public class GuiTuneRadio extends GuiScreen
 		if (tile)
 		{
 			radio.setFrequency(station);
-			QIPacketHandler.INSTANCE.sendToServer(new TuneRadioPacket(radio.getPos(), tempStation));
+			NBTTagCompound data = new NBTTagCompound();
+			data.setInteger("station", tempStation);
+			QIPacketHandler.INSTANCE.sendToServer(new GUIUpdatePacket(radio.getPos(), 0, data));
 		}
 		else
 		{

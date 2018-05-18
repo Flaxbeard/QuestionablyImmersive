@@ -2,10 +2,7 @@ package flaxbeard.questionablyimmersive.client.render;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
 import flaxbeard.questionablyimmersive.client.model.ModelCokeOvenBattery;
-import flaxbeard.questionablyimmersive.client.model.ModelMortar;
 import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityCokeOvenBattery;
-import flaxbeard.questionablyimmersive.common.blocks.metal.TileEntityMortar;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.EnumFacing;
