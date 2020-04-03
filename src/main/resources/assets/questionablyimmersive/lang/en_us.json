@@ -7,5 +7,5 @@
   "item.questionablyimmersive.punchcard": "Blank Punchcard",
   "item.questionablyimmersive.punchcard_punched": "Punched Punchcard",
   "desc.questionablyimmersive.info.punchcard": "Shift right click to set position",
-  "desc.questionablyimmersive.info.punchcard_pos": "x: %1$s y: %2$s z: %3$s %4$s"
-}
+  "desc.questionablyimmersive.info.punchcard_pos": "x: %1$s y: %2$s z: %3$s %4$s",
+  "manual.questionablyimmersive.questionable": "Questionable Inventions"}

@@ -87,9 +87,6 @@ public class CokeOvenBatteryModel extends Model
 
 
 		if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSneaking()) {
-			if (!wasSneaking) {
-				refresh();
-			}
 			wasSneaking = true;
 		} else {
 			wasSneaking = false;
@@ -113,7 +110,7 @@ public class CokeOvenBatteryModel extends Model
 		if (Minecraft.getInstance().player != null)
 		{
 			float t = 0;
-			if (battery != null && battery.active[index])
+			if (battery != null && battery.active[index] && battery.hasWorld())
 			{
 				if (battery.processMax[index] > 0 && battery.process[index] < 50)
 				{
@@ -164,6 +161,23 @@ public class CokeOvenBatteryModel extends Model
 			else if (progress <= 70f)
 			{
 				doorOpenPercent = Math.cos((progress - 55) * Math.PI / 30f);
+			}
+
+			if (battery == null) {
+				double ticks = Minecraft.getInstance().player.ticksExisted +  Minecraft.getInstance().getRenderPartialTicks();
+
+				if (Math.floor((ticks / 45)) % 6 == index) {
+					ticks = ticks - Math.floor((ticks / 45)) * 45;
+
+					if (ticks < 15)
+					{
+						doorOpenPercent = (float) 1 - Math.cos((ticks * Math.PI / 30f));
+					} else if (ticks < 30) {
+						doorOpenPercent = 1;
+					} else {
+						doorOpenPercent = (float) Math.cos(((ticks - 30) * Math.PI / 30f));
+					}
+				}
 			}
 
 			if (doorOpenPercent > 0)
