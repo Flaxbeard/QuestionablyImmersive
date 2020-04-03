@@ -61,7 +61,6 @@ public abstract class QIMultiblockBlock extends QITileProviderBlock
 			{
 				((QIBaseTileEntity) tileEntity).setOverrideState(state);
 			}
-
 			if (tileEntity instanceof IEBaseTileEntity)
 			{
 				((IEBaseTileEntity) tileEntity).setOverrideState(state);

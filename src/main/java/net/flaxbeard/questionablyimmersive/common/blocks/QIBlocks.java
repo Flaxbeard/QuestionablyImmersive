@@ -8,6 +8,7 @@ public final class QIBlocks
 	{
 		public static Block cokeOvenBattery;
 		public static Block triphammer;
+		public static Block railgunMortar;
 
 		public Multiblocks()
 		{
@@ -21,6 +22,15 @@ public final class QIBlocks
 		public static TriphammerAnvilBlock TRIPHAMMER_ANVIL_DAMAGED;
 
 		public Metal()
+		{
+		}
+	}
+
+	public static final class MetalDevices
+	{
+		public static Block gauge;
+
+		public MetalDevices()
 		{
 		}
 	}

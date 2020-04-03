@@ -1,21 +1,27 @@
 package net.flaxbeard.questionablyimmersive.common;
 
+import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.common.network.IMessage;
+import blusunrize.immersiveengineering.common.util.IELogger;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
+import net.flaxbeard.questionablyimmersive.common.blocks.QIGenericTileBlock;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIMetalMultiblockBlock;
 import net.flaxbeard.questionablyimmersive.common.blocks.TriphammerAnvilBlock;
-import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
-import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerAnvilTileEntity;
-import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.*;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
+import net.flaxbeard.questionablyimmersive.common.entities.MortarItemEntity;
+import net.flaxbeard.questionablyimmersive.common.items.PunchcardItem;
+import net.flaxbeard.questionablyimmersive.common.items.QIItems;
 import net.flaxbeard.questionablyimmersive.common.network.GUIUpdateMessage;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.state.IProperty;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -42,6 +48,14 @@ public class QIContent
 	public static void modConstruction()
 	{
 		QuestionablyImmersive.proxy.registerContainersAndScreens();
+
+		QIBlocks.Multiblocks.railgunMortar = new QIMetalMultiblockBlock("railgun_mortar", () ->
+		{
+			return RailgunMortarTileEntity.TYPE;
+		}, () ->
+		{
+			return RailgunMortarTileEntity.Master.TYPE;
+		});
 
 		QIBlocks.Multiblocks.cokeOvenBattery = new QIMetalMultiblockBlock("coke_oven_battery", () ->
 		{
@@ -74,6 +88,15 @@ public class QIContent
 		{
 			return TriphammerAnvilTileEntity.TYPE;
 		}, Blocks.DAMAGED_ANVIL);
+
+		Block.Properties defaultMetalProperties = Block.Properties.create(Material.IRON).hardnessAndResistance(3.0F, 15.0F);
+		QIBlocks.MetalDevices.gauge = new QIGenericTileBlock("gauge", () ->
+		{
+			return GaugeTileEntity.TYPE;
+		}, defaultMetalProperties, new IProperty[]{IEProperties.FACING_ALL});
+
+		QIItems.Misc.punchcardBlank = new PunchcardItem(false);
+		QIItems.Misc.punchcardPunched = new PunchcardItem(true);
 	}
 
 	public static void init()
@@ -82,6 +105,7 @@ public class QIContent
 		MultiblockHandler.registerMultiblock(QIMultiblocks.COKE_OVEN_BATTERY_SLICE);
 		MultiblockHandler.registerMultiblock(QIMultiblocks.COKE_OVEN_BATTERY_DISPLAY);
 		MultiblockHandler.registerMultiblock(QIMultiblocks.TRIPHAMMER);
+		MultiblockHandler.registerMultiblock(QIMultiblocks.RAILGUN_MORTAR);
 
 		registerMessage(GUIUpdateMessage.class, GUIUpdateMessage::new);
 	}
@@ -97,6 +121,10 @@ public class QIContent
 		registerTile(TriphammerTileEntity.Master.class, event, QIBlocks.Multiblocks.triphammer);
 
 		registerTile(TriphammerAnvilTileEntity.class, event, QIBlocks.Metal.TRIPHAMMER_ANVIL, QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED, QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED);
+
+		registerTile(GaugeTileEntity.class, event, QIBlocks.MetalDevices.gauge);
+		registerTile(RailgunMortarTileEntity.class, event, QIBlocks.Multiblocks.railgunMortar);
+		registerTile(RailgunMortarTileEntity.Master.class, event, QIBlocks.Multiblocks.railgunMortar);
 	}
 
 	@SubscribeEvent
@@ -145,6 +173,7 @@ public class QIContent
 			T b = (T) var2.next();
 			if (b.getRegistryName() == null)
 			{
+				IELogger.logger.info("Null name for {} (class {})", b, b.getClass());
 				++numNull;
 			}
 		}
@@ -175,6 +204,7 @@ public class QIContent
 				return null;
 			}
 		}, validSet, null);
+
 		type.setRegistryName(QuestionablyImmersive.MODID, s);
 		event.getRegistry().register(type);
 
@@ -195,6 +225,7 @@ public class QIContent
 	public static void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event)
 	{
 		event.getRegistry().registerAll(
+				MortarItemEntity.TYPE
 		);
 	}
 

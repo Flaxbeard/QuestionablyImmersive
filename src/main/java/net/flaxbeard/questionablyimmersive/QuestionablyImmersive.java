@@ -51,8 +51,8 @@ public class QuestionablyImmersive
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
 
 		MinecraftForge.EVENT_BUS.register(this);
-
 		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, QIConfig.ALL);
+
 		QIContent.modConstruction();
 	}
 
@@ -61,6 +61,7 @@ public class QuestionablyImmersive
 	{
 		QIContent.init();
 		proxy.preInit();
+
 		proxy.postInit();
 	}
 

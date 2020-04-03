@@ -5,13 +5,15 @@
 
 package net.flaxbeard.questionablyimmersive.common.blocks.multiblocks;
 
+
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 
 public class QIMultiblocks
 {
+	public static IETemplateMultiblock TRIPHAMMER;
+	public static IETemplateMultiblock RAILGUN_MORTAR;
 	public static IETemplateMultiblock COKE_OVEN_BATTERY_DISPLAY;
 	public static IETemplateMultiblock COKE_OVEN_BATTERY_SLICE;
-	public static IETemplateMultiblock TRIPHAMMER;
 
 	public QIMultiblocks()
 	{
@@ -22,6 +24,7 @@ public class QIMultiblocks
 		COKE_OVEN_BATTERY_DISPLAY = new CokeOvenBatteryDisplayMultiblock();
 		COKE_OVEN_BATTERY_SLICE = new CokeOvenBatterySliceMultiblock();
 		TRIPHAMMER = new TriphammerMultiblock();
+		RAILGUN_MORTAR = new RailgunMortarMultiblock();
 	}
 
 }

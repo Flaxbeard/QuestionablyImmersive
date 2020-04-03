@@ -379,6 +379,7 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 		if (state.getBlock() == this)
 		{
 			TileEntity te = world.getTileEntity(pos);
+
 			if (te instanceof ICollisionBounds)
 			{
 				return ((ICollisionBounds) te).getCollisionShape();
@@ -394,6 +395,7 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 		if (world.getBlockState(pos).getBlock() == this)
 		{
 			TileEntity te = world.getTileEntity(pos);
+
 			if (te instanceof ISelectionBounds)
 			{
 				return ((ISelectionBounds) te).getSelectionShape();
@@ -407,6 +409,7 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 	public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
 	{
 		TileEntity te = world.getTileEntity(pos);
+
 		if (te instanceof ISelectionBounds)
 		{
 			List<AxisAlignedBB> list = ((ISelectionBounds) te).getSelectionShape().toBoundingBoxList();
