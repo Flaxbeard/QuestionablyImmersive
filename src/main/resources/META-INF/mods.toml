@@ -1,0 +1,39 @@
+# @file mods.toml
+# @spec TOML v0.5.0 (https://github.com/toml-lang/toml)
+#
+modLoader="javafml"
+loaderVersion="[28,)"
+issueTrackerURL="https://github.com/Flaxbeard/QuestionablyImmersive/issues"
+
+[[mods]]
+modId="questionablyimmersive"
+version="${version}"
+displayName="Questionably Immersive"
+updateJSONURL="https://raw.githubusercontent.com/Flaxbeard/QuestionablyImmersive/1.14/changelog.json"
+displayURL="https://minecraft.curseforge.com/projects/questionably-immersive/"
+credits="Thanks to Blu & Hazard and everyone who has contributed translations"
+authors="Flaxbeard"
+description='''
+A general-purpose addon for Immersive Engineering.
+'''
+
+[[dependencies.questionablyimmersive]]
+    modId="forge"
+    mandatory=true
+    versionRange="[28,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.questionablyimmersive]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.14.4]"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.questionablyimmersive]]
+  modId="immersiveengineering"
+  mandatory=true
+  versionRange="[0.14,)"
+  ordering="AFTER"
+  side="BOTH"
