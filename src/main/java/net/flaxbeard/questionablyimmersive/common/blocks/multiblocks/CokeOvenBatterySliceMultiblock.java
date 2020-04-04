@@ -81,6 +81,12 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 	}
 
 	@Override
+	protected int getMinLayers()
+	{
+		return 6;
+	}
+
+	@Override
 	protected QIMultiblockBlock.MultiblockTileType getTileType(boolean equals, int i)
 	{
 		if (equals && i == 0) {

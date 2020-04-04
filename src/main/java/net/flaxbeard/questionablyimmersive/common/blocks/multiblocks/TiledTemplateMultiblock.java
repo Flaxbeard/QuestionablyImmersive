@@ -1,11 +1,6 @@
 package net.flaxbeard.questionablyimmersive.common.blocks.multiblocks;
 
-import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.multiblocks.BlockMatcher;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
-import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
-import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
-import blusunrize.immersiveengineering.common.util.IELogger;
 import blusunrize.immersiveengineering.common.util.Utils;
 import com.google.common.collect.ImmutableList;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIMultiblockBlock;
@@ -29,21 +24,26 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 {
 
+	public final BlockPos masterFromOrigin;
+
 	public TiledTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, Map<Block, Tag<Block>> tags, Supplier<BlockState> baseState)
 	{
 		super(loc, masterFromOrigin, triggerFromOrigin, tags, baseState);
+
+		// TODO should be able to get rid of this
+		this.masterFromOrigin = masterFromOrigin;
 	}
 
 	public TiledTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, Supplier<BlockState> baseState)
 	{
 		super(loc, masterFromOrigin, triggerFromOrigin, baseState);
+		this.masterFromOrigin = masterFromOrigin;
 	}
 
 	@Override
@@ -59,10 +59,7 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 
 			try
 			{
-				// TODO
-				Method getTemplate = ObfuscationReflectionHelper.findMethod(TemplateMultiblock.class, "getTemplate");
-				getTemplate.setAccessible(true);
-				Template template = (Template) getTemplate.invoke(this);
+				Template template = getTemplate();
 
 				ImmutableList mirrorStates;
 				if (this.canBeMirrored())
@@ -82,9 +79,6 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 					PlacementSettings placeSet = (new PlacementSettings()).setMirror(mirror).setRotation(rot);
 					BlockPos origin = pos.subtract(Template.transformedBlockPos(placeSet, this.triggerFromOrigin));
 
-					// TODO
-					List<List<Template.BlockInfo>> blocks = ObfuscationReflectionHelper.getPrivateValue(Template.class, template, "blocks");
-
 					Vec3i depthOffset = side.getOpposite().getDirectionVec();
 					int sliceWidth = template.getSize().getZ();
 					depthOffset = new Vec3i(depthOffset.getX() * sliceWidth, 0, depthOffset.getZ() * sliceWidth);
@@ -95,20 +89,16 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 					widthLabel:
 					while (width < 100)
 					{
-						Iterator var12 = ((List) blocks.get(0)).iterator();
-						while (var12.hasNext())
+						for (Template.BlockInfo info : template.blocks.get(0))
 						{
-							Template.BlockInfo info = (Template.BlockInfo) var12.next();
 							BlockPos realRelPos = Template.transformedBlockPos(placeSet, info.pos);
 							BlockPos here = offsetOrigin.add(realRelPos);
 							BlockState expected = info.state.mirror(mirror).rotate(rot);
 							BlockState inWorld = world.getBlockState(here);
 
-							// TODO
-							List<BlockMatcher.MatcherPredicate> additionalPredicates = ObfuscationReflectionHelper.getPrivateValue(TemplateMultiblock.class, this, "additionalPredicates");
-
 							BlockMatcher.Result matches = BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates);
 
+							// TODO should be able to get rid of this
 							Method isAllow = ObfuscationReflectionHelper.findMethod(BlockMatcher.Result.class, "isAllow");
 							isAllow.setAccessible(true);
 							boolean result = (boolean) isAllow.invoke(matches);
@@ -122,7 +112,7 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 						offsetOrigin = offsetOrigin.add(depthOffset);
 					}
 
-					if (width == 0) {
+					if (width < getMinLayers()) {
 						continue label34;
 					}
 
@@ -141,9 +131,9 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 		}
 	}
 
-	protected void form(World world, BlockPos pos, Rotation rot, Mirror mirror, Direction sideHit, Template template, int width) {
-		BlockPos masterFromOrigin = ObfuscationReflectionHelper.getPrivateValue(TemplateMultiblock.class, this, "masterFromOrigin");
+	protected abstract int getMinLayers();
 
+	protected void form(World world, BlockPos pos, Rotation rot, Mirror mirror, Direction sideHit, Template template, int width) {
 		BlockPos originalPos = pos;
 		BlockPos masterPos = withSettingsAndOffset(pos, masterFromOrigin, mirror, rot);
 
