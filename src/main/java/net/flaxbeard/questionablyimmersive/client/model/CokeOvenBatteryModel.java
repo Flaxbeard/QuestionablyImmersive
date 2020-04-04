@@ -127,6 +127,7 @@ public class CokeOvenBatteryModel extends Model
 
 			if (progress <= 15f)
 			{
+				// Darken coke
 				GlStateManager.pushMatrix();
 				GlStateManager.enableBlend();
 				GlStateManager.color4f(1, 1, 1, progress / 15f);
@@ -137,11 +138,13 @@ public class CokeOvenBatteryModel extends Model
 				GlStateManager.popMatrix();
 			} else if (progress <= 30f)
 			{
+				// Start to open door
 				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 				cokeBlock.render(f5);
 				doorOpenPercent = 1f - Math.cos((progress - 15f) * Math.PI / 30f);
 			} else if (progress <= 50f)
 			{
+				// Move coke out
 				doorOpenPercent = 1;
 				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 				cokeBlock.render(f5);
@@ -155,13 +158,16 @@ public class CokeOvenBatteryModel extends Model
 				doorOpenPercent = 1;
 			} else if (progress <= 70f)
 			{
+				// Close door
 				doorOpenPercent = Math.cos((progress - 55) * Math.PI / 30f);
 			}
 
+			// When rendering in manual
 			if (battery == null)
 			{
 				double ticks = Minecraft.getInstance().player.ticksExisted + Minecraft.getInstance().getRenderPartialTicks();
 
+				// Open doors in sequence
 				if (Math.floor((ticks / 45)) % 6 == index)
 				{
 					ticks = ticks - Math.floor((ticks / 45)) * 45;

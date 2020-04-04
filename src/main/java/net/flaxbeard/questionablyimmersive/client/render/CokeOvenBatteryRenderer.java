@@ -66,6 +66,7 @@ public class CokeOvenBatteryRenderer extends TileEntityRenderer<CokeOvenBatteryT
 				}
 			} else
 			{
+				// Render 5 ovens per Render-tagged TE
 				for (int i = te.layer; i < Math.min(te.layer + 5, te.numLayers); i++)
 				{
 					GlStateManager.pushMatrix();
