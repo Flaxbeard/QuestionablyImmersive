@@ -8,6 +8,7 @@ import blusunrize.immersiveengineering.common.blocks.IEBlocks;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import blusunrize.immersiveengineering.common.util.inventory.IIEInventory;
+import net.flaxbeard.questionablyimmersive.common.QIConfig;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlockInterfaces;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
 import net.minecraft.block.BlockState;
@@ -249,8 +250,7 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 								world.addEntity(ei);
 							}
 						}
-						// TODO
-						int creosoteLoss = 1;
+						double creosoteLoss = QIConfig.COKE_OVEN_BATTERY.creosoteLoss.get();
 						this.tank.fill(new FluidStack(IEContent.fluidCreosote, (int) (recipe.creosoteOutput * processAmount * creosoteLoss)), IFluidHandler.FluidAction.EXECUTE);
 						recuperationTime[i] = 20;
 					} else
@@ -366,21 +366,20 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 
 	private int getRecipeTime(CokeOvenRecipe recipe)
 	{
-		// TODO
-		int simultaneousOperations = 9;
-		float operationTimeModifier = 2f / 3f;
+		int simultaneousOperations = QIConfig.COKE_OVEN_BATTERY.simultaneousOperations.get();
+		double operationTimeModifier = QIConfig.COKE_OVEN_BATTERY.operationTimeModifier.get();
 
 		int recipeTime = (int) (recipe.time * simultaneousOperations * operationTimeModifier);
 		if (recipe.output.getItem() == Item.getItemFromBlock(IEBlocks.StoneDecoration.coke))
 		{
 			recipeTime = (int) (recipe.time * operationTimeModifier);
 		}
-		return recipeTime;
+		return recipeTime / 20;
 	}
 
 	private int getProcessAmount(CokeOvenRecipe recipe)
 	{
-		int processAmount = 9;//Config.QIConfig.cokeOvenBattery.simultaneousOperations;
+		int processAmount = QIConfig.COKE_OVEN_BATTERY.simultaneousOperations.get();
 		if (recipe.output.getItem() == Item.getItemFromBlock(IEBlocks.StoneDecoration.coke))
 		{
 			processAmount = 1;

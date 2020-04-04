@@ -3,12 +3,15 @@ package net.flaxbeard.questionablyimmersive;
 import blusunrize.immersiveengineering.common.items.IEItems;
 import net.flaxbeard.questionablyimmersive.client.ClientProxy;
 import net.flaxbeard.questionablyimmersive.common.CommonProxy;
+import net.flaxbeard.questionablyimmersive.common.QIConfig;
 import net.flaxbeard.questionablyimmersive.common.QIContent;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -40,6 +43,8 @@ public class QuestionablyImmersive
 		FMLJavaModLoadingContext.get().getModEventBus().addListener(this::loadComplete);
 
 		MinecraftForge.EVENT_BUS.register(this);
+
+		ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, QIConfig.ALL);
 		QIContent.modConstruction();
 	}
 
