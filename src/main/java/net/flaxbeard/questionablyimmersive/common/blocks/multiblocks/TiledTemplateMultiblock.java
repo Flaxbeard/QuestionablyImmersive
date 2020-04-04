@@ -19,10 +19,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.template.PlacementSettings;
 import net.minecraft.world.gen.feature.template.Template;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -30,20 +27,14 @@ import java.util.function.Supplier;
 public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 {
 
-	public final BlockPos masterFromOrigin;
-
 	public TiledTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, Map<Block, Tag<Block>> tags, Supplier<BlockState> baseState)
 	{
 		super(loc, masterFromOrigin, triggerFromOrigin, tags, baseState);
-
-		// TODO should be able to get rid of this
-		this.masterFromOrigin = masterFromOrigin;
 	}
 
 	public TiledTemplateMultiblock(ResourceLocation loc, BlockPos masterFromOrigin, BlockPos triggerFromOrigin, Supplier<BlockState> baseState)
 	{
 		super(loc, masterFromOrigin, triggerFromOrigin, baseState);
-		this.masterFromOrigin = masterFromOrigin;
 	}
 
 	@Override
@@ -60,77 +51,63 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 			return false;
 		} else
 		{
+			Template template = getTemplate();
 
-			try
+			ImmutableList mirrorStates;
+			if (this.canBeMirrored())
 			{
-				Template template = getTemplate();
-
-				ImmutableList mirrorStates;
-				if (this.canBeMirrored())
-				{
-					mirrorStates = ImmutableList.of(Mirror.NONE, Mirror.FRONT_BACK);
-				} else
-				{
-					mirrorStates = ImmutableList.of(Mirror.NONE);
-				}
-
-				Iterator var8 = mirrorStates.iterator();
-
-				label34:
-				while (var8.hasNext())
-				{
-					Mirror mirror = (Mirror) var8.next();
-					PlacementSettings placeSet = (new PlacementSettings()).setMirror(mirror).setRotation(rot);
-					BlockPos origin = pos.subtract(Template.transformedBlockPos(placeSet, this.triggerFromOrigin));
-
-					Vec3i depthOffset = side.getOpposite().getDirectionVec();
-					int sliceWidth = template.getSize().getZ();
-					depthOffset = new Vec3i(depthOffset.getX() * sliceWidth, 0, depthOffset.getZ() * sliceWidth);
-
-					BlockPos offsetOrigin = origin;
-
-					int width = 0;
-					widthLabel:
-					while (width < 100)
-					{
-						for (Template.BlockInfo info : template.blocks.get(0))
-						{
-							BlockPos realRelPos = Template.transformedBlockPos(placeSet, info.pos);
-							BlockPos here = offsetOrigin.add(realRelPos);
-							BlockState expected = info.state.mirror(mirror).rotate(rot);
-							BlockState inWorld = world.getBlockState(here);
-
-							BlockMatcher.Result matches = BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates);
-
-							// TODO should be able to get rid of this
-							Method isAllow = ObfuscationReflectionHelper.findMethod(BlockMatcher.Result.class, "isAllow");
-							isAllow.setAccessible(true);
-							boolean result = (boolean) isAllow.invoke(matches);
-
-							if (!result)
-							{
-								break widthLabel;
-							}
-						}
-						width += 1;
-						offsetOrigin = offsetOrigin.add(depthOffset);
-					}
-
-					if (width < getMinLayers())
-					{
-						continue label34;
-					}
-
-					this.form(world, origin, rot, mirror, side, template, width);
-					return true;
-				}
-			} catch (IllegalAccessException e)
+				mirrorStates = ImmutableList.of(Mirror.NONE, Mirror.FRONT_BACK);
+			} else
 			{
-				e.printStackTrace();
-			} catch (InvocationTargetException e)
-			{
-				e.printStackTrace();
+				mirrorStates = ImmutableList.of(Mirror.NONE);
 			}
+
+			Iterator var8 = mirrorStates.iterator();
+
+			label34:
+			while (var8.hasNext())
+			{
+				Mirror mirror = (Mirror) var8.next();
+				PlacementSettings placeSet = (new PlacementSettings()).setMirror(mirror).setRotation(rot);
+				BlockPos origin = pos.subtract(Template.transformedBlockPos(placeSet, this.triggerFromOrigin));
+
+				Vec3i depthOffset = side.getOpposite().getDirectionVec();
+				int sliceWidth = template.getSize().getZ();
+				depthOffset = new Vec3i(depthOffset.getX() * sliceWidth, 0, depthOffset.getZ() * sliceWidth);
+
+				BlockPos offsetOrigin = origin;
+
+				int width = 0;
+				widthLabel:
+				while (width < 100)
+				{
+					for (Template.BlockInfo info : template.blocks.get(0))
+					{
+						BlockPos realRelPos = Template.transformedBlockPos(placeSet, info.pos);
+						BlockPos here = offsetOrigin.add(realRelPos);
+						BlockState expected = info.state.mirror(mirror).rotate(rot);
+						BlockState inWorld = world.getBlockState(here);
+
+						BlockMatcher.Result matches = BlockMatcher.matches(expected, inWorld, world, here, additionalPredicates);
+
+						if (!matches.isAllow())
+						{
+							break widthLabel;
+						}
+					}
+					width += 1;
+					offsetOrigin = offsetOrigin.add(depthOffset);
+				}
+
+				if (width < getMinLayers())
+				{
+					continue label34;
+				}
+
+				this.form(world, origin, rot, mirror, side, template, width);
+				return true;
+			}
+
 
 			return false;
 		}
