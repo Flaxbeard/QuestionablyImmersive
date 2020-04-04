@@ -375,7 +375,7 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		{
 			recipeTime = (int) (recipe.time * operationTimeModifier);
 		}
-		return 100;//recipeTime;
+		return recipeTime;
 	}
 
 	private int getProcessAmount(CokeOvenRecipe recipe)
