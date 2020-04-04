@@ -87,17 +87,22 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 	public NonNullList<ItemStack> inventory;
 
 	public int[] recuperationTime;
-	public int process[];
-	public int processMax[];
-	public boolean active[];
+	public int[] process;
+	public int[] processMax;
+	public boolean[] active;
 	public LazyOptional<IItemHandler>[] invHandlers;
 	public CokeOvenBatteryTileEntity.Data guiData;
 
 	private CokeOvenBatteryTileEntity(TileEntityType<CokeOvenBatteryTileEntity> type)
 	{
 		super(QIMultiblocks.COKE_OVEN_BATTERY_SLICE, type, false);
-		this.inventory = NonNullList.withSize(numLayers + 2, ItemStack.EMPTY);
+		this.inventory = NonNullList.withSize(0, ItemStack.EMPTY);
 		this.guiData = new Data();
+		this.process = new int[0];
+		this.processMax = new int[0];
+		this.active = new boolean[0];
+		this.active = new boolean[0];
+		this.invHandlers = new LazyOptional[0];
 	}
 
 	public CokeOvenBatteryTileEntity()
@@ -361,7 +366,7 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		{
 			recipeTime = (int) (recipe.time * operationTimeModifier);
 		}
-		return recipeTime;
+		return 100;//recipeTime;
 	}
 
 	private int getProcessAmount(CokeOvenRecipe recipe)

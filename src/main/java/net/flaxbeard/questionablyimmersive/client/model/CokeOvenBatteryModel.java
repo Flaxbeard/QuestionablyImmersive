@@ -110,7 +110,7 @@ public class CokeOvenBatteryModel extends Model
 		if (Minecraft.getInstance().player != null)
 		{
 			float t = 0;
-			if (battery != null && battery.active[index] && battery.hasWorld())
+			if (battery != null && battery.active.length > index && battery.active[index] && battery.hasWorld())
 			{
 				if (battery.processMax[index] > 0 && battery.process[index] < 50)
 				{

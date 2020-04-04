@@ -45,7 +45,6 @@ public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEnt
 			if (this.isDummy())
 			{
 				this.master().disassemble();
-				this.world.removeBlock(this.pos, false);
 			}
 			else {
 				T master = this.master();
@@ -55,7 +54,7 @@ public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEnt
 				for (int i = 0; i < numLayers; i++)
 				{
 					IETemplateMultiblock multiblockInstance = ObfuscationReflectionHelper.getPrivateValue(MultiblockPartTileEntity.class, this, "multiblockInstance");
-					multiblockInstance.disassemble(this.world, startPos.add(0, 0, i), this.getIsMirrored(), multiblockInstance.untransformDirection(this.getFacing()));
+					multiblockInstance.disassemble(this.world, startPos.offset(getFacing(), i), this.getIsMirrored(), multiblockInstance.untransformDirection(this.getFacing()));
 				}
 			}
 		}
