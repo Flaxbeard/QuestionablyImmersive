@@ -26,7 +26,8 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 	private boolean leftMouseWasDown = false;
 	private boolean leftMouseDown = false;
 
-	public CokeOvenBatteryScreen(CokeOvenBatteryContainer container, PlayerInventory inventoryPlayer, ITextComponent title) {
+	public CokeOvenBatteryScreen(CokeOvenBatteryContainer container, PlayerInventory inventoryPlayer, ITextComponent title)
+	{
 		super(container, inventoryPlayer, title);
 		this.tile = container.tile;
 		this.container = container;
@@ -82,10 +83,10 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 		this.renderHoveredToolTip(mx, my);
 
 		List<ITextComponent> tooltip = new ArrayList<>();
-		ClientUtils.handleGuiTank(tile.tank, guiLeft + 125,guiTop + 21, 16,47, 176,31,20,51, mx,my, "questionablyimmersive:textures/gui/cokeoven.png", tooltip);
-		if(!tooltip.isEmpty())
+		ClientUtils.handleGuiTank(tile.tank, guiLeft + 125, guiTop + 21, 16, 47, 176, 31, 20, 51, mx, my, "questionablyimmersive:textures/gui/cokeoven.png", tooltip);
+		if (!tooltip.isEmpty())
 		{
-			ClientUtils.drawHoveringText(tooltip, mx, my, font, guiLeft+xSize,-1);
+			ClientUtils.drawHoveringText(tooltip, mx, my, font, guiLeft + xSize, -1);
 			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
@@ -104,7 +105,8 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 	@Override
 	public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
 	{
-		if (p_mouseClicked_5_ == 0) {
+		if (p_mouseClicked_5_ == 0)
+		{
 			this.leftMouseDown = true;
 		}
 		return super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_);
@@ -113,7 +115,8 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 	@Override
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_)
 	{
-		if (p_mouseReleased_5_ == 0) {
+		if (p_mouseReleased_5_ == 0)
+		{
 			this.leftMouseDown = false;
 		}
 		return super.mouseReleased(p_mouseReleased_1_, p_mouseReleased_3_, p_mouseReleased_5_);
@@ -135,10 +138,9 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 
 		if ((isPointInRegion(10, 56, 110, 12, mx, my) || leftMouseWasDown) && this.leftMouseDown)
 		{
-			scroll = (int) ((mx - (15./2) - guiLeft - 10.) * maxScroll) / 95;
+			scroll = (int) ((mx - (15. / 2) - guiLeft - 10.) * maxScroll) / 95;
 			leftMouseWasDown = true;
-		}
-		else
+		} else
 		{
 			leftMouseWasDown = false;
 		}
@@ -162,19 +164,18 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 			{
 				slot.xPos = -Integer.MAX_VALUE;
 				slot.yPos = -Integer.MAX_VALUE;
-			}
-			else
+			} else
 			{
 				slot.xPos = 13 + x;
 				slot.yPos = 17 + y;
 
-				int h = tile.active[i] ? (int)(12 * (tile.process[i] / (float) tile.processMax[i]) + .99) : 0;
+				int h = tile.active[i] ? (int) (12 * (tile.process[i] / (float) tile.processMax[i]) + .99) : 0;
 
 				this.blit(guiLeft + 11 + x, guiTop + 15, 200, 0, 20, 36);
 				this.blit(guiLeft + 11 + x, guiTop + 38 + (12 - h), 225, (12 - h), 20, h);
 			}
 
 		}
-		ClientUtils.handleGuiTank(tile.tank, guiLeft + 125,guiTop + 21, 16,47, 176,31,20,51, mx,my, "questionablyimmersive:textures/guis/coke_oven_battery.png", null);
+		ClientUtils.handleGuiTank(tile.tank, guiLeft + 125, guiTop + 21, 16, 47, 176, 31, 20, 51, mx, my, "questionablyimmersive:textures/guis/coke_oven_battery.png", null);
 	}
 }

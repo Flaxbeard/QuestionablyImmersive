@@ -5,7 +5,6 @@
 
 package net.flaxbeard.questionablyimmersive.common.blocks.multiblocks;
 
-import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 
 public class QIMultiblocks

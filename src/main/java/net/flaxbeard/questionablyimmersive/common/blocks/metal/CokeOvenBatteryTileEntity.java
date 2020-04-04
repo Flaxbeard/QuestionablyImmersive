@@ -253,7 +253,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 						int creosoteLoss = 1;
 						this.tank.fill(new FluidStack(IEContent.fluidCreosote, (int) (recipe.creosoteOutput * processAmount * creosoteLoss)), IFluidHandler.FluidAction.EXECUTE);
 						recuperationTime[i] = 20;
-					} else {
+					} else
+					{
 						active[i] = false;
 					}
 					processMax[i] = 0;
@@ -281,16 +282,22 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		// Output fluid to pipes
 		if (tank.getFluidAmount() > 0)
 		{
-			ItemStack inFullSlot = (ItemStack)this.inventory.get(1);
-			if (inFullSlot.isEmpty() || inFullSlot.getCount() + 1 <= inFullSlot.getMaxStackSize()) {
-				ItemStack filledContainer = Utils.fillFluidContainer(this.tank, this.inventory.get(0).copy(), inFullSlot, (PlayerEntity)null);
-				if (!filledContainer.isEmpty()) {
-					if (this.inventory.get(0).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)) {
+			ItemStack inFullSlot = (ItemStack) this.inventory.get(1);
+			if (inFullSlot.isEmpty() || inFullSlot.getCount() + 1 <= inFullSlot.getMaxStackSize())
+			{
+				ItemStack filledContainer = Utils.fillFluidContainer(this.tank, this.inventory.get(0).copy(), inFullSlot, (PlayerEntity) null);
+				if (!filledContainer.isEmpty())
+				{
+					if (this.inventory.get(0).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer))
+					{
 						this.inventory.set(2, filledContainer.copy());
-					} else {
-						if (!inFullSlot.isEmpty() && ItemHandlerHelper.canItemStacksStack(inFullSlot, filledContainer)) {
+					} else
+					{
+						if (!inFullSlot.isEmpty() && ItemHandlerHelper.canItemStacksStack(inFullSlot, filledContainer))
+						{
 							inFullSlot.grow(filledContainer.getCount());
-						} else if (inFullSlot.isEmpty()) {
+						} else if (inFullSlot.isEmpty())
+						{
 							this.inventory.set(1, filledContainer.copy());
 						}
 
@@ -327,12 +334,14 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 				{
 					int drained = output.fill(Utils.copyFluidStackWithAmount(out, Math.min(out.getAmount(), accepted), false), IFluidHandler.FluidAction.EXECUTE);
 					this.tank.drain(drained, IFluidHandler.FluidAction.EXECUTE);
-					this.markDirty();;
+					this.markDirty();
+					;
 				}
 			}
 		}
 
-		if (update) {
+		if (update)
+		{
 			this.markDirty();
 			this.markContainingBlockForUpdate(null);
 		}
@@ -359,7 +368,7 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 	{
 		// TODO
 		int simultaneousOperations = 9;
-		float operationTimeModifier = 2f/3f;
+		float operationTimeModifier = 2f / 3f;
 
 		int recipeTime = (int) (recipe.time * simultaneousOperations * operationTimeModifier);
 		if (recipe.output.getItem() == Item.getItemFromBlock(IEBlocks.StoneDecoration.coke))
@@ -403,12 +412,14 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 	{
 		CokeOvenBatteryTileEntity master = (CokeOvenBatteryTileEntity) this.master();
 
-		if (master != this && master != null) {
+		if (master != this && master != null)
+		{
 			return master.getCurrentProcessesStep();
 		}
 
 		int[] out = new int[this.process.length];
-		for (int i = 0; i < this.process.length; i++) {
+		for (int i = 0; i < this.process.length; i++)
+		{
 			out[i] = this.processMax[i] - this.process[i];
 		}
 		return out;
@@ -562,7 +573,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 	@Override
 	public boolean isStackValid(int slot, ItemStack stack)
 	{
-		if (slot == 0) {
+		if (slot == 0)
+		{
 			return Utils.isFluidRelatedItemStack(stack);
 		}
 
@@ -598,11 +610,14 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 	{
 		public static final int FLUID_AMOUNT = 0;
 
-		public Data() {
+		public Data()
+		{
 		}
 
-		public int get(int index) {
-			switch(index) {
+		public int get(int index)
+		{
+			switch (index)
+			{
 				case 0:
 					return CokeOvenBatteryTileEntity.this.tank.getFluidAmount();
 				default:
@@ -610,8 +625,10 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 			}
 		}
 
-		public void set(int index, int value) {
-			switch(index) {
+		public void set(int index, int value)
+		{
+			switch (index)
+			{
 				case 0:
 					CokeOvenBatteryTileEntity.this.tank.setFluid(new FluidStack(IEContent.fluidCreosote, value));
 					break;
@@ -621,7 +638,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 
 		}
 
-		public int size() {
+		public int size()
+		{
 			return 1;
 		}
 	}

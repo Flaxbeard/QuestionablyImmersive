@@ -42,27 +42,33 @@ public abstract class QITemplateMultiblock extends IETemplateMultiblock
 
 		world.setBlockState(actualPos, state);
 		TileEntity curr = world.getTileEntity(actualPos);
-		if (curr instanceof MultiblockPartTileEntity) {
-			MultiblockPartTileEntity tile = (MultiblockPartTileEntity)curr;
+		if (curr instanceof MultiblockPartTileEntity)
+		{
+			MultiblockPartTileEntity tile = (MultiblockPartTileEntity) curr;
 			tile.formed = true;
 			tile.offsetToMaster = new BlockPos(offsetFromMaster);
 			tile.posInMultiblock = info.pos;
-			if (state.getProperties().contains(IEProperties.MIRRORED)) {
+			if (state.getProperties().contains(IEProperties.MIRRORED))
+			{
 				tile.setMirrored(mirrored);
 			}
 
 			tile.setFacing(this.transformDirection(clickDirection.getOpposite()));
 			tile.markDirty();
 			world.addBlockEvent(actualPos, world.getBlockState(actualPos).getBlock(), 255, 0);
-		} else {
+		} else
+		{
 			IELogger.logger.error("Expected MB TE at {} during placement", actualPos);
 		}
 	}
+
 	@Override
-	protected void replaceStructureBlock(Template.BlockInfo info, World world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster) {
+	protected void replaceStructureBlock(Template.BlockInfo info, World world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster)
+	{
 		QIMultiblockBlock.MultiblockTileType tileType = QIMultiblockBlock.MultiblockTileType.SLAVE;
 
-		if (offsetFromMaster.equals(Vec3i.NULL_VECTOR)) {
+		if (offsetFromMaster.equals(Vec3i.NULL_VECTOR))
+		{
 			tileType = QIMultiblockBlock.MultiblockTileType.MASTER;
 		}
 		replaceStructureBlock(info, world, actualPos, mirrored, clickDirection, offsetFromMaster, tileType);

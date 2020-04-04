@@ -1,9 +1,6 @@
 package net.flaxbeard.questionablyimmersive.common.blocks.metal;
 
-import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
-import blusunrize.immersiveengineering.api.multiblocks.TemplateMultiblock;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
-import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
@@ -25,7 +22,8 @@ public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEnt
 	}
 
 	@Override
-	public void readCustomNBT(CompoundNBT nbt, boolean descPacket) {
+	public void readCustomNBT(CompoundNBT nbt, boolean descPacket)
+	{
 		super.readCustomNBT(nbt, descPacket);
 		this.posInMultiblockTotal = NBTUtil.readBlockPos(nbt.getCompound("posInMultiblockTotal"));
 		this.numLayers = nbt.getInt("numLayers");
@@ -33,20 +31,23 @@ public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEnt
 	}
 
 	@Override
-	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket) {
+	public void writeCustomNBT(CompoundNBT nbt, boolean descPacket)
+	{
 		super.writeCustomNBT(nbt, descPacket);
 		nbt.put("posInMultiblockTotal", NBTUtil.writeBlockPos(new BlockPos(this.posInMultiblockTotal)));
 		nbt.putInt("numLayers", numLayers);
 		nbt.putInt("layer", layer);
 	}
 
-	public void disassemble() {
-		if (this.formed && !this.world.isRemote) {
+	public void disassemble()
+	{
+		if (this.formed && !this.world.isRemote)
+		{
 			if (this.isDummy())
 			{
 				this.master().disassemble();
-			}
-			else {
+			} else
+			{
 				T master = this.master();
 				ObfuscationReflectionHelper.setPrivateValue(MultiblockPartTileEntity.class, this, master, "tempMasterTE");
 

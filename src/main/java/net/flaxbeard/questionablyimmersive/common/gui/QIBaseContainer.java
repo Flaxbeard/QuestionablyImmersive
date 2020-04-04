@@ -16,60 +16,78 @@ import net.minecraft.tileentity.TileEntity;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class QIBaseContainer<T extends TileEntity> extends Container {
+public class QIBaseContainer<T extends TileEntity> extends Container
+{
 	public T tile;
 	@Nullable
 	public IInventory inv;
 	public int slotCount;
 
-	public QIBaseContainer(PlayerInventory inventoryPlayer, T tile, int id) {
+	public QIBaseContainer(PlayerInventory inventoryPlayer, T tile, int id)
+	{
 		super(QIGuiHandler.getContainerTypeFor(tile), id);
 		this.tile = tile;
-		if (tile instanceof IIEInventory) {
+		if (tile instanceof IIEInventory)
+		{
 			this.inv = new TileInventory(tile);
 		}
 
 	}
 
-	public boolean canInteractWith(@Nonnull PlayerEntity player) {
+	public boolean canInteractWith(@Nonnull PlayerEntity player)
+	{
 		return this.inv != null && this.inv.isUsableByPlayer(player);
 	}
 
 	@Nonnull
-	public ItemStack slotClick(int id, int button, ClickType clickType, PlayerEntity player) {
-		Slot slot = id < 0 ? null : (Slot)this.inventorySlots.get(id);
-		if (!(slot instanceof Ghost)) {
+	public ItemStack slotClick(int id, int button, ClickType clickType, PlayerEntity player)
+	{
+		Slot slot = id < 0 ? null : (Slot) this.inventorySlots.get(id);
+		if (!(slot instanceof Ghost))
+		{
 			return super.slotClick(id, button, clickType, player);
-		} else {
+		} else
+		{
 			ItemStack stack = ItemStack.EMPTY;
 			ItemStack stackSlot = slot.getStack();
-			if (!stackSlot.isEmpty()) {
+			if (!stackSlot.isEmpty())
+			{
 				stack = stackSlot.copy();
 			}
 
-			if (button == 2) {
+			if (button == 2)
+			{
 				slot.putStack(ItemStack.EMPTY);
-			} else {
+			} else
+			{
 				PlayerInventory playerInv;
 				ItemStack stackHeld;
-				if (button != 0 && button != 1) {
-					if (button == 5) {
+				if (button != 0 && button != 1)
+				{
+					if (button == 5)
+					{
 						playerInv = player.inventory;
 						stackHeld = playerInv.getItemStack();
-						if (!slot.getHasStack()) {
+						if (!slot.getHasStack())
+						{
 							slot.putStack(Utils.copyStackWithAmount(stackHeld, 1));
 						}
 					}
-				} else {
+				} else
+				{
 					playerInv = player.inventory;
 					stackHeld = playerInv.getItemStack();
-					if (stackSlot.isEmpty()) {
-						if (!stackHeld.isEmpty() && slot.isItemValid(stackHeld)) {
+					if (stackSlot.isEmpty())
+					{
+						if (!stackHeld.isEmpty() && slot.isItemValid(stackHeld))
+						{
 							slot.putStack(Utils.copyStackWithAmount(stackHeld, 1));
 						}
-					} else if (stackHeld.isEmpty()) {
+					} else if (stackHeld.isEmpty())
+					{
 						slot.putStack(ItemStack.EMPTY);
-					} else if (slot.isItemValid(stackHeld)) {
+					} else if (slot.isItemValid(stackHeld))
+					{
 						slot.putStack(Utils.copyStackWithAmount(stackHeld, 1));
 					}
 				}
@@ -80,23 +98,30 @@ public class QIBaseContainer<T extends TileEntity> extends Container {
 	}
 
 	@Nonnull
-	public ItemStack transferStackInSlot(PlayerEntity player, int slot) {
+	public ItemStack transferStackInSlot(PlayerEntity player, int slot)
+	{
 		ItemStack itemstack = ItemStack.EMPTY;
-		Slot slotObject = (Slot)this.inventorySlots.get(slot);
-		if (slotObject != null && slotObject.getHasStack()) {
+		Slot slotObject = (Slot) this.inventorySlots.get(slot);
+		if (slotObject != null && slotObject.getHasStack())
+		{
 			ItemStack itemstack1 = slotObject.getStack();
 			itemstack = itemstack1.copy();
-			if (slot < this.slotCount) {
-				if (!this.mergeItemStack(itemstack1, this.slotCount, this.inventorySlots.size(), true)) {
+			if (slot < this.slotCount)
+			{
+				if (!this.mergeItemStack(itemstack1, this.slotCount, this.inventorySlots.size(), true))
+				{
 					return ItemStack.EMPTY;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, this.slotCount, false)) {
+			} else if (!this.mergeItemStack(itemstack1, 0, this.slotCount, false))
+			{
 				return ItemStack.EMPTY;
 			}
 
-			if (itemstack1.isEmpty()) {
+			if (itemstack1.isEmpty())
+			{
 				slotObject.putStack(ItemStack.EMPTY);
-			} else {
+			} else
+			{
 				slotObject.onSlotChanged();
 			}
 		}
@@ -104,13 +129,16 @@ public class QIBaseContainer<T extends TileEntity> extends Container {
 		return itemstack;
 	}
 
-	protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+	protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection)
+	{
 		return super.mergeItemStack(stack, startIndex, endIndex, reverseDirection);
 	}
 
-	public void onContainerClosed(PlayerEntity playerIn) {
+	public void onContainerClosed(PlayerEntity playerIn)
+	{
 		super.onContainerClosed(playerIn);
-		if (this.inv != null) {
+		if (this.inv != null)
+		{
 			this.inv.closeInventory(playerIn);
 		}
 

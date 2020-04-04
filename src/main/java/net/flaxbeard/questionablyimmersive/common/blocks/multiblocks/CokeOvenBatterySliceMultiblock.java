@@ -7,7 +7,8 @@ import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTi
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.TiledMultiblockTileEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -46,7 +47,8 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 	@Override
 	protected void afterReplacement(TiledMultiblockTileEntity tile, int layer)
 	{
-		if (tile instanceof CokeOvenBatteryTileEntity) {
+		if (tile instanceof CokeOvenBatteryTileEntity)
+		{
 			CokeOvenBatteryTileEntity oven = (CokeOvenBatteryTileEntity) tile;
 
 			oven.tank = new FluidTank(6000 * oven.numLayers);
@@ -58,7 +60,8 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 				oven.active = new boolean[layers];
 				oven.recuperationTime = new int[layers];
 				oven.invHandlers = new LazyOptional[layers];
-				for (int i = 0; i < layers; i++) {
+				for (int i = 0; i < layers; i++)
+				{
 					boolean[] insert = new boolean[layers + 2];
 					insert[i + 2] = true;
 					IEInventoryHandler handler = new IEInventoryHandler(layers + 2, oven, 0, insert, new boolean[layers]);
@@ -68,7 +71,8 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 
 				oven.markDirty();
 				oven.markContainingBlockForUpdate((BlockState) null);
-			} else {
+			} else
+			{
 				oven.process = new int[0];
 				oven.processMax = new int[0];
 				oven.active = new boolean[0];
@@ -89,9 +93,11 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 	@Override
 	protected QIMultiblockBlock.MultiblockTileType getTileType(boolean equals, int i)
 	{
-		if (equals && i == 0) {
+		if (equals && i == 0)
+		{
 			return QIMultiblockBlock.MultiblockTileType.MASTER;
-		} else if (equals && i % 5 == 0) {
+		} else if (equals && i % 5 == 0)
+		{
 			return QIMultiblockBlock.MultiblockTileType.RENDERED_SLAVE;
 		}
 		return QIMultiblockBlock.MultiblockTileType.SLAVE;

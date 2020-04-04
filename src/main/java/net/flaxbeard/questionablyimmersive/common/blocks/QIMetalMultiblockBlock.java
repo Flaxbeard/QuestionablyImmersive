@@ -4,7 +4,6 @@ import blusunrize.immersiveengineering.api.IEProperties;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.state.IProperty;
-import net.minecraft.state.IntegerProperty;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.world.IBlockReader;
@@ -43,10 +42,10 @@ public class QIMetalMultiblockBlock extends QIMultiblockBlock
 		if (mtt == MultiblockTileType.SLAVE)
 		{
 			return this.tileType.get().create();
-		} else if (mtt == MultiblockTileType.RENDERED_SLAVE) {
+		} else if (mtt == MultiblockTileType.RENDERED_SLAVE)
+		{
 			return this.renderedTileType.get().create();
-		}
-		else
+		} else
 		{
 			return this.masterTileType.get().create();
 		}

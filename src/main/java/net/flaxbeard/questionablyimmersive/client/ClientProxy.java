@@ -65,7 +65,8 @@ public class ClientProxy extends CommonProxy
 		this.registerScreen(CokeOvenBatteryContainer.ID, CokeOvenBatteryScreen::new);
 	}
 
-	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation containerName, ScreenManager.IScreenFactory<C, S> factory) {
+	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation containerName, ScreenManager.IScreenFactory<C, S> factory)
+	{
 		ContainerType<C> type = (ContainerType<C>) QIGuiHandler.getContainerType(containerName);
 		ScreenManager.registerFactory(type, factory);
 	}

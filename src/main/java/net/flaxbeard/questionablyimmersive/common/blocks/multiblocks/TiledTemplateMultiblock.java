@@ -47,15 +47,19 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 	}
 
 	@Override
-	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player) {
-		if (side.getAxis() == Direction.Axis.Y) {
-			side = Direction.fromAngle((double)player.rotationYaw);
+	public boolean createStructure(World world, BlockPos pos, Direction side, PlayerEntity player)
+	{
+		if (side.getAxis() == Direction.Axis.Y)
+		{
+			side = Direction.fromAngle((double) player.rotationYaw);
 		}
 
 		Rotation rot = Utils.getRotationBetweenFacings(Direction.NORTH, side.getOpposite());
-		if (rot == null) {
+		if (rot == null)
+		{
 			return false;
-		} else {
+		} else
+		{
 
 			try
 			{
@@ -112,7 +116,8 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 						offsetOrigin = offsetOrigin.add(depthOffset);
 					}
 
-					if (width < getMinLayers()) {
+					if (width < getMinLayers())
+					{
 						continue label34;
 					}
 
@@ -133,7 +138,8 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 
 	protected abstract int getMinLayers();
 
-	protected void form(World world, BlockPos pos, Rotation rot, Mirror mirror, Direction sideHit, Template template, int width) {
+	protected void form(World world, BlockPos pos, Rotation rot, Mirror mirror, Direction sideHit, Template template, int width)
+	{
 		BlockPos originalPos = pos;
 		BlockPos masterPos = withSettingsAndOffset(pos, masterFromOrigin, mirror, rot);
 
@@ -154,7 +160,8 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 
 				this.replaceStructureBlock(block, world, actualPos, mirror != Mirror.NONE, sideHit, actualPos.subtract(masterPos), tileType);
 				TileEntity curr = world.getTileEntity(actualPos);
-				if (curr instanceof TiledMultiblockTileEntity) {
+				if (curr instanceof TiledMultiblockTileEntity)
+				{
 
 					TiledMultiblockTileEntity tile = (TiledMultiblockTileEntity) curr;
 					tile.numLayers = width;
@@ -169,7 +176,8 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 
 	protected QIMultiblockBlock.MultiblockTileType getTileType(boolean equals, int i)
 	{
-		if (equals && i == 0) {
+		if (equals && i == 0)
+		{
 			return QIMultiblockBlock.MultiblockTileType.MASTER;
 		}
 		return QIMultiblockBlock.MultiblockTileType.SLAVE;

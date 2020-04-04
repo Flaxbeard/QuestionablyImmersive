@@ -1,6 +1,5 @@
 package net.flaxbeard.questionablyimmersive.common.blocks;
 
-import blusunrize.immersiveengineering.client.models.WrappedUnbakedModel;
 import net.minecraft.block.Block;
 
 public final class QIBlocks

@@ -22,18 +22,21 @@ public class QIBlockInterfaces
 
 		boolean canUseGui(PlayerEntity var1);
 
-		default boolean isValid() {
+		default boolean isValid()
+		{
 			return this.getGuiMaster() != null;
 		}
 
 		@Nonnull
-		default Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+		default Container createMenu(int id, PlayerInventory playerInventory, PlayerEntity playerEntity)
+		{
 			IInteractionObjectQI master = this.getGuiMaster();
 			Preconditions.checkState(master instanceof TileEntity);
-			return QIGuiHandler.createContainer(playerInventory, (TileEntity)master, id);
+			return QIGuiHandler.createContainer(playerInventory, (TileEntity) master, id);
 		}
 
-		default ITextComponent getDisplayName() {
+		default ITextComponent getDisplayName()
+		{
 			return new StringTextComponent("");
 		}
 	}
