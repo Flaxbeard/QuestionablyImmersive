@@ -7,6 +7,7 @@ public final class QIBlocks
 	public static final class Multiblocks
 	{
 		public static Block cokeOvenBattery;
+		public static Block triphammer;
 
 		public Multiblocks()
 		{

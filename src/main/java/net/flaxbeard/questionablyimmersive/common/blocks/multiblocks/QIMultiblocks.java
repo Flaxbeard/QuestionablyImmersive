@@ -11,6 +11,7 @@ public class QIMultiblocks
 {
 	public static IETemplateMultiblock COKE_OVEN_BATTERY_DISPLAY;
 	public static IETemplateMultiblock COKE_OVEN_BATTERY_SLICE;
+	public static IETemplateMultiblock TRIPHAMMER;
 
 	public QIMultiblocks()
 	{
@@ -20,6 +21,7 @@ public class QIMultiblocks
 	{
 		COKE_OVEN_BATTERY_DISPLAY = new CokeOvenBatteryDisplayMultiblock();
 		COKE_OVEN_BATTERY_SLICE = new CokeOvenBatterySliceMultiblock();
+		TRIPHAMMER = new TriphammerMultiblock();
 	}
 
 }

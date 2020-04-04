@@ -8,8 +8,10 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.client.gui.CokeOvenBatteryScreen;
 import net.flaxbeard.questionablyimmersive.client.render.CokeOvenBatteryRenderer;
+import net.flaxbeard.questionablyimmersive.client.render.TriphammerRenderer;
 import net.flaxbeard.questionablyimmersive.common.CommonProxy;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.flaxbeard.questionablyimmersive.common.gui.CokeOvenBatteryContainer;
 import net.flaxbeard.questionablyimmersive.common.gui.QIGuiHandler;
 import net.minecraft.client.gui.IHasContainer;
@@ -35,6 +37,7 @@ public class ClientProxy extends CommonProxy
 	public void postInit()
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(CokeOvenBatteryTileEntity.Rendered.class, new CokeOvenBatteryRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TriphammerTileEntity.Master.class, new TriphammerRenderer());
 	}
 
 	@Override
@@ -43,6 +46,7 @@ public class ClientProxy extends CommonProxy
 		IEManualInstance ieMan = ManualHelper.getManual();
 		Tree.InnerNode<ResourceLocation, ManualEntry> toolsCat = ieMan.contentTree.getRoot().getOrCreateSubnode(new ResourceLocation(QuestionablyImmersive.MODID, "questionable"));
 		ieMan.addEntry(toolsCat, new ResourceLocation(QuestionablyImmersive.MODID, "coke_oven_battery"));
+		ieMan.addEntry(toolsCat, new ResourceLocation(QuestionablyImmersive.MODID, "triphammer"));
 	}
 
 	@Override

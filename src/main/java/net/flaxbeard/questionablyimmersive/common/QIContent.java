@@ -5,6 +5,7 @@ import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIMetalMultiblockBlock;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
@@ -43,6 +44,14 @@ public class QIContent
 		{
 			return CokeOvenBatteryTileEntity.Master.TYPE;
 		});
+
+		QIBlocks.Multiblocks.triphammer = new QIMetalMultiblockBlock("triphammer", () ->
+		{
+			return TriphammerTileEntity.TYPE;
+		}, () ->
+		{
+			return TriphammerTileEntity.Master.TYPE;
+		});
 	}
 
 	public static void init()
@@ -50,6 +59,7 @@ public class QIContent
 		QIMultiblocks.init();
 		MultiblockHandler.registerMultiblock(QIMultiblocks.COKE_OVEN_BATTERY_SLICE);
 		MultiblockHandler.registerMultiblock(QIMultiblocks.COKE_OVEN_BATTERY_DISPLAY);
+		MultiblockHandler.registerMultiblock(QIMultiblocks.TRIPHAMMER);
 	}
 
 	@SubscribeEvent
@@ -58,6 +68,9 @@ public class QIContent
 		registerTile(CokeOvenBatteryTileEntity.class, event, QIBlocks.Multiblocks.cokeOvenBattery);
 		registerTile(CokeOvenBatteryTileEntity.Rendered.class, event, QIBlocks.Multiblocks.cokeOvenBattery);
 		registerTile(CokeOvenBatteryTileEntity.Master.class, event, QIBlocks.Multiblocks.cokeOvenBattery);
+
+		registerTile(TriphammerTileEntity.class, event, QIBlocks.Multiblocks.triphammer);
+		registerTile(TriphammerTileEntity.Master.class, event, QIBlocks.Multiblocks.triphammer);
 	}
 
 	@SubscribeEvent
