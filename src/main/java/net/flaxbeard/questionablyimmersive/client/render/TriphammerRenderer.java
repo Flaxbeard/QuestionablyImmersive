@@ -18,8 +18,10 @@ import net.minecraft.util.Direction;
 public class TriphammerRenderer extends TileEntityRenderer<TriphammerTileEntity.Master>
 {
 	private static TriphammerModel model = new TriphammerModel(false);
+	private static TriphammerModel modelM = new TriphammerModel(true);
 
-	private static String texture = "immersiveengineering:textures/block/metal/storage_steel.png";
+	private static String texture = "questionablyimmersive:textures/models/triphammer.png";
+	private static String textureM = "questionablyimmersive:textures/models/triphammer_m.png";
 
 	@Override
 	public void render(TriphammerTileEntity.Master te, double x, double y, double z, float partialTicks, int destroyStage)
@@ -53,29 +55,35 @@ public class TriphammerRenderer extends TileEntityRenderer<TriphammerTileEntity.
 			{
 				GlStateManager.translated(0, 0, 1);
 			}
-			GlStateManager.translated(0, 0, -3);
+			GlStateManager.translated(0, 0, -2);
 
 			if (te.getIsMirrored())
 			{
 			}
 
-			ClientUtils.bindTexture(texture);
+			ClientUtils.bindTexture(te.getIsMirrored() ? texture : textureM);
 
 			//float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);;
 			//model.ticks = modelM.ticks = 1.5F * ticks;
 
 			GlStateManager.pushMatrix();
 
-			model.ticks = Minecraft.getInstance().player.ticksExisted /* TODO te.ticks */ + partialTicks;
-			model.render(null, 0, 0, 0, 0, 0, 0.0625F);
+			boolean falling = te.fallingTicks % 60 >= 30 && te.fallingTicks % 60 < 40;
+			TriphammerModel m = te.getIsMirrored() ? modelM : model;
+			m.fallingTicks = te.fallingTicks + (te.active || falling ? partialTicks : 1);
+			m.ticks = te.ticks + (te.active ? partialTicks : 1);
+			m.render(null, 0, 0, 0, 0, 0, 0.0625F);
 			GlStateManager.popMatrix();
 
 			GlStateManager.pushMatrix();
 
-			ItemStack stack = te.inventory.get(0).copy();
-			stack = new ItemStack(IEItems.Tools.hammer);
+			ItemStack stack = te.inventory.get(2).copy();
+			if (stack.isEmpty()) {
+				stack = te.inventory.get(0).copy();
+			}
 			if (!stack.isEmpty())
 			{
+
 				stack.setCount(1);
 				GlStateManager.translated(3.5, 1, 1.5);
 				GlStateManager.translated(0.0F, (1.0F / 32.0F), 0.0F);
@@ -85,7 +93,6 @@ public class TriphammerRenderer extends TileEntityRenderer<TriphammerTileEntity.
 
 			}
 			GlStateManager.popMatrix();
-
 
 
 			GlStateManager.popMatrix();

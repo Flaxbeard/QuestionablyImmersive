@@ -4,6 +4,7 @@ import blusunrize.immersiveengineering.ImmersiveEngineering;
 import com.google.common.base.Preconditions;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.inventory.container.Container;
@@ -42,6 +43,7 @@ public class QIGuiHandler
 	public static void commonInit()
 	{
 		register(CokeOvenBatteryTileEntity.Master.class, CokeOvenBatteryContainer.ID, CokeOvenBatteryContainer::new);
+		register(TriphammerTileEntity.Master.class, TriphammerContainer.ID, TriphammerContainer::new);
 	}
 
 	public static <T extends TileEntity, C extends QIBaseContainer<? super T>> void register(Class<T> tileClass, ResourceLocation name, QIGuiHandler.TileContainerConstructor<T, C> container)

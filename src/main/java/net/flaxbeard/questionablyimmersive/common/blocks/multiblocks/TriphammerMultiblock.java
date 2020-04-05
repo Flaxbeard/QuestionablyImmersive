@@ -18,7 +18,7 @@ public class TriphammerMultiblock extends QITemplateMultiblock
 
 	public TriphammerMultiblock()
 	{
-		super(new ResourceLocation(QuestionablyImmersive.MODID, "multiblocks/triphammer"), new BlockPos(0, 1, 0), new BlockPos(0, 1, 0), () ->
+		super(new ResourceLocation(QuestionablyImmersive.MODID, "multiblocks/triphammer"), new BlockPos(1, 1, 0), new BlockPos(1, 1, 0), () ->
 		{
 			return QIBlocks.Multiblocks.triphammer.getDefaultState();
 		});
