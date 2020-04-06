@@ -5,6 +5,7 @@ import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTi
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import com.google.common.collect.ImmutableSet;
+import com.mojang.authlib.GameProfile;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlockInterfaces;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
 import net.minecraft.block.AnvilBlock;
@@ -13,7 +14,9 @@ import net.minecraft.block.SoundType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -22,24 +25,26 @@ import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class TriphammerTileEntity extends PoweredMultiblockTileEntity<TriphammerTileEntity, IMultiblockRecipe> implements QIBlockInterfaces.IInteractionObjectQI
 {
@@ -98,6 +103,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 	public ItemStack output = ItemStack.EMPTY;
 
+	private FakePlayer fakePlayer;
+
 	private TriphammerTileEntity(TileEntityType<TriphammerTileEntity> type)
 	{
 		super(QIMultiblocks.TRIPHAMMER, 0, false, type);
@@ -128,10 +135,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			ticks = nbt.getInt("ticks");
 		}
 
-		if (!descPacket)
-		{
-			output = ItemStack.read(nbt.getCompound("output")).copy();
-		}
+		output = ItemStack.read(nbt.getCompound("output")).copy();
 	}
 
 	@Override
@@ -568,6 +572,10 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 	public void updateRepairOutput()
 	{
+		if (world.isRemote) {
+			return;
+		}
+
 		ItemStack itemstack = inventory.get(0);
 		setMaximumCost(1);
 		int i = 0;
@@ -590,7 +598,25 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 			if (!itemstack2.isEmpty())
 			{
-				// TODO if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, inv, repairedItemName, j)) return; // TODO
+
+				ItemStack dummy1 = itemstack.copy();
+				ItemStack dummy2 = itemstack2.copy();
+				if (fakePlayer == null)
+				{
+					fakePlayer = FakePlayerFactory.get((ServerWorld) this.world, new GameProfile(UUID.randomUUID(), "Anvil Man"));
+				}
+				RepairContainer dummyContainer = new RepairContainer(0, fakePlayer.inventory, IWorldPosCallable.DUMMY);
+				dummyContainer.putStackInSlot(0, dummy1);
+				dummyContainer.putStackInSlot(1, dummy2);
+				Inventory dummyOutput = new Inventory(1);
+				if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(dummyContainer, dummy1, dummy2, dummyOutput, repairedItemName, j))
+				{
+					setMaximumCost(dummyContainer.getMaximumCost());
+					setMaterialCost(dummyContainer.materialCost);
+					setOutput(dummyOutput.getStackInSlot(0).copy());
+					return;
+				}
+
 				isEnchantedBook = itemstack2.getItem() == Items.ENCHANTED_BOOK && !EnchantedBookItem.getEnchantments(itemstack2).isEmpty();
 
 				if (outputItem.isDamageable() && outputItem.getItem().getIsRepairable(itemstack, itemstack2))
@@ -781,6 +807,9 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 			setOutput(outputItem.copy());
 		}
+
+		this.markDirty();
+		this.markContainingBlockForUpdate(null);
 	}
 
 	public void setOutput(ItemStack output)
