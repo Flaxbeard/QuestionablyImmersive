@@ -18,6 +18,8 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ItemParticleData;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
@@ -292,14 +294,12 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		{
 			if (isAnvilMode)
 			{
-				BlockPos anvilPos = getPos().offset(facing, 3);
+				BlockPos anvilPos = getPos().offset(facing, -3);
 				for (int i = 0; i < 10; i++)
 				{
-					/*world.spawnParticle(EnumParticleTypes.ITEM_CRACK,
+					world.addParticle(new ItemParticleData(ParticleTypes.ITEM, inventory.get(0)),
 							anvilPos.getX() + .5f, anvilPos.getY(), anvilPos.getZ() + .5f,
-							(this.world.rand.nextFloat() - .5f) * .5f, this.world.rand.nextFloat() * .2f, (this.world.rand.nextFloat() - .5f) * .5f,
-							Item.getIdFromItem(inventory.get(0).getItem())
-					); TODO */
+							(this.world.rand.nextFloat() - .5f) * .5f, this.world.rand.nextFloat() * .2f, (this.world.rand.nextFloat() - .5f) * .5f);
 				}
 				world.playSound(
 						getPos().getX(),

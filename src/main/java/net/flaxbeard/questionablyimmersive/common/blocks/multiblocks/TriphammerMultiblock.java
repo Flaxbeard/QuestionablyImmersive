@@ -3,9 +3,12 @@ package net.flaxbeard.questionablyimmersive.common.blocks.multiblocks;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,7 +19,7 @@ public class TriphammerMultiblock extends QITemplateMultiblock
 
 	public TriphammerMultiblock()
 	{
-		super(new ResourceLocation(QuestionablyImmersive.MODID, "multiblocks/triphammer"), new BlockPos(1, 1, 0), new BlockPos(1, 1, 0), () ->
+		super(new ResourceLocation(QuestionablyImmersive.MODID, "multiblocks/triphammer"), new BlockPos(1, 1, 0), new BlockPos(1, 1, 3), () ->
 		{
 			return QIBlocks.Multiblocks.triphammer.getDefaultState();
 		});

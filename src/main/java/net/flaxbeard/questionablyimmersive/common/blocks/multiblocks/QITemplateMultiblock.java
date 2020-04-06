@@ -37,7 +37,6 @@ public abstract class QITemplateMultiblock extends IETemplateMultiblock
 
 	protected void replaceStructureBlock(Template.BlockInfo info, World world, BlockPos actualPos, boolean mirrored, Direction clickDirection, Vec3i offsetFromMaster, QIMultiblockBlock.MultiblockTileType tileType)
 	{
-		System.out.println("YET");
 		BlockState state = this.baseState.get();
 		state = state.with(QIMultiblockBlock.MULTIBLOCK_TILE_TYPE, tileType);
 
