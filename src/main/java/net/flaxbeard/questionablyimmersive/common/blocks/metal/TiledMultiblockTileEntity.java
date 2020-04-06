@@ -39,6 +39,7 @@ public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEnt
 		nbt.putInt("layer", layer);
 	}
 
+	@Override
 	public void disassemble()
 	{
 		if (this.formed && !this.world.isRemote)

@@ -518,6 +518,13 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		return new float[]{0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F};
 	}
 
+	@Nullable
+	@Override
+	public CokeOvenBatteryTileEntity getTileForPos(BlockPos targetPosInMB)
+	{
+		return super.getTileForPos(targetPosInMB);
+	}
+
 	@Override
 	public Direction getFacing()
 	{

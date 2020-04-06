@@ -2,7 +2,9 @@ package net.flaxbeard.questionablyimmersive.client.gui;
 
 import blusunrize.immersiveengineering.client.gui.IEContainerScreen;
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.gui.TriphammerContainer;
+import net.flaxbeard.questionablyimmersive.common.network.GUIUpdateMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.resources.I18n;
@@ -11,6 +13,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -48,7 +51,7 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 		this.nameField.setDisabledTextColour(-1);
 		this.nameField.setEnableBackgroundDrawing(false);
 		this.nameField.setMaxStringLength(35);
-		//this.nameField.setResponder(this::func_214075_a);
+		this.nameField.setResponder(this::renameItem);
 		this.children.add(this.nameField);
 		this.container.addListener(this);
 		this.setFocusedDefault(this.nameField);
@@ -116,14 +119,16 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+	{
 		GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
 		this.minecraft.getTextureManager().bindTexture(ANVIL_RESOURCE);
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;
 		this.blit(i, j, 0, 0, this.xSize, this.ySize);
 		this.blit(i + 59, j + 20, 0, this.ySize + (this.container.getSlot(0).getHasStack() ? 0 : 16), 110, 16);
-		if ((this.container.getSlot(0).getHasStack() || this.container.getSlot(1).getHasStack()) && !this.container.getSlot(2).getHasStack()) {
+		if ((this.container.getSlot(0).getHasStack() || this.container.getSlot(1).getHasStack()) && !this.triphammer.hasOutput())
+		{
 			this.blit(i + 99, j + 45, this.xSize, 0, 28, 21);
 		}
 
@@ -144,7 +149,8 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 	}
 
 	@Override
-	public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+	public void render(int p_render_1_, int p_render_2_, float p_render_3_)
+	{
 		this.renderBackground();
 		super.render(p_render_1_, p_render_2_, p_render_3_);
 		this.renderHoveredToolTip(p_render_1_, p_render_2_);
@@ -154,7 +160,7 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 	}
 
 
-	 @Override
+	@Override
 	public void sendAllContents(Container containerToSend, NonNullList<ItemStack> itemsList)
 	{
 		this.sendSlotContents(containerToSend, 0, containerToSend.getSlot(0).getStack());
@@ -170,7 +176,7 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 
 			if (!stack.isEmpty())
 			{
-			//	this.renameItem();
+				this.renameItem();
 			}
 		}
 	}
@@ -180,4 +186,49 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 	{
 
 	}
+
+	@Override
+	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+	{
+		if (keyCode == 256)
+		{
+			this.minecraft.player.closeScreen();
+		}
+
+		return !this.nameField.keyPressed(keyCode, scanCode, modifiers)
+				&& !this.nameField.func_212955_f() ? super.keyPressed(keyCode, scanCode, modifiers) : true;
+	}
+
+	private void renameItem(String s)
+	{
+		renameItem();
+	}
+
+	private void renameItem()
+	{
+		String s = this.nameField.getText();
+		Slot slot = this.triphammer.getSlot(0);
+
+		if (!slot.getHasStack())
+		{
+			s = "";
+		}
+
+		if (!this.nameField.getText().equals(s))
+		{
+			this.nameField.setText(s);
+		}
+
+		if (slot.getHasStack() && !slot.getStack().hasDisplayName() && s.equals(slot.getStack().getDisplayName().getFormattedText()))
+		{
+			s = "";
+		}
+
+		this.triphammer.updateItemName(s);
+
+		CompoundNBT data = new CompoundNBT();
+		data.putString("name", s);
+		QuestionablyImmersive.packetHandler.sendToServer(new GUIUpdateMessage(triphammer.tile.getPos(), 0, data));
+	}
+
 }

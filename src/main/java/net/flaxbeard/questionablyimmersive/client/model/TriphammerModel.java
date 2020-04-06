@@ -1,6 +1,5 @@
 package net.flaxbeard.questionablyimmersive.client.model;
 
-import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
@@ -37,11 +36,13 @@ public class TriphammerModel extends Model
 		axle.addBox(24, 22, 16, 4, 4, 16);
 		this.base.addChild(axle);
 
-		if (mirror) {
+		if (mirror)
+		{
 			RendererModel redman = new RendererModel(this, 0, 0);
 			redman.addBox(-0.01f, 0.005f, 32, 16, 32, 16);
 			this.base.addChild(redman);
-		} else {
+		} else
+		{
 			RendererModel redman = new RendererModel(this, 0, 0);
 			redman.addBox(-0.01f, 0.005f, 0, 16, 32, 16);
 			this.base.addChild(redman);
@@ -59,7 +60,7 @@ public class TriphammerModel extends Model
 
 		this.hammer = new RendererModel(this, 0, 69);
 		this.hammer.setRotationPoint(26, 24, 24);
-		this.hammer.addBox(12 - 24, 21 - 24, 22 - 24, 16 * 4 - 12 -2, 6, 4);
+		this.hammer.addBox(12 - 24, 21 - 24, 22 - 24, 16 * 4 - 12 - 2, 6, 4);
 		hammer.rotateAngleZ = (float) Math.toRadians(50);
 		RendererModel hammerHead = new RendererModel(this, 56, 79);
 		hammerHead.addBox(50 - 24 - 2, 16 - 23, 20 - 24, 12, 14, 8);
@@ -78,7 +79,8 @@ public class TriphammerModel extends Model
 			RendererModel trip2 = new RendererModel(this, 0, 56);
 			trip2.addBox(-8, -2, -13, 4, 4, 9);
 			this.spinboye.addChild(trip2);
-		} else {
+		} else
+		{
 			this.spinboye = new RendererModel(this, 0, 48);
 			this.spinboye.setRotationPoint(8, 24, 24);
 			this.spinboye.addBox(-4, -2, -8, 8, 4, 4);
@@ -127,12 +129,15 @@ public class TriphammerModel extends Model
 
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
-		if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSneaking()) {
-			if (!wasSneaking) {
+		if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSneaking())
+		{
+			if (!wasSneaking)
+			{
 				refresh();
 			}
 			wasSneaking = true;
-		} else {
+		} else
+		{
 			wasSneaking = false;
 		}
 		this.base.render(f5);
@@ -140,31 +145,28 @@ public class TriphammerModel extends Model
 		float tks = (ticks % 120) / 2;
 		float fTks = (fallingTicks % 120) / 2;
 
-		float rot = (float) Math.toRadians((tks + 23.5)  * -6 + 180);
+		float rot = (float) Math.toRadians((tks + 23.5) * -6 + 180);
 		spinboye.rotateAngleZ = rot;
 
 
 		fTks = fTks % 30;
 		float totalDeg = 37f;
 
-		float offset = (float)  Math.toRadians(-2);
+		float offset = (float) Math.toRadians(-2);
 
 		if (fTks >= 0 && fTks < 9)
 		{
-			hammer.rotateAngleZ = (float)  Math.toRadians(totalDeg * fTks / 9.);
-		}
-		else if (fTks < 15)
+			hammer.rotateAngleZ = (float) Math.toRadians(totalDeg * fTks / 9.);
+		} else if (fTks < 15)
 		{
-			float ttl = (float)  Math.toRadians(totalDeg);
+			float ttl = (float) Math.toRadians(totalDeg);
 			hammer.rotateAngleZ = ttl;
-		}
-		else if (fTks < 17)
+		} else if (fTks < 17)
 		{
-			float ttl = (float)  Math.toRadians(totalDeg) - offset;
+			float ttl = (float) Math.toRadians(totalDeg) - offset;
 			float down = (float) Math.cos((fTks - 15) / 2 * Math.PI / 2);
 			hammer.rotateAngleZ = down * ttl + offset;
-		}
-		else
+		} else
 		{
 			hammer.rotateAngleZ = 0 + offset;
 		}

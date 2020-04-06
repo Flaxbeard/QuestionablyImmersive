@@ -3,6 +3,7 @@ package net.flaxbeard.questionablyimmersive.common.gui;
 import blusunrize.immersiveengineering.common.gui.TileInventory;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
+import net.flaxbeard.questionablyimmersive.common.network.GUIUpdateMessage;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -13,7 +14,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public class TriphammerContainer extends QIBaseContainer<TriphammerTileEntity>
+public class TriphammerContainer extends QIBaseContainer<TriphammerTileEntity> implements GUIUpdateMessage.IMessageReceiver
 {
 	public static ResourceLocation ID = new ResourceLocation(QuestionablyImmersive.MODID, "triphammer");
 
@@ -54,13 +55,20 @@ public class TriphammerContainer extends QIBaseContainer<TriphammerTileEntity>
 		slotCount = 2;
 
 		for (int i = 0; i < 3; i++)
+		{
 			for (int j = 0; j < 9; j++)
-				addSlot(new Slot(inventoryPlayer, j+i*9+9, 8+j*18, 84+i*18));
+			{
+				addSlot(new Slot(inventoryPlayer, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+			}
+		}
 		for (int i = 0; i < 9; i++)
-			addSlot(new Slot(inventoryPlayer, i, 8+i*18, 142));
+		{
+			addSlot(new Slot(inventoryPlayer, i, 8 + i * 18, 142));
+		}
 
 		updateRepairOutput();
 	}
+
 	@Override
 	public void onCraftMatrixChanged(IInventory inventoryIn)
 	{
@@ -106,9 +114,8 @@ public class TriphammerContainer extends QIBaseContainer<TriphammerTileEntity>
 		this.updateRepairOutput();
 	}
 
-
-	// TODO @Override
-	public void handlePacket(int messageId, CompoundNBT data)
+	@Override
+	public void handleMessage(int messageId, CompoundNBT data)
 	{
 		if (messageId == 0)
 		{
@@ -128,10 +135,10 @@ public class TriphammerContainer extends QIBaseContainer<TriphammerTileEntity>
 
 	public void setOutput(ItemStack stack)
 	{
-		if (stack == null) {
+		if (stack == null)
+		{
 			stack = ItemStack.EMPTY;
 		}
 		tile.setOutput(stack);
 	}
-
 }

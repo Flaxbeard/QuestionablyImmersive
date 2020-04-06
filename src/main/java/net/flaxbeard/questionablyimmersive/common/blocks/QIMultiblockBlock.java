@@ -1,6 +1,7 @@
 package net.flaxbeard.questionablyimmersive.common.blocks;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.common.blocks.IEBaseTileEntity;
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartTileEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import net.minecraft.block.Block;
@@ -59,6 +60,11 @@ public abstract class QIMultiblockBlock extends QITileProviderBlock
 			if (tileEntity instanceof QIBaseTileEntity)
 			{
 				((QIBaseTileEntity) tileEntity).setOverrideState(state);
+			}
+
+			if (tileEntity instanceof IEBaseTileEntity)
+			{
+				((IEBaseTileEntity) tileEntity).setOverrideState(state);
 			}
 
 			if (tileEntity instanceof MultiblockPartTileEntity)

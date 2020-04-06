@@ -1,10 +1,8 @@
 package net.flaxbeard.questionablyimmersive.common.blocks.multiblocks;
 
-import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
-import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
-import net.minecraft.block.BlockState;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +33,7 @@ public class TriphammerMultiblock extends QITemplateMultiblock
 	{
 		if (te == null)
 		{
-			te = new CokeOvenBatteryTileEntity.Master();
+			te = new TriphammerTileEntity.Master();
 		}
 
 		QuestionablyImmersive.proxy.renderTileForManual((TileEntity) te);

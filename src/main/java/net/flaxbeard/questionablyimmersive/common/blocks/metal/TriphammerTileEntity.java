@@ -18,6 +18,7 @@ import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
@@ -127,7 +128,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 		if (!descPacket)
 		{
-			output = ItemStack.read(nbt.getCompound("output"));
+			output = ItemStack.read(nbt.getCompound("output")).copy();
 		}
 	}
 
@@ -151,11 +152,18 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	}
 
 	@Override
+	public void disassemble()
+	{
+		super.disassemble();
+	}
+
+	@Override
 	public void tick()
 	{
 		super.tick();
 
-		if (isDummy()) {
+		if (isDummy())
+		{
 			return;
 		}
 
@@ -197,7 +205,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						);
 				if (shouldConsume)
 				{
-					int consumed =  0; // TODO Config.QIConfig.Triphammer.costPerTick;
+					int consumed = 0; // TODO Config.QIConfig.Triphammer.costPerTick;
 					int extracted = energyStorage.extractEnergy(consumed, true);
 
 					if (extracted >= consumed)
@@ -224,13 +232,11 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 									{
 										itemstack.shrink(materialCost);
 										inventory.set(1, itemstack);
-									}
-									else
+									} else
 									{
 										inventory.set(1, ItemStack.EMPTY);
 									}
-								}
-								else
+								} else
 								{
 									inventory.set(1, ItemStack.EMPTY);
 								}
@@ -240,8 +246,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 								update = true;
 							}
-						}
-						else
+						} else
 						{
 							if (progress >= 200 && ticks % 60 == 35)
 							{
@@ -274,8 +279,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			{
 				progress++;
 			}
-		}
-		else
+		} else
 		{
 			if (fallingTicks % 60 >= 30 && fallingTicks % 60 < 40)
 			{
@@ -307,7 +311,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						this.world.rand.nextFloat() * 0.1F + 0.75F,
 						false
 				);
-			} else if (active) {
+			} else if (active)
+			{
 				BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
 
 				BlockState targetedBlock = world.getBlockState(targetPos);
@@ -389,9 +394,18 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	{
 		if (this.world != null)
 		{
+			BlockState state = this.getBlockState();
 			return super.getFacing();
 		}
 		return Direction.NORTH;
+	}
+
+	@Nullable
+	public TriphammerTileEntity getTileForPos(BlockPos targetPosInMB)
+	{
+		BlockPos target = this.getBlockPosForPos(targetPosInMB);
+		TileEntity tile = Utils.getExistingTileEntity(this.getWorldNonnull(), target);
+		return tile instanceof TriphammerTileEntity ? (TriphammerTileEntity) tile : null;
 	}
 
 	@Override
@@ -565,8 +579,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		{
 			setOutput(ItemStack.EMPTY);
 			setMaximumCost(0);
-		}
-		else
+		} else
 		{
 			ItemStack outputItem = itemstack.copy();
 			ItemStack itemstack2 = inventory.get(1);
@@ -602,8 +615,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 					}
 
 					setMaterialCost(i3);
-				}
-				else
+				} else
 				{
 					if (!isEnchantedBook && (outputItem.getItem() != itemstack2.getItem() || !outputItem.isDamageable()))
 					{
@@ -663,8 +675,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 							if (!canApplyEnchant)
 							{
 								isntApplicable = true;
-							}
-							else
+							} else
 							{
 								isApplicable = true;
 
@@ -715,18 +726,23 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 				}
 			}
 
-			if (StringUtils.isBlank(this.repairedItemName)) {
-				if (itemstack.hasDisplayName()) {
+			if (StringUtils.isBlank(this.repairedItemName))
+			{
+				if (outputItem.hasDisplayName())
+				{
 					k = 1;
 					i += k;
-					itemstack.clearCustomName();
+					outputItem.clearCustomName();
 				}
-			} else if (!this.repairedItemName.equals(itemstack.getDisplayName().getString())) {
+			} else if (!this.repairedItemName.equals(outputItem.getDisplayName().getString()))
+			{
 				k = 1;
 				i += k;
-				itemstack.setDisplayName(new StringTextComponent(this.repairedItemName));
+				outputItem.setDisplayName(new StringTextComponent(this.repairedItemName));
 			}
-			if (isEnchantedBook && !outputItem.getItem().isBookEnchantable(outputItem, itemstack2)) outputItem = ItemStack.EMPTY;
+
+			if (isEnchantedBook && !outputItem.getItem().isBookEnchantable(outputItem, itemstack2))
+				outputItem = ItemStack.EMPTY;
 
 			setMaximumCost(j + i);
 
@@ -763,7 +779,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 				EnchantmentHelper.setEnchantments(map, outputItem);
 			}
 
-			setOutput(outputItem);
+			setOutput(outputItem.copy());
 		}
 	}
 
@@ -795,8 +811,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			if (StringUtils.isBlank(newName))
 			{
 				output.clearCustomName();
-			}
-			else
+			} else
 			{
 				output.setDisplayName(new StringTextComponent(this.repairedItemName));
 			}

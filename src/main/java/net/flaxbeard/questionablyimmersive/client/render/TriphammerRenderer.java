@@ -1,11 +1,8 @@
 package net.flaxbeard.questionablyimmersive.client.render;
 
 import blusunrize.immersiveengineering.client.ClientUtils;
-import blusunrize.immersiveengineering.common.items.IEItems;
 import com.mojang.blaze3d.platform.GlStateManager;
-import net.flaxbeard.questionablyimmersive.client.model.CokeOvenBatteryModel;
 import net.flaxbeard.questionablyimmersive.client.model.TriphammerModel;
-import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
@@ -39,19 +36,16 @@ public class TriphammerRenderer extends TileEntityRenderer<TriphammerTileEntity.
 				rotationMod = 90f;
 				GlStateManager.rotated(90F, 0, 1, 0);
 				GlStateManager.translated(-1, 0, 1);
-			}
-			else if (rotation == Direction.EAST)
+			} else if (rotation == Direction.EAST)
 			{
 				rotationMod = 180f;
 				GlStateManager.rotated(180F, 0, 1, 0);
 				GlStateManager.translated(-1, 0, 0);
-			}
-			else if (rotation == Direction.NORTH)
+			} else if (rotation == Direction.NORTH)
 			{
 				rotationMod = 270f;
 				GlStateManager.rotated(270F, 0, 1, 0);
-			}
-			else
+			} else
 			{
 				GlStateManager.translated(0, 0, 1);
 			}
@@ -63,22 +57,28 @@ public class TriphammerRenderer extends TileEntityRenderer<TriphammerTileEntity.
 
 			ClientUtils.bindTexture(te.getIsMirrored() ? texture : textureM);
 
-			//float ticks = te.activeTicks + (te.wasActive ? partialTicks : 0);;
-			//model.ticks = modelM.ticks = 1.5F * ticks;
-
 			GlStateManager.pushMatrix();
 
 			boolean falling = te.fallingTicks % 60 >= 30 && te.fallingTicks % 60 < 40;
 			TriphammerModel m = te.getIsMirrored() ? modelM : model;
+
 			m.fallingTicks = te.fallingTicks + (te.active || falling ? partialTicks : 1);
 			m.ticks = te.ticks + (te.active ? partialTicks : 1);
+
+			if (!te.hasWorld())
+			{
+				m.ticks = Minecraft.getInstance().player.ticksExisted + partialTicks;
+				m.fallingTicks = Minecraft.getInstance().player.ticksExisted + partialTicks;
+			}
+
 			m.render(null, 0, 0, 0, 0, 0, 0.0625F);
 			GlStateManager.popMatrix();
 
 			GlStateManager.pushMatrix();
 
 			ItemStack stack = te.inventory.get(2).copy();
-			if (stack.isEmpty()) {
+			if (stack.isEmpty())
+			{
 				stack = te.inventory.get(0).copy();
 			}
 			if (!stack.isEmpty())
