@@ -8,24 +8,22 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlockInterfaces;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
+import net.flaxbeard.questionablyimmersive.common.util.AnvilUtils;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.inventory.container.RepairContainer;
-import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.*;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
@@ -37,12 +35,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -572,241 +568,25 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 	public void updateRepairOutput()
 	{
-		if (world.isRemote) {
+		if (world.isRemote)
+		{
 			return;
 		}
 
-		ItemStack itemstack = inventory.get(0);
-		setMaximumCost(1);
-		int i = 0;
-		int j = 0;
-		int k = 0;
-
-
-		if (itemstack.isEmpty())
+		if (fakePlayer == null)
 		{
-			setOutput(ItemStack.EMPTY);
-			setMaximumCost(0);
-		} else
-		{
-			ItemStack outputItem = itemstack.copy();
-			ItemStack itemstack2 = inventory.get(1);
-			Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(outputItem);
-			j = j + itemstack.getRepairCost() + (itemstack2.isEmpty() ? 0 : itemstack2.getRepairCost());
-			setMaterialCost(0);
-			boolean isEnchantedBook = false;
-
-			if (!itemstack2.isEmpty())
-			{
-
-				ItemStack dummy1 = itemstack.copy();
-				ItemStack dummy2 = itemstack2.copy();
-				if (fakePlayer == null)
-				{
-					fakePlayer = FakePlayerFactory.get((ServerWorld) this.world, new GameProfile(UUID.randomUUID(), "Anvil Man"));
-				}
-				RepairContainer dummyContainer = new RepairContainer(0, fakePlayer.inventory, IWorldPosCallable.DUMMY);
-				dummyContainer.putStackInSlot(0, dummy1);
-				dummyContainer.putStackInSlot(1, dummy2);
-				Inventory dummyOutput = new Inventory(1);
-				if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(dummyContainer, dummy1, dummy2, dummyOutput, repairedItemName, j))
-				{
-					setMaximumCost(dummyContainer.getMaximumCost());
-					setMaterialCost(dummyContainer.materialCost);
-					setOutput(dummyOutput.getStackInSlot(0).copy());
-					return;
-				}
-
-				isEnchantedBook = itemstack2.getItem() == Items.ENCHANTED_BOOK && !EnchantedBookItem.getEnchantments(itemstack2).isEmpty();
-
-				if (outputItem.isDamageable() && outputItem.getItem().getIsRepairable(itemstack, itemstack2))
-				{
-					int l2 = Math.min(outputItem.getDamage(), outputItem.getMaxDamage() / 4);
-
-					if (l2 <= 0)
-					{
-						setOutput(ItemStack.EMPTY);
-						setMaximumCost(0);
-						return;
-					}
-
-					int i3;
-
-					for (i3 = 0; l2 > 0 && i3 < itemstack2.getCount(); ++i3)
-					{
-						int j3 = outputItem.getDamage() - l2;
-						outputItem.setDamage(j3);
-						++i;
-						l2 = Math.min(outputItem.getDamage(), outputItem.getMaxDamage() / 4);
-					}
-
-					setMaterialCost(i3);
-				} else
-				{
-					if (!isEnchantedBook && (outputItem.getItem() != itemstack2.getItem() || !outputItem.isDamageable()))
-					{
-						setOutput(ItemStack.EMPTY);
-						setMaximumCost(0);
-
-						return;
-					}
-
-					if (outputItem.isDamageable() && !isEnchantedBook)
-					{
-						int l = itemstack.getMaxDamage() - itemstack.getDamage();
-						int i1 = itemstack2.getMaxDamage() - itemstack2.getDamage();
-						int j1 = i1 + outputItem.getMaxDamage() * 12 / 100;
-						int k1 = l + j1;
-						int l1 = outputItem.getMaxDamage() - k1;
-
-						if (l1 < 0)
-						{
-							l1 = 0;
-						}
-
-						if (l1 < outputItem.getDamage()) // vanilla uses metadata here instead of damage.
-						{
-							outputItem.setDamage(l1);
-							i += 2;
-						}
-					}
-
-					Map<Enchantment, Integer> map1 = EnchantmentHelper.getEnchantments(itemstack2);
-					boolean isApplicable = false;
-					boolean isntApplicable = false;
-
-					for (Enchantment enchantment1 : map1.keySet())
-					{
-						if (enchantment1 != null)
-						{
-							int i2 = map.containsKey(enchantment1) ? ((Integer) map.get(enchantment1)).intValue() : 0;
-							int j2 = ((Integer) map1.get(enchantment1)).intValue();
-							j2 = i2 == j2 ? j2 + 1 : Math.max(j2, i2);
-							boolean canApplyEnchant = enchantment1.canApply(itemstack);
-
-							if (itemstack.getItem() == Items.ENCHANTED_BOOK)
-							{
-								canApplyEnchant = true;
-							}
-
-							for (Enchantment enchantment : map.keySet())
-							{
-								if (enchantment != enchantment1 && !enchantment1.isCompatibleWith(enchantment))
-								{
-									canApplyEnchant = false;
-									++i;
-								}
-							}
-
-							if (!canApplyEnchant)
-							{
-								isntApplicable = true;
-							} else
-							{
-								isApplicable = true;
-
-								if (j2 > enchantment1.getMaxLevel())
-								{
-									j2 = enchantment1.getMaxLevel();
-								}
-
-								map.put(enchantment1, Integer.valueOf(j2));
-								int k3 = 0;
-
-								switch (enchantment1.getRarity())
-								{
-									case COMMON:
-										k3 = 1;
-										break;
-									case UNCOMMON:
-										k3 = 2;
-										break;
-									case RARE:
-										k3 = 4;
-										break;
-									case VERY_RARE:
-										k3 = 8;
-								}
-
-								if (isEnchantedBook)
-								{
-									k3 = Math.max(1, k3 / 2);
-								}
-
-								i += k3 * j2;
-
-								if (itemstack.getCount() > 1)
-								{
-									i = 40;
-								}
-							}
-						}
-					}
-
-					if (isntApplicable && !isApplicable)
-					{
-						setOutput(ItemStack.EMPTY);
-						setMaximumCost(0);
-						return;
-					}
-				}
-			}
-
-			if (StringUtils.isBlank(this.repairedItemName))
-			{
-				if (outputItem.hasDisplayName())
-				{
-					k = 1;
-					i += k;
-					outputItem.clearCustomName();
-				}
-			} else if (!this.repairedItemName.equals(outputItem.getDisplayName().getString()))
-			{
-				k = 1;
-				i += k;
-				outputItem.setDisplayName(new StringTextComponent(this.repairedItemName));
-			}
-
-			if (isEnchantedBook && !outputItem.getItem().isBookEnchantable(outputItem, itemstack2))
-				outputItem = ItemStack.EMPTY;
-
-			setMaximumCost(j + i);
-
-			if (i <= 0)
-			{
-				outputItem = ItemStack.EMPTY;
-			}
-
-			if (k == i && k > 0 && getMaximumCost() >= 40)
-			{
-				setMaximumCost(39);
-			}
-
-			if (getMaximumCost() >= 40)
-			{
-				outputItem = ItemStack.EMPTY;
-			}
-
-			if (!outputItem.isEmpty())
-			{
-				int k2 = outputItem.getRepairCost();
-
-				if (!itemstack2.isEmpty() && k2 < itemstack2.getRepairCost())
-				{
-					k2 = itemstack2.getRepairCost();
-				}
-
-				if (k != i || k == 0)
-				{
-					k2 = k2 * 2 + 1;
-				}
-
-				outputItem.setRepairCost(k2);
-				EnchantmentHelper.setEnchantments(map, outputItem);
-			}
-
-			setOutput(outputItem.copy());
+			fakePlayer = FakePlayerFactory.get((ServerWorld) this.world, new GameProfile(UUID.randomUUID(), "Anvil Man"));
 		}
+		AnvilUtils.RepairOutput repairOutput = AnvilUtils.updateRepairOutput(
+				fakePlayer,
+				repairedItemName,
+				inventory.get(0).copy(),
+				inventory.get(1).copy()
+		);
+
+		this.setMaterialCost(repairOutput.materialCost);
+		this.setMaximumCost(repairOutput.maximumCost);
+		this.setOutput(repairOutput.output);
 
 		this.markDirty();
 		this.markContainingBlockForUpdate(null);
