@@ -1,5 +1,6 @@
-Coke Oven Battery
-Hotter Topic!
-The Coke Oven Battery is built as above - but the width can be increased from 6 blocks to up to 100. To form the multiblock, right click the lower light engineering block.<np>
-Mundane <link;cokeoven;Coke Ovens;start> are useful for producing small amounts of coal coke, but their bulky form factor makes mass production a hassle. With the help of some steel, you can squeeze the production of many Coke Ovens into a single expandable Coke Oven Battery. This structure is uniquely variable in size - while the most basic Coke Oven Battery contains 6 ovens, building the battery larger will add additional ovens.<np>
-Coal or log inputs for each oven can be inserted in the blue port on the oven's top, while creosote is output on the orange side ports. Each oven's output is dumped out the door. While each operation takes longer than the base Coke Oven, each oven can process up to 9 inputs in parallel, leading to a greater throughput. The smallest Coke Oven Battery then has over 6 times the throughput of a base Coke Oven, at the cost of slightly less creosote production.
+Triphammer
+Stop... hammer time!
+The Triphammer is an automated hammer useful for ore processing and automatic smithing. It is built as above and is formed by right clicking the iron block on the front.<np>
+The Triphammer is a crude but effective tool to increase the yield from ores I mine. While less effective than the <link;crusher;Crusher;start>, a Triphammer requires no steel. The hammer will destroy blocks placed under the business end, producing on average 1.5 grit per ore block. Blocks which cannot be processed are destroyed as usual.<np>
+If an anvil is instead placed underneath the head of the Triphammer, the machine becomes a useful automatic smithing tool. Ordinary anvil operations can be performed using power instead of experience.
+Secondary slot items can be input on any side of the anvil. Primary slot items can be input on any side of the block above the anvil, except from the top. The Triphammer will attempt to output below the anvil, otherwise output can be <link;conveyors;extracted;conveyor_extract_recipe> from either side.

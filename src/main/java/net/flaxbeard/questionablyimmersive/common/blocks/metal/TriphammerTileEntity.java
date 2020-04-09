@@ -1,5 +1,6 @@
 package net.flaxbeard.questionablyimmersive.common.blocks.metal;
 
+import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -7,10 +8,13 @@ import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlockInterfaces;
+import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
+import net.flaxbeard.questionablyimmersive.common.blocks.TriphammerAnvilBlock;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
 import net.flaxbeard.questionablyimmersive.common.util.AnvilUtils;
 import net.minecraft.block.AnvilBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
@@ -70,7 +74,20 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	}
 
 	public NonNullList<ItemStack> inventory;
-	LazyOptional<IItemHandler> insertionHandler = registerConstantCap(new IEInventoryHandler(3, this, 0, new boolean[]{true, false, false}, new boolean[]{false, false, true})
+	LazyOptional<IItemHandler> insertionHandlerAbove = registerConstantCap(new IEInventoryHandler(3, this, 0, new boolean[]{true, false, false}, new boolean[]{false, false, true})
+	{
+		@Override
+		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
+		{
+			ItemStack result = super.insertItem(slot, stack, simulate);
+			if (slot < 2 && !simulate && !(ItemStack.areItemStacksEqual(stack, result) || ItemStack.areItemStackTagsEqual(stack, result)))
+			{
+				TriphammerTileEntity.this.updateRepairOutput();
+			}
+			return result;
+		}
+	});
+	LazyOptional<IItemHandler> insertionHandlerBelow = registerConstantCap(new IEInventoryHandler(3, this, 0, new boolean[]{false, true, false}, new boolean[]{false, false, true})
 	{
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
@@ -156,7 +173,35 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	@Override
 	public void disassemble()
 	{
+		removeAnvil();
 		super.disassemble();
+	}
+
+	public void addAnvil() {
+		BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
+		BlockState targetedBlock = world.getBlockState(targetPos);
+
+		if (targetedBlock.getBlock() == Blocks.ANVIL || targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL || targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL) {
+			Direction facing = targetedBlock.get(AnvilBlock.FACING);
+
+			BlockState baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL.getDefaultState();
+			if (targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL) {
+				baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED.getDefaultState();
+			} else if (targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL)
+			{
+				baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED.getDefaultState();
+			}
+			world.setBlockState(targetPos, baseState.with(IEProperties.FACING_HORIZONTAL, facing));
+		}
+	}
+
+	public void removeAnvil() {
+		BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
+		BlockState targetedBlock = world.getBlockState(targetPos);
+
+		if (targetedBlock.getBlock() instanceof TriphammerAnvilBlock) {
+			world.setBlockState(targetPos, ((TriphammerAnvilBlock) targetedBlock.getBlock()).toOriginal(targetedBlock));
+		}
 	}
 
 	@Override
@@ -176,7 +221,11 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
 
 			BlockState targetedBlock = world.getBlockState(targetPos);
-			isAnvilMode = targetedBlock.getBlock() instanceof AnvilBlock;
+
+			if (targetedBlock.getBlock() == Blocks.ANVIL || targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL || targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL) {
+				addAnvil();
+			}
+			isAnvilMode = targetedBlock.getBlock() instanceof TriphammerAnvilBlock;
 			if (wasAnvilMode && !isAnvilMode)
 			{
 				setMaximumCost(0);
@@ -189,6 +238,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 					inventory.set(i, ItemStack.EMPTY);
 				}
 			}
+
 			if (isAnvilMode != wasAnvilMode)
 			{
 				update = true;
@@ -221,6 +271,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						{
 							if (progress == maxProgress)
 							{
+								float breakChance = 0.12f;
+
 								inventory.set(2, output);
 								output = ItemStack.EMPTY;
 
@@ -247,6 +299,21 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 								progress = 0;
 
 								update = true;
+
+								if (world.rand.nextFloat() < breakChance)
+								{
+									targetedBlock = world.getBlockState(targetPos);
+									BlockState damagedStack = TriphammerAnvilBlock.damage(targetedBlock);
+									if (damagedStack == null)
+									{
+										world.removeBlock(targetPos, false);
+										world.playEvent(1029, targetPos, 0);
+									} else
+									{
+										world.setBlockState(targetPos, damagedStack, 2);
+										world.playEvent(1030, targetPos, 0);
+									}
+								}
 							}
 						} else
 						{
@@ -379,7 +446,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	@Override
 	public float[] getBlockBounds()
 	{
-		return new float[]{0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F};
+		return new float[]{0.0F, 0.5F, 0.0F, 1.0F, 1.0F, 1.0F};
 	}
 
 	@Override
@@ -454,7 +521,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			TriphammerTileEntity master = (TriphammerTileEntity) this.master();
 			if (master != null)
 			{
-				return master.insertionHandler.cast();
+				return master.insertionHandlerAbove.cast();
 			}
 		}
 
@@ -586,6 +653,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 		this.setMaterialCost(repairOutput.materialCost);
 		this.setMaximumCost(repairOutput.maximumCost);
+
 		this.setOutput(repairOutput.output);
 
 		this.markDirty();
@@ -598,6 +666,16 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		{
 			output = ItemStack.EMPTY;
 		}
+
+		if (output.hasTag() && output.getRepairCost() == 0) {
+			output.getTag().remove("RepairCost");
+			if (output.getTag().isEmpty()) {
+				output.setTag(null);
+			} else {
+				output.setRepairCost(0);
+			}
+		}
+
 		if (this.output == null || !output.isItemEqual(this.output) || !ItemStack.areItemStackTagsEqual(output, this.output))
 		{
 			this.progress = 0;

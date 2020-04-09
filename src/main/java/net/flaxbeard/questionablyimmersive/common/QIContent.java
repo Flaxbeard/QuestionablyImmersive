@@ -5,11 +5,14 @@ import blusunrize.immersiveengineering.common.network.IMessage;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIMetalMultiblockBlock;
+import net.flaxbeard.questionablyimmersive.common.blocks.TriphammerAnvilBlock;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerAnvilTileEntity;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
 import net.flaxbeard.questionablyimmersive.common.network.GUIUpdateMessage;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
@@ -58,6 +61,16 @@ public class QIContent
 		{
 			return TriphammerTileEntity.Master.TYPE;
 		});
+
+		QIBlocks.Metal.TRIPHAMMER_ANVIL = new TriphammerAnvilBlock("triphammer_anvil", () -> {
+			return TriphammerAnvilTileEntity.TYPE;
+		}, Blocks.ANVIL);
+		QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED = new TriphammerAnvilBlock("triphammer_anvil_chipped", () -> {
+			return TriphammerAnvilTileEntity.TYPE;
+		}, Blocks.CHIPPED_ANVIL);
+		QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED = new TriphammerAnvilBlock("triphammer_anvil_damaged", () -> {
+			return TriphammerAnvilTileEntity.TYPE;
+		}, Blocks.DAMAGED_ANVIL);
 	}
 
 	public static void init()
@@ -79,6 +92,8 @@ public class QIContent
 
 		registerTile(TriphammerTileEntity.class, event, QIBlocks.Multiblocks.triphammer);
 		registerTile(TriphammerTileEntity.Master.class, event, QIBlocks.Multiblocks.triphammer);
+
+		registerTile(TriphammerAnvilTileEntity.class, event, QIBlocks.Metal.TRIPHAMMER_ANVIL, QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED, QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED);
 	}
 
 	@SubscribeEvent
