@@ -7,6 +7,7 @@ import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
+import net.flaxbeard.questionablyimmersive.common.QIConfig;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlockInterfaces;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
 import net.flaxbeard.questionablyimmersive.common.blocks.TriphammerAnvilBlock;
@@ -111,6 +112,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	private int progress;
 	private int maxProgress;
 
+	private int newAnvilCooldown;
+
 	public boolean active;
 	public boolean isAnvilMode;
 
@@ -120,7 +123,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 	private TriphammerTileEntity(TileEntityType<TriphammerTileEntity> type)
 	{
-		super(QIMultiblocks.TRIPHAMMER, 0, false, type);
+		super(QIMultiblocks.TRIPHAMMER, 16000, false, type);
 		this.inventory = NonNullList.withSize(3, ItemStack.EMPTY);
 	}
 
@@ -147,6 +150,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		{
 			ticks = nbt.getInt("ticks");
 		}
+		newAnvilCooldown = nbt.getInt("newAnvilCooldown");
 
 		output = ItemStack.read(nbt.getCompound("output")).copy();
 	}
@@ -166,6 +170,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		nbt.putBoolean("active", active);
 		nbt.putBoolean("isAnvilMode", isAnvilMode);
 		nbt.putInt("ticks", ticks);
+		nbt.putInt("newAnvilCooldown", newAnvilCooldown);
 
 		nbt.put("output", output.serializeNBT());
 	}
@@ -177,15 +182,18 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		super.disassemble();
 	}
 
-	public void addAnvil() {
+	public void addAnvil()
+	{
 		BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
 		BlockState targetedBlock = world.getBlockState(targetPos);
 
-		if (targetedBlock.getBlock() == Blocks.ANVIL || targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL || targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL) {
+		if (targetedBlock.getBlock() == Blocks.ANVIL || targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL || targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL)
+		{
 			Direction facing = targetedBlock.get(AnvilBlock.FACING);
 
 			BlockState baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL.getDefaultState();
-			if (targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL) {
+			if (targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL)
+			{
 				baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED.getDefaultState();
 			} else if (targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL)
 			{
@@ -195,11 +203,13 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		}
 	}
 
-	public void removeAnvil() {
+	public void removeAnvil()
+	{
 		BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
 		BlockState targetedBlock = world.getBlockState(targetPos);
 
-		if (targetedBlock.getBlock() instanceof TriphammerAnvilBlock) {
+		if (targetedBlock.getBlock() instanceof TriphammerAnvilBlock)
+		{
 			world.setBlockState(targetPos, ((TriphammerAnvilBlock) targetedBlock.getBlock()).toOriginal(targetedBlock));
 		}
 	}
@@ -222,7 +232,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 			BlockState targetedBlock = world.getBlockState(targetPos);
 
-			if (targetedBlock.getBlock() == Blocks.ANVIL || targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL || targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL) {
+			if (targetedBlock.getBlock() == Blocks.ANVIL || targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL || targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL)
+			{
 				addAnvil();
 			}
 			isAnvilMode = targetedBlock.getBlock() instanceof TriphammerAnvilBlock;
@@ -231,11 +242,22 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 				setMaximumCost(0);
 
 				progress = 0;
+			} else if (isAnvilMode && !wasAnvilMode)
+			{
+				newAnvilCooldown = 1;
+			}
 
-				for (int i = 0; i < inventory.size(); i++)
+			if (!isAnvilMode && newAnvilCooldown > 0)
+			{
+				newAnvilCooldown--;
+
+				if (newAnvilCooldown == 0)
 				{
-					InventoryHelper.spawnItemStack(world, targetPos.getX() + .5, targetPos.getY() + .5, targetPos.getZ() + .5, inventory.get(i));
-					inventory.set(i, ItemStack.EMPTY);
+					for (int i = 0; i < inventory.size(); i++)
+					{
+						InventoryHelper.spawnItemStack(world, targetPos.getX() + .5, targetPos.getY() + .5, targetPos.getZ() + .5, inventory.get(i));
+						inventory.set(i, ItemStack.EMPTY);
+					}
 				}
 			}
 
@@ -257,7 +279,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						);
 				if (shouldConsume)
 				{
-					int consumed = 0; // TODO Config.QIConfig.Triphammer.costPerTick;
+					int consumed = QIConfig.TRIPHAMMER.costPerTick.get();
 					int extracted = energyStorage.extractEnergy(consumed, true);
 
 					if (extracted >= consumed)
@@ -308,6 +330,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 									{
 										world.removeBlock(targetPos, false);
 										world.playEvent(1029, targetPos, 0);
+										newAnvilCooldown = 60;
 									} else
 									{
 										world.setBlockState(targetPos, damagedStack, 2);
@@ -427,7 +450,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	public void setMaximumCost(int maximumCost)
 	{
 		this.maximumCost = maximumCost;
-		this.maxProgress = /*Config.QIConfig.Triphammer.ticksPerLevel*/ 40 * maximumCost;
+		this.maxProgress = QIConfig.TRIPHAMMER.ticksPerLevel.get() * maximumCost;
 	}
 
 
@@ -667,11 +690,14 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			output = ItemStack.EMPTY;
 		}
 
-		if (output.hasTag() && output.getRepairCost() == 0) {
+		if (output.hasTag() && output.getRepairCost() == 0)
+		{
 			output.getTag().remove("RepairCost");
-			if (output.getTag().isEmpty()) {
+			if (output.getTag().isEmpty())
+			{
 				output.setTag(null);
-			} else {
+			} else
+			{
 				output.setRepairCost(0);
 			}
 		}

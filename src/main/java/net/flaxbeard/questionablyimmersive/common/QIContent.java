@@ -62,13 +62,16 @@ public class QIContent
 			return TriphammerTileEntity.Master.TYPE;
 		});
 
-		QIBlocks.Metal.TRIPHAMMER_ANVIL = new TriphammerAnvilBlock("triphammer_anvil", () -> {
+		QIBlocks.Metal.TRIPHAMMER_ANVIL = new TriphammerAnvilBlock("triphammer_anvil", () ->
+		{
 			return TriphammerAnvilTileEntity.TYPE;
 		}, Blocks.ANVIL);
-		QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED = new TriphammerAnvilBlock("triphammer_anvil_chipped", () -> {
+		QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED = new TriphammerAnvilBlock("triphammer_anvil_chipped", () ->
+		{
 			return TriphammerAnvilTileEntity.TYPE;
 		}, Blocks.CHIPPED_ANVIL);
-		QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED = new TriphammerAnvilBlock("triphammer_anvil_damaged", () -> {
+		QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED = new TriphammerAnvilBlock("triphammer_anvil_damaged", () ->
+		{
 			return TriphammerAnvilTileEntity.TYPE;
 		}, Blocks.DAMAGED_ANVIL);
 	}

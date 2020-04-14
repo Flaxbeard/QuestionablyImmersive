@@ -47,39 +47,50 @@ public class TriphammerAnvilBlock extends QIGenericTileBlock
 	}
 
 	@Nullable
-	public static BlockState damage(BlockState state) {
+	public static BlockState damage(BlockState state)
+	{
 		Block block = state.getBlock();
-		if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL) {
+		if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL)
+		{
 			return QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED.getDefaultState().with(IEProperties.FACING_HORIZONTAL, state.get(IEProperties.FACING_HORIZONTAL));
-		} else if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED) {
+		} else if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED)
+		{
 			return QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED.getDefaultState().with(IEProperties.FACING_HORIZONTAL, state.get(IEProperties.FACING_HORIZONTAL));
-		} else {
+		} else
+		{
 			return null;
 		}
 	}
 
 	@Override
-	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving) {
+	public void onBlockAdded(BlockState state, World worldIn, BlockPos pos, BlockState oldState, boolean isMoving)
+	{
 		worldIn.getPendingBlockTicks().scheduleTick(pos, this, this.tickRate(worldIn));
 	}
 
 	@Override
-	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos) {
+	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn, BlockPos currentPos, BlockPos facingPos)
+	{
 		worldIn.getPendingBlockTicks().scheduleTick(currentPos, this, this.tickRate(worldIn));
 		return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 	}
 
 	@Override
-	public void tick(BlockState state, World worldIn, BlockPos pos, Random random) {
-		if (!worldIn.isRemote) {
+	public void tick(BlockState state, World worldIn, BlockPos pos, Random random)
+	{
+		if (!worldIn.isRemote)
+		{
 			this.checkFallable(worldIn, pos);
 		}
 	}
 
-	private void checkFallable(World worldIn, BlockPos pos) {
-		if (worldIn.isAirBlock(pos.down()) || canFallThrough(worldIn.getBlockState(pos.down())) && pos.getY() >= 0) {
-			if (!worldIn.isRemote) {
-				FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, toOriginal(worldIn.getBlockState(pos)));
+	private void checkFallable(World worldIn, BlockPos pos)
+	{
+		if (worldIn.isAirBlock(pos.down()) || canFallThrough(worldIn.getBlockState(pos.down())) && pos.getY() >= 0)
+		{
+			if (!worldIn.isRemote)
+			{
+				FallingBlockEntity fallingblockentity = new FallingBlockEntity(worldIn, (double) pos.getX() + 0.5D, (double) pos.getY(), (double) pos.getZ() + 0.5D, toOriginal(worldIn.getBlockState(pos)));
 				this.onStartFalling(fallingblockentity);
 				worldIn.addEntity(fallingblockentity);
 				worldIn.setBlockState(pos, toOriginal(worldIn.getBlockState(pos)));
@@ -88,28 +99,33 @@ public class TriphammerAnvilBlock extends QIGenericTileBlock
 		}
 	}
 
-	public BlockState toOriginal(BlockState state) {
+	public BlockState toOriginal(BlockState state)
+	{
 		Direction facing = state.get(IEProperties.FACING_HORIZONTAL);
 		return this.original.getDefaultState().with(AnvilBlock.FACING, facing);
 	}
 
 	@Override
-	public int tickRate(IWorldReader worldIn) {
+	public int tickRate(IWorldReader worldIn)
+	{
 		return 2;
 	}
 
-	public static boolean canFallThrough(BlockState state) {
+	public static boolean canFallThrough(BlockState state)
+	{
 		Block block = state.getBlock();
 		Material material = state.getMaterial();
 		return state.isAir() || block == Blocks.FIRE || material.isLiquid() || material.isReplaceable();
 	}
 
-	protected void onStartFalling(FallingBlockEntity fallingEntity) {
+	protected void onStartFalling(FallingBlockEntity fallingEntity)
+	{
 		fallingEntity.setHurtEntities(true);
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
+	public BlockState getStateForPlacement(BlockItemUseContext context)
+	{
 		return this.getDefaultState().with(IEProperties.FACING_HORIZONTAL, context.getPlacementHorizontalFacing().rotateY());
 	}
 
@@ -124,30 +140,36 @@ public class TriphammerAnvilBlock extends QIGenericTileBlock
 	private static final VoxelShape Z_AXIS_AABB = VoxelShapes.or(PART_BASE, PART_LOWER_Z, PART_MID_Z, PART_UPPER_Z);
 
 	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context)
+	{
 		Direction direction = state.get(IEProperties.FACING_HORIZONTAL);
 		return direction.getAxis() == Direction.Axis.X ? X_AXIS_AABB : Z_AXIS_AABB;
 	}
 
 	@Override
-	public BlockState rotate(BlockState state, Rotation rot) {
+	public BlockState rotate(BlockState state, Rotation rot)
+	{
 		return state.with(IEProperties.FACING_HORIZONTAL, rot.rotate(state.get(IEProperties.FACING_HORIZONTAL)));
 	}
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+	{
 		builder.add(IEProperties.FACING_HORIZONTAL);
 	}
 
 	@Override
-	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type) {
+	public boolean allowsMovement(BlockState state, IBlockReader worldIn, BlockPos pos, PathType type)
+	{
 		return false;
 	}
 
 	@Override
-	public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+	public boolean onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit)
+	{
 		TileEntity tile = world.getTileEntity(pos.add(0, 1, 0));
-		if (tile instanceof TriphammerTileEntity && hand == Hand.MAIN_HAND && !player.isSneaking()) {
+		if (tile instanceof TriphammerTileEntity && hand == Hand.MAIN_HAND && !player.isSneaking())
+		{
 			QIBlockInterfaces.IInteractionObjectQI interaction = (QIBlockInterfaces.IInteractionObjectQI) tile;
 
 			interaction = interaction.getGuiMaster();

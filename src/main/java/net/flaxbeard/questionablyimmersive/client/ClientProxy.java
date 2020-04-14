@@ -46,7 +46,7 @@ public class ClientProxy extends CommonProxy
 	public void postPostInit()
 	{
 		IEManualInstance ieMan = ManualHelper.getManual();
-		Tree.InnerNode<ResourceLocation, ManualEntry> toolsCat = ieMan.contentTree.getRoot().getOrCreateSubnode(new ResourceLocation(QuestionablyImmersive.MODID, "questionable"));
+		Tree.InnerNode<ResourceLocation, ManualEntry> toolsCat = ieMan.getRoot().getOrCreateSubnode(new ResourceLocation(QuestionablyImmersive.MODID, "questionable"));
 		ieMan.addEntry(toolsCat, new ResourceLocation(QuestionablyImmersive.MODID, "coke_oven_battery"));
 		ieMan.addEntry(toolsCat, new ResourceLocation(QuestionablyImmersive.MODID, "triphammer"));
 	}

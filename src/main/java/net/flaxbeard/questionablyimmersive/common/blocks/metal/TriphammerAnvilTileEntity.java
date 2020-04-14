@@ -37,7 +37,8 @@ public class TriphammerAnvilTileEntity extends QIBaseTileEntity
 	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction facing)
 	{
 		TileEntity triphammer = world.getTileEntity(getPos().add(0, 1, 0));
-		if (triphammer instanceof TriphammerTileEntity) {
+		if (triphammer instanceof TriphammerTileEntity)
+		{
 			return ((TriphammerTileEntity) triphammer).master().insertionHandlerBelow.cast();
 		}
 		return super.getCapability(cap, facing);
