@@ -30,7 +30,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -376,35 +375,9 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 		if (state.getBlock() == this)
 		{
 			TileEntity te = world.getTileEntity(pos);
-			if (te instanceof IAdvancedCollisionBounds)
+			if (te instanceof ICollisionBounds)
 			{
-				List<AxisAlignedBB> bounds = ((IAdvancedCollisionBounds) te).getAdvancedCollisionBounds();
-				if (bounds != null && !bounds.isEmpty())
-				{
-					VoxelShape ret = VoxelShapes.empty();
-					Iterator var8 = bounds.iterator();
-
-					while (var8.hasNext())
-					{
-						AxisAlignedBB aabb = (AxisAlignedBB) var8.next();
-						if (aabb != null)
-						{
-							ret = VoxelShapes.combineAndSimplify(ret, VoxelShapes.create(aabb), IBooleanFunction.OR);
-						}
-					}
-
-					return ret;
-				}
-			}
-
-			if (te instanceof IBlockBounds)
-			{
-				float[] bounds = ((IBlockBounds) te).getBlockBounds();
-				if (bounds != null)
-				{
-					AxisAlignedBB aabb = new AxisAlignedBB((double) bounds[0], (double) bounds[1], (double) bounds[2], (double) bounds[3], (double) bounds[4], (double) bounds[5]);
-					return VoxelShapes.create(aabb);
-				}
+				return ((ICollisionBounds) te).getCollisionShape();
 			}
 		}
 
@@ -417,40 +390,23 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 		if (world.getBlockState(pos).getBlock() == this)
 		{
 			TileEntity te = world.getTileEntity(pos);
-			if (te instanceof IAdvancedSelectionBounds)
+			if (te instanceof ISelectionBounds)
 			{
-				List<AxisAlignedBB> bounds = ((IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
-				if (bounds != null && !bounds.isEmpty())
-				{
-					VoxelShape ret = VoxelShapes.empty();
-					Iterator var7 = bounds.iterator();
-
-					while (var7.hasNext())
-					{
-						AxisAlignedBB aabb = (AxisAlignedBB) var7.next();
-						if (aabb != null)
-						{
-							ret = VoxelShapes.combineAndSimplify(ret, VoxelShapes.create(aabb), IBooleanFunction.OR);
-						}
-					}
-
-					return ret;
-				}
+				return ((ISelectionBounds) te).getSelectionShape();
 			}
 		}
 
 		return super.getRaytraceShape(state, world, pos);
 	}
 
-	@Nullable
 	@Override
 	public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
 	{
 		TileEntity te = world.getTileEntity(pos);
-		if (te instanceof IAdvancedSelectionBounds)
+		if (te instanceof ISelectionBounds)
 		{
-			List<AxisAlignedBB> list = ((IAdvancedSelectionBounds) te).getAdvancedSelectionBounds();
-			if (list != null && !list.isEmpty())
+			List<AxisAlignedBB> list = ((ISelectionBounds) te).getSelectionShape().toBoundingBoxList();
+			if (!list.isEmpty())
 			{
 				RayTraceResult min = null;
 				double minDist = 1.0D / 0.0;

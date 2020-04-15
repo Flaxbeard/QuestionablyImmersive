@@ -515,12 +515,6 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		nbt.putByteArray("active", activeTemp);
 	}
 
-	@Override
-	public float[] getBlockBounds()
-	{
-		return new float[]{0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F};
-	}
-
 	@Nullable
 	@Override
 	public CokeOvenBatteryTileEntity getTileForPos(BlockPos targetPosInMB)

@@ -2,9 +2,12 @@ package net.flaxbeard.questionablyimmersive.common.blocks.metal;
 
 import blusunrize.immersiveengineering.api.IEProperties;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
 import blusunrize.immersiveengineering.common.util.Utils;
 import blusunrize.immersiveengineering.common.util.inventory.IEInventoryHandler;
+import blusunrize.immersiveengineering.common.util.shapes.CachedVoxelShapes;
+import blusunrize.immersiveengineering.common.util.shapes.MultiblockCacheKey;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.authlib.GameProfile;
 import net.flaxbeard.questionablyimmersive.common.QIConfig;
@@ -29,7 +32,11 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
@@ -44,10 +51,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
-public class TriphammerTileEntity extends PoweredMultiblockTileEntity<TriphammerTileEntity, IMultiblockRecipe> implements QIBlockInterfaces.IInteractionObjectQI
+public class TriphammerTileEntity extends PoweredMultiblockTileEntity<TriphammerTileEntity, IMultiblockRecipe> implements QIBlockInterfaces.IInteractionObjectQI, IEBlockInterfaces.IBlockBounds
 {
 	public static TileEntityType<TriphammerTileEntity> TYPE;
 
@@ -120,6 +126,26 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	public ItemStack output = ItemStack.EMPTY;
 
 	private FakePlayer fakePlayer;
+
+	private static final CachedVoxelShapes<MultiblockCacheKey> SHAPES = new CachedVoxelShapes<MultiblockCacheKey>(TriphammerTileEntity::getShape)
+	{
+		@Override
+		public VoxelShape get(MultiblockCacheKey k)
+		{
+			List<AxisAlignedBB> subshapes = getShape(k);
+			VoxelShape ret = VoxelShapes.empty();
+			AxisAlignedBB aabb;
+			if (subshapes != null)
+			{
+				for (Iterator var4 = subshapes.iterator(); var4.hasNext(); ret = VoxelShapes.combine(ret, VoxelShapes.create(aabb), IBooleanFunction.OR))
+				{
+					aabb = (AxisAlignedBB) var4.next();
+				}
+			}
+
+			return ret.simplify();
+		}
+	};
 
 	private TriphammerTileEntity(TileEntityType<TriphammerTileEntity> type)
 	{
@@ -467,9 +493,115 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 	}
 
 	@Override
-	public float[] getBlockBounds()
+	public VoxelShape getBlockBounds()
 	{
-		return new float[]{0.0F, 0.5F, 0.0F, 1.0F, 1.0F, 1.0F};
+		return SHAPES.get(new MultiblockCacheKey(this));
+	}
+
+	private static List<AxisAlignedBB> getShape(MultiblockCacheKey key)
+	{
+		BlockPos posInMultiblock = key.posInMultiblock;
+		Direction fl = key.facing;
+		Direction fw = key.facing.rotateY();
+		if (key.mirrored)
+		{
+			fw = fw.getOpposite();
+		}
+
+		ArrayList list = new ArrayList<AxisAlignedBB>();
+		float minX;
+		float maxX;
+		float minZ;
+		float maxZ;
+
+		if (posInMultiblock.getX() == 2 && posInMultiblock.getZ() == 0)
+		{
+			list.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+			return list;
+		}
+
+		if (posInMultiblock.getY() == 0 && posInMultiblock.getZ() < 3)
+		{
+			if (posInMultiblock.getX() == 1)
+			{
+				list.add(new AxisAlignedBB(0, 0, 0, 1, 0.5, 1));
+			} else if (posInMultiblock.getX() == 0)
+			{
+				minX = fw == Direction.EAST ? 0.5F : 0F;
+				minZ = fw == Direction.SOUTH ? 0.5F : 0F;
+				maxX = fw == Direction.WEST ? 0.5F : 1F;
+				maxZ = fw == Direction.NORTH ? 0.5F : 1F;
+				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ));
+			} else
+			{
+				minX = fw == Direction.WEST ? 0.5F : 0F;
+				minZ = fw == Direction.NORTH ? 0.5F : 0F;
+				maxX = fw == Direction.EAST ? 0.5F : 1F;
+				maxZ = fw == Direction.SOUTH ? 0.5F : 1F;
+				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ));
+			}
+		}
+
+		if (new BlockPos(1, 1, 0).equals(posInMultiblock))
+		{
+			minX = fw == Direction.EAST ? 7F / 16F : 0F;
+			minZ = fw == Direction.SOUTH ? 7F / 16F : 0F;
+			maxX = fw == Direction.WEST ? 7F / 16F : 1F;
+			maxZ = fw == Direction.NORTH ? 7F / 16F : 1F;
+			list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 1, maxZ));
+			return list;
+		}
+
+		if (new BlockPos(1, 0, 1).equals(posInMultiblock))
+		{
+			minX = fl == Direction.WEST ? 4F / 16F : (fl == Direction.EAST ? 0F / 16F : -2F / 16F);
+			minZ = fl == Direction.NORTH ? 4F / 16F : (fl == Direction.SOUTH ? 0F / 16F : -2F / 16F);
+			maxX = fl == Direction.WEST ? 16F / 16F : (fl == Direction.EAST ? 12F / 16F : 4F / 16F);
+			maxZ = fl == Direction.NORTH ? 16F / 16F : (fl == Direction.SOUTH ? 12F / 16F : 4F / 16F);
+			list.add(new AxisAlignedBB(minX, 0.5, minZ, maxX, 1, maxZ));
+		}
+
+		if (new BlockPos(1, 1, 1).equals(posInMultiblock))
+		{
+			minX = fw == Direction.EAST || fw == Direction.WEST ? 6F / 16F : 0;
+			minZ = fw == Direction.NORTH || fw == Direction.SOUTH ? 6F / 16F : 0;
+			maxX = fw == Direction.EAST || fw == Direction.WEST ? 10F / 16F : 1;
+			maxZ = fw == Direction.NORTH || fw == Direction.SOUTH ? 10F / 16F : 1;
+			list.add(new AxisAlignedBB(minX, 2F / 16F, minZ, maxX, 14F / 16F, maxZ));
+
+			minX = fl == Direction.WEST ? 8F / 16F : (fl == Direction.EAST ? 4F / 16F : 0);
+			minZ = fl == Direction.NORTH ? 8F / 16F : (fl == Direction.SOUTH ? 4F / 16F : 0);
+			maxX = fl == Direction.WEST ? 12F / 16F : (fl == Direction.EAST ? 8F / 16F : 1);
+			maxZ = fl == Direction.NORTH ? 12F / 16F : (fl == Direction.SOUTH ? 8F / 16F : 1);
+			list.add(new AxisAlignedBB(minX, 6F / 16F, minZ, maxX, 10F / 16F, maxZ));
+
+			minX = fl == Direction.WEST ? 6F / 16F : (fl == Direction.EAST ? 2F / 16F : 0F / 16F);
+			minZ = fl == Direction.NORTH ? 6F / 16F : (fl == Direction.SOUTH ? 2F / 16F : 0F / 16F);
+			maxX = fl == Direction.WEST ? 14F / 16F : (fl == Direction.EAST ? 10F / 16F : 6F / 16F);
+			maxZ = fl == Direction.NORTH ? 14F / 16F : (fl == Direction.SOUTH ? 10F / 16F : 6F / 16F);
+			list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 8 / 16F, maxZ));
+			return list;
+		}
+		if (new BlockPos(1, 1, 2).equals(posInMultiblock))
+		{
+			minX = fw == Direction.EAST || fw == Direction.WEST ? 6F / 16F : 0;
+			minZ = fw == Direction.NORTH || fw == Direction.SOUTH ? 6F / 16F : 0;
+			maxX = fw == Direction.EAST || fw == Direction.WEST ? 10F / 16F : 1;
+			maxZ = fw == Direction.NORTH || fw == Direction.SOUTH ? 10F / 16F : 1;
+			list.add(new AxisAlignedBB(minX, 2F / 16F, minZ, maxX, 14F / 16F, maxZ));
+			return list;
+		}
+		if (new BlockPos(1, 1, 3).equals(posInMultiblock))
+		{
+			minX = fw == Direction.EAST || fw == Direction.WEST ? 4F / 16F : 0;
+			minZ = fw == Direction.NORTH || fw == Direction.SOUTH ? 4F / 16F : 0;
+			maxX = fw == Direction.EAST || fw == Direction.WEST ? 12F / 16F : 1;
+			maxZ = fw == Direction.NORTH || fw == Direction.SOUTH ? 12F / 16F : 1;
+			list.add(new AxisAlignedBB(minX, 0F / 16F, minZ, maxX, 16 / 16F, maxZ));
+			return list;
+		}
+		//list.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
+		return list;
 	}
 
 	@Override

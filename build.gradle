@@ -98,6 +98,6 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.2.3'
-    compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-c839561b")
+    compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-4fc655a9")
     runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }
