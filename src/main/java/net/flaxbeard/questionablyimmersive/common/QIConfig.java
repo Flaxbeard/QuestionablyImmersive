@@ -50,14 +50,20 @@ public class QIConfig
 	{
 		public final ForgeConfigSpec.IntValue costPerTick;
 		public final ForgeConfigSpec.IntValue ticksPerLevel;
+		public final ForgeConfigSpec.IntValue ticksPerHardness;
+		public final ForgeConfigSpec.DoubleValue relativeYield;
 
 		Triphammer(ForgeConfigSpec.Builder builder)
 		{
 			builder.push("triphammer");
-			this.costPerTick = builder.comment("The Flux the Triphammer will use per tick. Default: 64")
+			this.costPerTick = builder.comment("The Flux the Triphammer will use per tick, Default: 64")
 					.defineInRange("cost_per_tick", 64, 1, 2147483647);
-			this.ticksPerLevel = builder.comment("Number of ticks to perform one level's worth of anvil operations Default: 600")
+			this.ticksPerLevel = builder.comment("Number of ticks to perform one level's worth of anvil operations, Default: 600")
 					.defineInRange("ticks_per_level", 600, 1, 2147483647);
+			this.ticksPerHardness = builder.comment("Number of ticks per point of block hardness to destroy a block, Default: 50")
+					.defineInRange("ticks_per_hardness", 50, 1, 2147483647);
+			this.relativeYield = builder.comment("Triphammer yield relative to Crusher, Default: 0.75 (0.75*2x = 1.5x per ore)")
+					.defineInRange("relativeYield", 0.75, 0, 2147483647);
 			builder.pop();
 		}
 	}

@@ -18,7 +18,16 @@ group= "net.flaxbeard.questionablyimmersive"
 archivesBaseName = "questionablyimmersive"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-
+sourceSets {
+    main {
+        resources {
+            srcDirs = [
+                    "$rootDir/src/main/resources",
+                    "$rootDir/src/generated/resources"
+            ]
+        }
+    }
+}
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -75,8 +84,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
 
-            args '--mod', 'questionablyimmersive', '--all', '--output', file('src/generated/resources/')
-
+            args '--mod', 'questionablyimmersive', '--all', '--output', file('src/generated/resources/'), '--validate',
+                    '--existing', sourceSets.main.resources.srcDirs[0]
             mods {
                 questionablyimmersive {
                     source sourceSets.main

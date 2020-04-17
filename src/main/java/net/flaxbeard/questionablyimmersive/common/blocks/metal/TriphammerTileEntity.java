@@ -1,6 +1,7 @@
 package net.flaxbeard.questionablyimmersive.common.blocks.metal;
 
 import blusunrize.immersiveengineering.api.IEProperties;
+import blusunrize.immersiveengineering.api.crafting.CrusherRecipe;
 import blusunrize.immersiveengineering.api.crafting.IMultiblockRecipe;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockTileEntity;
@@ -22,16 +23,16 @@ import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.DirectionalPlaceContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.BlockParticleData;
 import net.minecraft.particles.ItemParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.IBooleanFunction;
@@ -86,16 +87,41 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
 		{
-			ItemStack result = super.insertItem(slot, stack, simulate);
-			if (slot < 2 && !simulate && !(ItemStack.areItemStacksEqual(stack, result) || ItemStack.areItemStackTagsEqual(stack, result)))
+			if (isAnvilMode)
 			{
-				TriphammerTileEntity.this.updateRepairOutput();
+				ItemStack result = super.insertItem(slot, stack, simulate);
+				if (slot < 2 && !simulate && !(ItemStack.areItemStacksEqual(stack, result) || ItemStack.areItemStackTagsEqual(stack, result)))
+				{
+					TriphammerTileEntity.this.updateRepairOutput();
+				}
+				return result;
+			} else
+			{
+				stack = stack.copy();
+
+				BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
+				if (stack.getItem() instanceof BlockItem)
+				{
+					if (simulate)
+					{
+						stack.setCount(stack.getCount() - 1);
+						return stack;
+					}
+					BlockItem bi = (BlockItem) stack.getItem();
+					ActionResultType result = bi.tryPlace(new DirectionalPlaceContext(world, targetPos, getFacing(), stack, Direction.DOWN));
+				}
+				return stack;
 			}
-			return result;
 		}
 	});
 	LazyOptional<IItemHandler> insertionHandlerBelow = registerConstantCap(new IEInventoryHandler(3, this, 0, new boolean[]{false, true, false}, new boolean[]{false, false, true})
 	{
+		@Override
+		public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+		{
+			return isAnvilMode;
+		}
+
 		@Override
 		public ItemStack insertItem(int slot, ItemStack stack, boolean simulate)
 		{
@@ -302,7 +328,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 								targetedBlock,
 								world,
 								targetPos
-						);
+						) && targetedBlock.getBlockHardness(world, targetPos) != -1;
 				if (shouldConsume)
 				{
 					int consumed = QIConfig.TRIPHAMMER.costPerTick.get();
@@ -366,15 +392,40 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 							}
 						} else
 						{
-							if (progress >= 200 && ticks % 60 == 35)
+							maxProgress = (int) Math.ceil(targetedBlock.getBlockHardness(world, targetPos) * QIConfig.TRIPHAMMER.ticksPerHardness.get());
+							if (progress >= maxProgress && ticks % 60 == 35)
 							{
-								world.destroyBlock(targetPos, true);
+								ItemStack blockStack = new ItemStack(targetedBlock.getBlock());
+								CrusherRecipe recipe = CrusherRecipe.findRecipe(blockStack);
+								if (recipe != null)
+								{
+									world.destroyBlock(targetPos, false);
+									NonNullList<ItemStack> outputs = recipe.getActualItemOutputs(this);
+									for (ItemStack stack : outputs)
+									{
+										ItemStack out = stack.copy();
+										float size = (float) (out.getCount() * QIConfig.TRIPHAMMER.relativeYield.get());
+										out.setCount((int) size);
+										if (world.rand.nextFloat() < size % 1)
+										{
+											out.setCount((int) size + 1);
+										}
+										Utils.dropStackAtPos(world, targetPos, out);
+									}
+								} else
+								{
+									world.destroyBlock(targetPos, true);
+								}
 								progress = 0;
 								update = true;
+								world.sendBlockBreakProgress(0, targetPos, -1);
 							}
 						}
 
 					}
+				} else
+				{
+					progress = 0;
 				}
 			}
 
@@ -433,6 +484,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 				BlockState targetedBlock = world.getBlockState(targetPos);
 
+				world.sendBlockBreakProgress(0, targetPos, (progress * 10) / maxProgress);
+
 				SoundType soundType = targetedBlock.getBlock().getSoundType(targetedBlock, world, targetPos, null);
 				world.playSound(
 						targetPos.getX(),
@@ -444,12 +497,15 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						soundType.getPitch() * 0.8F,
 						false
 				);
+
+				for (int i = 0; i < 10; i++)
+				{
+					world.addParticle(new BlockParticleData(ParticleTypes.BLOCK, targetedBlock),
+							targetPos.getX() + .5f, targetPos.getY() + 1, targetPos.getZ() + .5f,
+							(this.world.rand.nextFloat() - .5f) * .5f, this.world.rand.nextFloat() * .2f, (this.world.rand.nextFloat() - .5f) * .5f);
+				}
 			}
 		}
-		/*else if (world.isRemote && ticks % 60 == 0)
-		{
-			world.playSound(getPos().getX(), getPos().getY(), getPos().getZ(), SoundEvents.BLOCK_WOOD_HIT, SoundCategory.BLOCKS, 0.2F, .5f, false);
-		}*/
 
 		if (update)
 		{
@@ -600,7 +656,6 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			list.add(new AxisAlignedBB(minX, 0F / 16F, minZ, maxX, 16 / 16F, maxZ));
 			return list;
 		}
-		//list.add(new AxisAlignedBB(0, 0, 0, 1, 1, 1));
 		return list;
 	}
 
