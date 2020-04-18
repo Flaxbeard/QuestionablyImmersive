@@ -1,6 +1,9 @@
 Triphammer
 Stop... hammer time!
 The Triphammer is an automated hammer useful for ore processing and automatic smithing. It is built as above and is formed by right clicking the iron block on the front.<np>
-The Triphammer is a crude but effective tool to increase the yield from ores I mine. While less effective than the <link;crusher;Crusher;start>, a Triphammer requires no steel. The hammer will destroy blocks placed under the business end, producing on average 1.5 grit per ore block. Blocks which cannot be processed are destroyed as usual.<np>
+The Triphammer is a crude but effective tool to increase the yield from ores I mine. While less effective than the <link;crusher;Crusher;start>, a Triphammer requires no steel. The hammer will destroy blocks placed under the business end, producing on average 1.5 grit per ore block. Blocks which cannot be processed are destroyed as usual.
+
+The Triphammer will auto-place blocks input to any side of the hammer head.<np>
 If an anvil is instead placed underneath the head of the Triphammer, the machine becomes a useful automatic smithing tool. Ordinary anvil operations can be performed using power instead of experience.
-Secondary slot items can be input on any side of the anvil. Primary slot items can be input on any side of the block above the anvil, except from the top. The Triphammer will attempt to output below the anvil, otherwise output can be <link;conveyors;extracted;conveyor_extract_recipe> from either side.
+
+Secondary slot items can be input on any side of the anvil. Primary slot items can be input on any side of the hammer head, except from the top. Output can be <link;conveyors;extracted;conveyor_extract_recipe> from any side of the hammer head or anvil.

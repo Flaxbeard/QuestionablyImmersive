@@ -27,6 +27,16 @@ sourceSets {
         }
     }
 }
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
+
+        expand 'version': project.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
+}
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -106,6 +116,6 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.2.3'
-    compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-4fc655a9")
+    compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-13d19159")
     runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }
