@@ -18,7 +18,25 @@ group= "net.flaxbeard.questionablyimmersive"
 archivesBaseName = "questionablyimmersive"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceSets {
+    main {
+        resources {
+            srcDirs = [
+                    "$rootDir/src/main/resources",
+            ]
+        }
+    }
+}
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
 
+        expand 'version': project.version
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META-INF/mods.toml'
+    }
+}
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
@@ -75,8 +93,8 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
 
-            args '--mod', 'questionablyimmersive', '--all', '--output', file('src/generated/resources/')
-
+            args '--mod', 'questionablyimmersive', '--reports', '--all', '--output', file('src/generated/resources/'), '--validate',
+                    '--existing', sourceSets.main.resources.srcDirs[0]
             mods {
                 questionablyimmersive {
                     source sourceSets.main
@@ -98,6 +116,6 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.14.4-28.2.3'
-    compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-9082fb01")
+    compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:0.14-95-13d19159")
     runtimeOnly fg.deobf("mezz.jei:jei-1.14.4:6.0.0.11")
 }

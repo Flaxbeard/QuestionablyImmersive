@@ -134,8 +134,6 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my)
 	{
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		int mouseChange = 0; // TODO
-
 		if ((isPointInRegion(10, 56, 110, 12, mx, my) || leftMouseWasDown) && this.leftMouseDown)
 		{
 			scroll = (int) ((mx - (15. / 2) - guiLeft - 10.) * maxScroll) / 95;

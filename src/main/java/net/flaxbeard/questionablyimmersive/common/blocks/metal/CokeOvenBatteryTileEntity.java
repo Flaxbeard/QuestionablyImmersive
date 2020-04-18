@@ -70,7 +70,10 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 			BlockPos nullPos = this.getPos();
 			Direction facing = getFacing();
 			boolean mirrored = getIsMirrored();
-			return new AxisAlignedBB(nullPos.offset(facing, -1).offset(mirrored ? facing.rotateYCCW() : facing.rotateY(), -2).down(1), nullPos.offset(facing, 5 + 1).offset(mirrored ? facing.rotateYCCW() : facing.rotateY(), 3).up(2));
+			return new AxisAlignedBB(
+					nullPos.offset(facing, -1).offset(mirrored ? facing.rotateYCCW() : facing.rotateY(), -2).down(1),
+					nullPos.offset(facing, 5 + 1).offset(mirrored ? facing.rotateYCCW() : facing.rotateY(), 3).up(2)
+			);
 		}
 	}
 
@@ -512,10 +515,11 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		nbt.putByteArray("active", activeTemp);
 	}
 
+	@Nullable
 	@Override
-	public float[] getBlockBounds()
+	public CokeOvenBatteryTileEntity getTileForPos(BlockPos targetPosInMB)
 	{
-		return new float[]{0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F};
+		return super.getTileForPos(targetPosInMB);
 	}
 
 	@Override

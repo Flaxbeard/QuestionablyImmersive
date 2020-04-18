@@ -7,11 +7,15 @@ import blusunrize.lib.manual.Tree;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.client.gui.CokeOvenBatteryScreen;
+import net.flaxbeard.questionablyimmersive.client.gui.TriphammerScreen;
 import net.flaxbeard.questionablyimmersive.client.render.CokeOvenBatteryRenderer;
+import net.flaxbeard.questionablyimmersive.client.render.TriphammerRenderer;
 import net.flaxbeard.questionablyimmersive.common.CommonProxy;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.flaxbeard.questionablyimmersive.common.gui.CokeOvenBatteryContainer;
 import net.flaxbeard.questionablyimmersive.common.gui.QIGuiHandler;
+import net.flaxbeard.questionablyimmersive.common.gui.TriphammerContainer;
 import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.Screen;
@@ -35,14 +39,16 @@ public class ClientProxy extends CommonProxy
 	public void postInit()
 	{
 		ClientRegistry.bindTileEntitySpecialRenderer(CokeOvenBatteryTileEntity.Rendered.class, new CokeOvenBatteryRenderer());
+		ClientRegistry.bindTileEntitySpecialRenderer(TriphammerTileEntity.Master.class, new TriphammerRenderer());
 	}
 
 	@Override
 	public void postPostInit()
 	{
 		IEManualInstance ieMan = ManualHelper.getManual();
-		Tree.InnerNode<ResourceLocation, ManualEntry> toolsCat = ieMan.contentTree.getRoot().getOrCreateSubnode(new ResourceLocation(QuestionablyImmersive.MODID, "questionable"));
+		Tree.InnerNode<ResourceLocation, ManualEntry> toolsCat = ieMan.getRoot().getOrCreateSubnode(new ResourceLocation(QuestionablyImmersive.MODID, "questionable"));
 		ieMan.addEntry(toolsCat, new ResourceLocation(QuestionablyImmersive.MODID, "coke_oven_battery"));
+		ieMan.addEntry(toolsCat, new ResourceLocation(QuestionablyImmersive.MODID, "triphammer"));
 	}
 
 	@Override
@@ -63,6 +69,7 @@ public class ClientProxy extends CommonProxy
 	{
 		super.registerContainersAndScreens();
 		this.registerScreen(CokeOvenBatteryContainer.ID, CokeOvenBatteryScreen::new);
+		this.registerScreen(TriphammerContainer.ID, TriphammerScreen::new);
 	}
 
 	public <C extends Container, S extends Screen & IHasContainer<C>> void registerScreen(ResourceLocation containerName, ScreenManager.IScreenFactory<C, S> factory)

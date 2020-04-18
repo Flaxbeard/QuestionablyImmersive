@@ -1,14 +1,21 @@
 package net.flaxbeard.questionablyimmersive.common;
 
 import blusunrize.immersiveengineering.api.multiblocks.MultiblockHandler;
+import blusunrize.immersiveengineering.common.network.IMessage;
 import net.flaxbeard.questionablyimmersive.QuestionablyImmersive;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIBlocks;
 import net.flaxbeard.questionablyimmersive.common.blocks.QIMetalMultiblockBlock;
+import net.flaxbeard.questionablyimmersive.common.blocks.TriphammerAnvilBlock;
 import net.flaxbeard.questionablyimmersive.common.blocks.metal.CokeOvenBatteryTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerAnvilTileEntity;
+import net.flaxbeard.questionablyimmersive.common.blocks.metal.TriphammerTileEntity;
 import net.flaxbeard.questionablyimmersive.common.blocks.multiblocks.QIMultiblocks;
+import net.flaxbeard.questionablyimmersive.common.network.GUIUpdateMessage;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.event.RegistryEvent;
@@ -18,6 +25,7 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Function;
 
 @Mod.EventBusSubscriber(
 		modid = QuestionablyImmersive.MODID,
@@ -25,6 +33,8 @@ import java.util.*;
 )
 public class QIContent
 {
+	private static int packetId = 0;
+
 	public static List<Block> registeredQIBlocks = new ArrayList();
 	public static List<Item> registeredQIItems = new ArrayList();
 	public static List<Class<? extends TileEntity>> registeredQITiles = new ArrayList();
@@ -43,6 +53,27 @@ public class QIContent
 		{
 			return CokeOvenBatteryTileEntity.Master.TYPE;
 		});
+
+		QIBlocks.Multiblocks.triphammer = new QIMetalMultiblockBlock("triphammer", () ->
+		{
+			return TriphammerTileEntity.TYPE;
+		}, () ->
+		{
+			return TriphammerTileEntity.Master.TYPE;
+		});
+
+		QIBlocks.Metal.TRIPHAMMER_ANVIL = new TriphammerAnvilBlock("triphammer_anvil", () ->
+		{
+			return TriphammerAnvilTileEntity.TYPE;
+		}, Blocks.ANVIL);
+		QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED = new TriphammerAnvilBlock("triphammer_anvil_chipped", () ->
+		{
+			return TriphammerAnvilTileEntity.TYPE;
+		}, Blocks.CHIPPED_ANVIL);
+		QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED = new TriphammerAnvilBlock("triphammer_anvil_damaged", () ->
+		{
+			return TriphammerAnvilTileEntity.TYPE;
+		}, Blocks.DAMAGED_ANVIL);
 	}
 
 	public static void init()
@@ -50,6 +81,9 @@ public class QIContent
 		QIMultiblocks.init();
 		MultiblockHandler.registerMultiblock(QIMultiblocks.COKE_OVEN_BATTERY_SLICE);
 		MultiblockHandler.registerMultiblock(QIMultiblocks.COKE_OVEN_BATTERY_DISPLAY);
+		MultiblockHandler.registerMultiblock(QIMultiblocks.TRIPHAMMER);
+
+		registerMessage(GUIUpdateMessage.class, GUIUpdateMessage::new);
 	}
 
 	@SubscribeEvent
@@ -58,6 +92,11 @@ public class QIContent
 		registerTile(CokeOvenBatteryTileEntity.class, event, QIBlocks.Multiblocks.cokeOvenBattery);
 		registerTile(CokeOvenBatteryTileEntity.Rendered.class, event, QIBlocks.Multiblocks.cokeOvenBattery);
 		registerTile(CokeOvenBatteryTileEntity.Master.class, event, QIBlocks.Multiblocks.cokeOvenBattery);
+
+		registerTile(TriphammerTileEntity.class, event, QIBlocks.Multiblocks.triphammer);
+		registerTile(TriphammerTileEntity.Master.class, event, QIBlocks.Multiblocks.triphammer);
+
+		registerTile(TriphammerAnvilTileEntity.class, event, QIBlocks.Metal.TRIPHAMMER_ANVIL, QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED, QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED);
 	}
 
 	@SubscribeEvent
@@ -85,6 +124,15 @@ public class QIContent
 			Item item = (Item) var1.next();
 			event.getRegistry().register(item);
 		}
+	}
+
+	private static <T extends IMessage> void registerMessage(Class<T> packetType, Function<PacketBuffer, T> decoder)
+	{
+		QuestionablyImmersive.packetHandler.registerMessage(packetId++, packetType, IMessage::toBytes, decoder, (t, ctx) ->
+		{
+			t.process(ctx);
+			ctx.get().setPacketHandled(true);
+		});
 	}
 
 	private static <T extends IForgeRegistryEntry<T>> void checkNonNullNames(Collection<T> coll)

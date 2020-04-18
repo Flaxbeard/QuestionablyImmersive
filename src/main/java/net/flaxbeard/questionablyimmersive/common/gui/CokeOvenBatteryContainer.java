@@ -14,6 +14,7 @@ import net.minecraft.util.ResourceLocation;
 public class CokeOvenBatteryContainer extends QIBaseContainer<CokeOvenBatteryTileEntity>
 {
 	public static ResourceLocation ID = new ResourceLocation(QuestionablyImmersive.MODID, "coke_oven_battery");
+
 	public IESlot[] slots;
 	public CokeOvenBatteryTileEntity.Data data;
 
