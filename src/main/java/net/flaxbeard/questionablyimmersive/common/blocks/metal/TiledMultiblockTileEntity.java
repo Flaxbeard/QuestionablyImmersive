@@ -8,11 +8,14 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
+import javax.annotation.Nullable;
+
 public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEntity<T>> extends MultiblockPartTileEntity<T>
 {
 	protected BlockPos posInMultiblockTotal;
 	public int layer;
 	public int numLayers;
+	private T tempMaster;
 
 	public TiledMultiblockTileEntity(IETemplateMultiblock multiblockInstance, TileEntityType<? extends T> type, boolean redstoneControl)
 	{
@@ -39,26 +42,38 @@ public abstract class TiledMultiblockTileEntity<T extends TiledMultiblockTileEnt
 		nbt.putInt("layer", layer);
 	}
 
+	@Nullable
+	@Override
+	public T master()
+	{
+		if (tempMaster != null)
+		{
+			return tempMaster;
+		}
+		return super.master();
+	}
+
 	@Override
 	public void disassemble()
 	{
 		if (this.formed && !this.world.isRemote)
 		{
-			if (this.isDummy())
-			{
-				this.master().disassemble();
-			} else
-			{
-				T master = this.master();
-				ObfuscationReflectionHelper.setPrivateValue(MultiblockPartTileEntity.class, this, master, "tempMasterTE");
+			this.tempMaster = this.master();
+			this.master().disassembleTiled();
+			this.world.removeBlock(this.pos, false);
+		}
+	}
 
-				BlockPos startPos = this.getOrigin();
-				for (int i = 0; i < numLayers; i++)
-				{
-					IETemplateMultiblock multiblockInstance = ObfuscationReflectionHelper.getPrivateValue(MultiblockPartTileEntity.class, this, "multiblockInstance");
-					multiblockInstance.disassemble(this.world, startPos.offset(getFacing(), i), this.getIsMirrored(), multiblockInstance.untransformDirection(this.getFacing()));
-				}
-			}
+	public void disassembleTiled()
+	{
+		T master = this.master();
+		ObfuscationReflectionHelper.setPrivateValue(MultiblockPartTileEntity.class, this, master, "tempMasterTE");
+
+		BlockPos startPos = this.getOrigin();
+		for (int i = 0; i < numLayers; i++)
+		{
+			IETemplateMultiblock multiblockInstance = ObfuscationReflectionHelper.getPrivateValue(MultiblockPartTileEntity.class, this, "multiblockInstance");
+			multiblockInstance.disassemble(this.world, startPos.offset(getFacing(), i), this.getIsMirrored(), multiblockInstance.untransformDirection(this.getFacing()));
 		}
 	}
 

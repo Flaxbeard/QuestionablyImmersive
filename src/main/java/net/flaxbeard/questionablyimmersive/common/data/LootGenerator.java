@@ -29,6 +29,7 @@ public abstract class LootGenerator implements IDataProvider
 		this.dataGenerator = gen;
 	}
 
+	@Override
 	public void act(@Nonnull DirectoryCache outCache)
 	{
 		this.tables.clear();

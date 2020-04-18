@@ -23,7 +23,6 @@ sourceSets {
         resources {
             srcDirs = [
                     "$rootDir/src/main/resources",
-                    "$rootDir/src/generated/resources"
             ]
         }
     }
@@ -84,7 +83,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'fml.earlyprogresswindow', 'false'
 
-            args '--mod', 'questionablyimmersive', '--all', '--output', file('src/generated/resources/'), '--validate',
+            args '--mod', 'questionablyimmersive', '--reports', '--all', '--output', file('src/generated/resources/'), '--validate',
                     '--existing', sourceSets.main.resources.srcDirs[0]
             mods {
                 questionablyimmersive {
