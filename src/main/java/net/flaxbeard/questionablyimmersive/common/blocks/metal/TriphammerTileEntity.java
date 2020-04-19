@@ -24,6 +24,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DirectionalPlaceContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -46,12 +47,15 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidTank;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 public class TriphammerTileEntity extends PoweredMultiblockTileEntity<TriphammerTileEntity, IMultiblockRecipe> implements QIBlockInterfaces.IInteractionObjectQI, IEBlockInterfaces.IBlockBounds
@@ -81,6 +85,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		}
 	}
 
+	private Method getStateForPlacement = ObfuscationReflectionHelper.findMethod(BlockItem.class, "getStateForPlacement", BlockItemUseContext.class);
 	public NonNullList<ItemStack> inventory;
 	LazyOptional<IItemHandler> insertionHandlerAbove = registerConstantCap(new IEInventoryHandler(3, this, 0, new boolean[]{true, false, false}, new boolean[]{false, false, true})
 	{
@@ -97,17 +102,29 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 				return result;
 			} else
 			{
+				ItemStack og = stack.copy();
 				stack = stack.copy();
 
 				BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
 				if (stack.getItem() instanceof BlockItem)
 				{
+					BlockItem bi = (BlockItem) stack.getItem();
 					if (simulate)
 					{
-						stack.setCount(stack.getCount() - 1);
-						return stack;
+						DirectionalPlaceContext context = new DirectionalPlaceContext(world, targetPos, getFacing(), stack, Direction.DOWN);
+						try
+						{
+							BlockState state = (BlockState) getStateForPlacement.invoke(bi, context);
+							if (context.canPlace() && state != null && state.isValidPosition(world, targetPos))
+							{
+								stack.setCount(stack.getCount() - 1);
+							}
+							return stack;
+						} catch (IllegalAccessException | InvocationTargetException e)
+						{
+							e.printStackTrace();
+						}
 					}
-					BlockItem bi = (BlockItem) stack.getItem();
 					ActionResultType result = bi.tryPlace(new DirectionalPlaceContext(world, targetPos, getFacing(), stack, Direction.DOWN));
 				}
 				return stack;
