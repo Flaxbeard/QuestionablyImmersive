@@ -19,7 +19,6 @@ public class CokeOvenBatteryModel extends Model
 	public RendererModel cokeBlock;
 
 	public boolean mirror;
-	private boolean wasSneaking = false;
 
 
 	public CokeOvenBatteryModel(boolean mirror)
@@ -84,16 +83,6 @@ public class CokeOvenBatteryModel extends Model
 
 	public void render(CokeOvenBatteryTileEntity.Master battery, int index, float f5)
 	{
-
-
-		if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSneaking())
-		{
-			wasSneaking = true;
-		} else
-		{
-			wasSneaking = false;
-		}
-
 		if (index == 0)
 		{
 			this.oven1.render(f5);

@@ -1,6 +1,5 @@
 package net.flaxbeard.questionablyimmersive.client.model;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.RendererModel;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
@@ -12,7 +11,6 @@ public class TriphammerModel extends Model
 	public RendererModel spinboye;
 
 	public boolean mirror;
-	private boolean wasSneaking = false;
 	public float ticks;
 	public float fallingTicks;
 
@@ -27,8 +25,6 @@ public class TriphammerModel extends Model
 
 	public void refresh()
 	{
-		//this.base = new RendererModel(this, 64, 0);
-		//this.base.addBox(0, 0, 0, 16 * 3, 8, 16 * 3);
 		this.base = new RendererModel(this, 64, 0);
 		this.base.addBox(-0.001f, 0, 8, 16 * 3, 8, 16 * 2);
 
@@ -47,16 +43,6 @@ public class TriphammerModel extends Model
 			redman.addBox(-0.01f, 0.005f, 0, 16, 32, 16);
 			this.base.addChild(redman);
 		}
-
-		/*RendererModel input = new RendererModel(this, 0, 0);
-		input.addBox(48, 0, 0, 16, 16, 16);
-		this.base.addChild(input);
-
-
-
-		RendererModel output = new RendererModel(this, 0, 0);
-		output.addBox(48, 0, 32, 16, 16, 16);
-		this.base.addChild(output);*/
 
 		this.hammer = new RendererModel(this, 0, 69);
 		this.hammer.setRotationPoint(26, 24, 24);
@@ -129,17 +115,6 @@ public class TriphammerModel extends Model
 
 	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
-		if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.isSneaking())
-		{
-			if (!wasSneaking)
-			{
-				refresh();
-			}
-			wasSneaking = true;
-		} else
-		{
-			wasSneaking = false;
-		}
 		this.base.render(f5);
 
 		float tks = (ticks % 120) / 2;
