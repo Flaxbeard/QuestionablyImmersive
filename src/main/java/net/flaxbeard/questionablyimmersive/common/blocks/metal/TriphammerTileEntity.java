@@ -85,7 +85,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 		}
 	}
 
-	private Method getStateForPlacement = ObfuscationReflectionHelper.findMethod(BlockItem.class, "getStateForPlacement", BlockItemUseContext.class);
+	private Method getStateForPlacement = ObfuscationReflectionHelper.findMethod(BlockItem.class, "func_195945_b", BlockItemUseContext.class);
 	public NonNullList<ItemStack> inventory;
 	LazyOptional<IItemHandler> insertionHandlerAbove = registerConstantCap(new IEInventoryHandler(3, this, 0, new boolean[]{true, false, false}, new boolean[]{false, false, true})
 	{

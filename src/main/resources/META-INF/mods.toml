@@ -34,6 +34,6 @@ A general-purpose addon for Immersive Engineering.
 [[dependencies.questionablyimmersive]]
   modId="immersiveengineering"
   mandatory=true
-  versionRange="[0.14,)"
+  versionRange="[0.14-95,)"
   ordering="AFTER"
   side="BOTH"
