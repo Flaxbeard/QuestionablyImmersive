@@ -170,25 +170,7 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 
 	private FakePlayer fakePlayer;
 
-	private static final CachedVoxelShapes<MultiblockCacheKey> SHAPES = new CachedVoxelShapes<MultiblockCacheKey>(TriphammerTileEntity::getShape)
-	{
-		@Override
-		public VoxelShape get(MultiblockCacheKey k)
-		{
-			List<AxisAlignedBB> subshapes = getShape(k);
-			VoxelShape ret = VoxelShapes.empty();
-			AxisAlignedBB aabb;
-			if (subshapes != null)
-			{
-				for (Iterator var4 = subshapes.iterator(); var4.hasNext(); ret = VoxelShapes.combine(ret, VoxelShapes.create(aabb), IBooleanFunction.OR))
-				{
-					aabb = (AxisAlignedBB) var4.next();
-				}
-			}
-
-			return ret.simplify();
-		}
-	};
+	private static final CachedVoxelShapes<MultiblockCacheKey> SHAPES = new CachedVoxelShapes<MultiblockCacheKey>(TriphammerTileEntity::getShape);
 
 	private TriphammerTileEntity(TileEntityType<TriphammerTileEntity> type)
 	{
