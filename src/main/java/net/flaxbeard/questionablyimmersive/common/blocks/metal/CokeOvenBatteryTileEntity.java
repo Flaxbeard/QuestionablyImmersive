@@ -181,7 +181,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 							}
 
 						}
-					} else if (recuperationTime[i] > 0)
+					}
+					else if (recuperationTime[i] > 0)
 					{
 						recuperationTime[i]--;
 					}
@@ -204,7 +205,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 					process[i] = 0;
 					processMax[i] = 0;
 					active[i] = false;
-				} else
+				}
+				else
 				{
 					CokeOvenRecipe recipe = CokeOvenRecipe.findRecipe(inventory.get(i + 2));
 					if (recipe == null || getRecipeTime(recipe) != processMax[i])
@@ -212,7 +214,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 						process[i] = 0;
 						processMax[i] = 0;
 						active[i] = false;
-					} else
+					}
+					else
 					{
 						process[i]--;
 						if (process[i] < 35 && !canDoorOpen(i))
@@ -221,7 +224,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 						}
 					}
 				}
-			} else if (recuperationTime[i] > 0)
+			}
+			else if (recuperationTime[i] > 0)
 			{
 				recuperationTime[i]--;
 				if (recuperationTime[i] == 0)
@@ -256,7 +260,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 						double creosoteLoss = QIConfig.COKE_OVEN_BATTERY.creosoteLoss.get();
 						this.tank.fill(new FluidStack(IEContent.fluidCreosote, (int) (recipe.creosoteOutput * processAmount * creosoteLoss)), IFluidHandler.FluidAction.EXECUTE);
 						recuperationTime[i] = 20;
-					} else
+					}
+					else
 					{
 						active[i] = false;
 					}
@@ -294,12 +299,14 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 					if (this.inventory.get(0).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer))
 					{
 						this.inventory.set(2, filledContainer.copy());
-					} else
+					}
+					else
 					{
 						if (!inFullSlot.isEmpty() && ItemHandlerHelper.canItemStacksStack(inFullSlot, filledContainer))
 						{
 							inFullSlot.grow(filledContainer.getCount());
-						} else if (inFullSlot.isEmpty())
+						}
+						else if (inFullSlot.isEmpty())
 						{
 							this.inventory.set(1, filledContainer.copy());
 						}
@@ -396,13 +403,15 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		if (((ItemStack) this.inventory.get(0)).isEmpty())
 		{
 			return null;
-		} else
+		}
+		else
 		{
 			CokeOvenRecipe recipe = CokeOvenRecipe.findRecipe((ItemStack) this.inventory.get(0));
 			if (recipe == null)
 			{
 				return null;
-			} else
+			}
+			else
 			{
 				return (((ItemStack) this.inventory.get(1)).isEmpty() || ItemStack.areItemsEqual((ItemStack) this.inventory.get(1), recipe.output) && ((ItemStack) this.inventory.get(1)).getCount() + recipe.output.getCount() <= this.getSlotLimit(1)) && this.tank.getFluidAmount() + recipe.creosoteOutput <= this.tank.getCapacity() ? recipe : null;
 			}
@@ -603,7 +612,8 @@ public class CokeOvenBatteryTileEntity extends TiledMultiblockTileEntity<CokeOve
 		{
 			CokeOvenBatteryTileEntity master = (CokeOvenBatteryTileEntity) this.master();
 			return master == null ? null : master.invHandlers[layer].cast();
-		} else
+		}
+		else
 		{
 			return super.getCapability(capability, facing);
 		}

@@ -86,10 +86,12 @@ public class CokeOvenBatteryModel extends Model
 		if (index == 0)
 		{
 			this.oven1.render(f5);
-		} else if ((battery != null && index == battery.numLayers - 1) || (battery == null && index == 5))
+		}
+		else if ((battery != null && index == battery.numLayers - 1) || (battery == null && index == 5))
 		{
 			this.oven2.render(f5);
-		} else
+		}
+		else
 		{
 			this.oven0.render(f5);
 		}
@@ -104,7 +106,8 @@ public class CokeOvenBatteryModel extends Model
 				if (battery.processMax[index] > 0 && battery.process[index] < 50)
 				{
 					t = (50 - battery.process[index]) + Minecraft.getInstance().getRenderPartialTicks();
-				} else
+				}
+				else
 				{
 					t = 50 + (20 - battery.recuperationTime[index]) + Minecraft.getInstance().getRenderPartialTicks();
 				}
@@ -125,19 +128,22 @@ public class CokeOvenBatteryModel extends Model
 				GlStateManager.color4f(1, 1, 1, 1);
 				GlStateManager.disableBlend();
 				GlStateManager.popMatrix();
-			} else if (progress <= 30f)
+			}
+			else if (progress <= 30f)
 			{
 				// Start to open door
 				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 				cokeBlock.render(f5);
 				doorOpenPercent = 1f - Math.cos((progress - 15f) * Math.PI / 30f);
-			} else if (progress <= 50f)
+			}
+			else if (progress <= 50f)
 			{
 				// Move coke out
 				doorOpenPercent = 1;
 				cokeBlock.setRotationPoint(4, 4, 38.01f + cokeMovePercent);
 				cokeBlock.render(f5);
-			} else if (progress <= 55f)
+			}
+			else if (progress <= 55f)
 			{
 				if (progress <= 51f)
 				{
@@ -145,7 +151,8 @@ public class CokeOvenBatteryModel extends Model
 					cokeBlock.render(f5);
 				}
 				doorOpenPercent = 1;
-			} else if (progress <= 70f)
+			}
+			else if (progress <= 70f)
 			{
 				// Close door
 				doorOpenPercent = Math.cos((progress - 55) * Math.PI / 30f);
@@ -164,10 +171,12 @@ public class CokeOvenBatteryModel extends Model
 					if (ticks < 15)
 					{
 						doorOpenPercent = (float) 1 - Math.cos((ticks * Math.PI / 30f));
-					} else if (ticks < 30)
+					}
+					else if (ticks < 30)
 					{
 						doorOpenPercent = 1;
-					} else
+					}
+					else
 					{
 						doorOpenPercent = (float) Math.cos(((ticks - 30) * Math.PI / 30f));
 					}
@@ -182,7 +191,8 @@ public class CokeOvenBatteryModel extends Model
 				double a = Math.sqrt(b * b + c * c - 2 * b * c * Math.cos(-door.rotateAngleY));
 				double angle = Math.asin(b * Math.sin(-door.rotateAngleY) / a);
 				piston.rotateAngleY = (float) (Math.toRadians(90) - angle);
-			} else
+			}
+			else
 			{
 				door.rotateAngleY = 0;
 				piston.rotateAngleY = (float) (Math.toRadians(0));

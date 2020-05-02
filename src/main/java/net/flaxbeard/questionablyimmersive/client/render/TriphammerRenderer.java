@@ -36,16 +36,19 @@ public class TriphammerRenderer extends TileEntityRenderer<TriphammerTileEntity.
 				rotationMod = 90f;
 				GlStateManager.rotated(90F, 0, 1, 0);
 				GlStateManager.translated(-1, 0, 1);
-			} else if (rotation == Direction.EAST)
+			}
+			else if (rotation == Direction.EAST)
 			{
 				rotationMod = 180f;
 				GlStateManager.rotated(180F, 0, 1, 0);
 				GlStateManager.translated(-1, 0, 0);
-			} else if (rotation == Direction.NORTH)
+			}
+			else if (rotation == Direction.NORTH)
 			{
 				rotationMod = 270f;
 				GlStateManager.rotated(270F, 0, 1, 0);
-			} else
+			}
+			else
 			{
 				GlStateManager.translated(0, 0, 1);
 			}

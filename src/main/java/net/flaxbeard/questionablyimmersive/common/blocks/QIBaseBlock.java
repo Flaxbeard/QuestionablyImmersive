@@ -147,10 +147,12 @@ public class QIBaseBlock extends Block
 		if (this.notNormalBlock)
 		{
 			return 0;
-		} else if (state.isOpaqueCube(worldIn, pos))
+		}
+		else if (state.isOpaqueCube(worldIn, pos))
 		{
 			return this.lightOpacity;
-		} else
+		}
+		else
 		{
 			return state.propagatesSkylightDown(worldIn, pos) ? 0 : 1;
 		}
@@ -235,7 +237,8 @@ public class QIBaseBlock extends Block
 		{
 			worldIn.notifyBlockUpdate(pos, state, state, 3);
 			return true;
-		} else
+		}
+		else
 		{
 			return super.eventReceived(state, worldIn, pos, eventID, eventParam);
 		}
@@ -262,7 +265,8 @@ public class QIBaseBlock extends Block
 		if (this.allowHammerHarvest(state) && tool == HammerItem.HAMMER_TOOL)
 		{
 			return true;
-		} else
+		}
+		else
 		{
 			return this.allowWirecutterHarvest(state) && tool == WirecutterItem.CUTTER_TOOL ? true : super.isToolEffective(state, tool);
 		}

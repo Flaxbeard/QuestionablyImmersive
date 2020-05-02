@@ -42,10 +42,12 @@ public class QIMetalMultiblockBlock extends QIMultiblockBlock
 		if (mtt == MultiblockTileType.SLAVE)
 		{
 			return this.tileType.get().create();
-		} else if (mtt == MultiblockTileType.RENDERED_SLAVE)
+		}
+		else if (mtt == MultiblockTileType.RENDERED_SLAVE)
 		{
 			return this.renderedTileType.get().create();
-		} else
+		}
+		else
 		{
 			return this.masterTileType.get().create();
 		}

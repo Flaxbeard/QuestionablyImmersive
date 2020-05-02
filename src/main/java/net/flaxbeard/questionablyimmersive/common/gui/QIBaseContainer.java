@@ -46,7 +46,8 @@ public class QIBaseContainer<T extends TileEntity> extends Container
 		if (!(slot instanceof Ghost))
 		{
 			return super.slotClick(id, button, clickType, player);
-		} else
+		}
+		else
 		{
 			ItemStack stack = ItemStack.EMPTY;
 			ItemStack stackSlot = slot.getStack();
@@ -58,7 +59,8 @@ public class QIBaseContainer<T extends TileEntity> extends Container
 			if (button == 2)
 			{
 				slot.putStack(ItemStack.EMPTY);
-			} else
+			}
+			else
 			{
 				PlayerInventory playerInv;
 				ItemStack stackHeld;
@@ -73,7 +75,8 @@ public class QIBaseContainer<T extends TileEntity> extends Container
 							slot.putStack(Utils.copyStackWithAmount(stackHeld, 1));
 						}
 					}
-				} else
+				}
+				else
 				{
 					playerInv = player.inventory;
 					stackHeld = playerInv.getItemStack();
@@ -83,10 +86,12 @@ public class QIBaseContainer<T extends TileEntity> extends Container
 						{
 							slot.putStack(Utils.copyStackWithAmount(stackHeld, 1));
 						}
-					} else if (stackHeld.isEmpty())
+					}
+					else if (stackHeld.isEmpty())
 					{
 						slot.putStack(ItemStack.EMPTY);
-					} else if (slot.isItemValid(stackHeld))
+					}
+					else if (slot.isItemValid(stackHeld))
 					{
 						slot.putStack(Utils.copyStackWithAmount(stackHeld, 1));
 					}
@@ -112,7 +117,8 @@ public class QIBaseContainer<T extends TileEntity> extends Container
 				{
 					return ItemStack.EMPTY;
 				}
-			} else if (!this.mergeItemStack(itemstack1, 0, this.slotCount, false))
+			}
+			else if (!this.mergeItemStack(itemstack1, 0, this.slotCount, false))
 			{
 				return ItemStack.EMPTY;
 			}
@@ -120,7 +126,8 @@ public class QIBaseContainer<T extends TileEntity> extends Container
 			if (itemstack1.isEmpty())
 			{
 				slotObject.putStack(ItemStack.EMPTY);
-			} else
+			}
+			else
 			{
 				slotObject.onSlotChanged();
 			}

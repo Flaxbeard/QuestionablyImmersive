@@ -82,7 +82,8 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 		if (ret.getProperties().contains(IEProperties.FACING_ALL))
 		{
 			ret = (BlockState) ret.with(IEProperties.FACING_ALL, this.getDefaultFacing());
-		} else if (ret.getProperties().contains(IEProperties.FACING_HORIZONTAL))
+		}
+		else if (ret.getProperties().contains(IEProperties.FACING_HORIZONTAL))
 		{
 			ret = (BlockState) ret.with(IEProperties.FACING_HORIZONTAL, this.getDefaultFacing());
 		}
@@ -127,7 +128,8 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 					}
 
 				};
-			} else
+			}
+			else
 			{
 				dropHandler = (c) ->
 				{
@@ -301,7 +303,8 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 			world.notifyBlockUpdate(pos, state, state, 3);
 			world.addBlockEvent(tile.getPos(), tile.getBlockState().getBlock(), 255, 0);
 			return true;
-		} else
+		}
+		else
 		{
 			if (tile instanceof IPlayerInteraction)
 			{
@@ -322,7 +325,8 @@ public abstract class QITileProviderBlock extends QIBaseBlock implements IColour
 				}
 
 				return true;
-			} else
+			}
+			else
 			{
 				return super.onBlockActivated(state, world, pos, player, hand, hit);
 			}

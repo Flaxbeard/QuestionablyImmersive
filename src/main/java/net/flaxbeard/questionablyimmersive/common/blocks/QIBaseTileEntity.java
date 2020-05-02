@@ -146,11 +146,13 @@ public abstract class QIBaseTileEntity extends TileEntity implements BlockstateP
 				BlockState state = this.world.getBlockState(this.pos);
 				this.world.notifyBlockUpdate(this.pos, state, state, 3);
 				return true;
-			} else
+			}
+			else
 			{
 				return super.receiveClientEvent(id, type);
 			}
-		} else
+		}
+		else
 		{
 			this.markContainingBlockForUpdate((BlockState) null);
 			return true;
@@ -210,14 +212,16 @@ public abstract class QIBaseTileEntity extends TileEntity implements BlockstateP
 				if (wrapper != null)
 				{
 					this.energyCaps.put(side, this.registerConstantCap(wrapper));
-				} else
+				}
+				else
 				{
 					this.energyCaps.put(side, LazyOptional.empty());
 				}
 			}
 
 			return ((LazyOptional) this.energyCaps.get(side)).cast();
-		} else
+		}
+		else
 		{
 			return super.getCapability(cap, side);
 		}

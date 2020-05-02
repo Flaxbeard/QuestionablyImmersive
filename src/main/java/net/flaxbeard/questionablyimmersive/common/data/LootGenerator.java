@@ -48,7 +48,8 @@ public abstract class LootGenerator implements IDataProvider
 				IELogger.logger.warn("Found validation problem in " + name + ": " + table);
 			});
 			throw new IllegalStateException("Failed to validate loot tables, see logs");
-		} else
+		}
+		else
 		{
 			this.tables.forEach((name, table) ->
 			{

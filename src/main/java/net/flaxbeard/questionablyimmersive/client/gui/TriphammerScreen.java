@@ -99,10 +99,12 @@ public class TriphammerScreen extends IEContainerScreen<TriphammerContainer> imp
 			{
 				s = I18n.format("container.repair.expensive");
 				i = 16736352;
-			} else if (!this.triphammer.hasOutput())
+			}
+			else if (!this.triphammer.hasOutput())
 			{
 				flag = false;
-			} else if (!this.triphammer.getSlot(2).canTakeStack(this.playerInventory.player))
+			}
+			else if (!this.triphammer.getSlot(2).canTakeStack(this.playerInventory.player))
 			{
 				i = 16736352;
 			}

@@ -56,7 +56,8 @@ public abstract class QITemplateMultiblock extends IETemplateMultiblock
 			tile.setFacing(this.transformDirection(clickDirection.getOpposite()));
 			tile.markDirty();
 			world.addBlockEvent(actualPos, world.getBlockState(actualPos).getBlock(), 255, 0);
-		} else
+		}
+		else
 		{
 			IELogger.logger.error("Expected MB TE at {} during placement", actualPos);
 		}

@@ -31,16 +31,19 @@ public class CokeOvenBatteryRenderer extends TileEntityRenderer<CokeOvenBatteryT
 				rotationMod = 90f;
 				GlStateManager.rotated(90F, 0, 1, 0);
 				GlStateManager.translated(-1, 0, 1);
-			} else if (rotation == Direction.WEST)
+			}
+			else if (rotation == Direction.WEST)
 			{
 				rotationMod = 180f;
 				GlStateManager.rotated(180F, 0, 1, 0);
 				GlStateManager.translated(-1, 0, 0);
-			} else if (rotation == Direction.SOUTH)
+			}
+			else if (rotation == Direction.SOUTH)
 			{
 				rotationMod = 270f;
 				GlStateManager.rotated(270F, 0, 1, 0);
-			} else
+			}
+			else
 			{
 				GlStateManager.translated(0, 0, 1);
 			}
@@ -64,7 +67,8 @@ public class CokeOvenBatteryRenderer extends TileEntityRenderer<CokeOvenBatteryT
 					model.render(null, i, 0.0625F);
 					GlStateManager.popMatrix();
 				}
-			} else
+			}
+			else
 			{
 				// Render 5 ovens per Render-tagged TE
 				for (int i = te.layer; i < Math.min(te.layer + 5, te.numLayers); i++)
@@ -77,7 +81,8 @@ public class CokeOvenBatteryRenderer extends TileEntityRenderer<CokeOvenBatteryT
 					if (parent != null && i < parent.active.length && parent.active[i])
 					{
 						ClientUtils.bindTexture(texture);
-					} else
+					}
+					else
 					{
 						ClientUtils.bindTexture(textureOff);
 					}

@@ -71,7 +71,8 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 
 				oven.markDirty();
 				oven.markContainingBlockForUpdate((BlockState) null);
-			} else
+			}
+			else
 			{
 				oven.process = new int[0];
 				oven.processMax = new int[0];
@@ -96,7 +97,8 @@ public class CokeOvenBatterySliceMultiblock extends TiledTemplateMultiblock
 		if (equals && i == 0)
 		{
 			return QIMultiblockBlock.MultiblockTileType.MASTER;
-		} else if (equals && i % 5 == 0)
+		}
+		else if (equals && i % 5 == 0)
 		{
 			return QIMultiblockBlock.MultiblockTileType.RENDERED_SLAVE;
 		}

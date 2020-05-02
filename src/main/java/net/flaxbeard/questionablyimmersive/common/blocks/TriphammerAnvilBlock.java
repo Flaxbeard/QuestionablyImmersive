@@ -53,10 +53,12 @@ public class TriphammerAnvilBlock extends QIGenericTileBlock
 		if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL)
 		{
 			return QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED.getDefaultState().with(IEProperties.FACING_HORIZONTAL, state.get(IEProperties.FACING_HORIZONTAL));
-		} else if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED)
+		}
+		else if (block == QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED)
 		{
 			return QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED.getDefaultState().with(IEProperties.FACING_HORIZONTAL, state.get(IEProperties.FACING_HORIZONTAL));
-		} else
+		}
+		else
 		{
 			return null;
 		}

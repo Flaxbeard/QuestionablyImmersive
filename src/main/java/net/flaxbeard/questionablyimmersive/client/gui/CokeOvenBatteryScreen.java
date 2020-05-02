@@ -138,7 +138,8 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 		{
 			scroll = (int) ((mx - (15. / 2) - guiLeft - 10.) * maxScroll) / 95;
 			leftMouseWasDown = true;
-		} else
+		}
+		else
 		{
 			leftMouseWasDown = false;
 		}
@@ -162,7 +163,8 @@ public class CokeOvenBatteryScreen extends IEContainerScreen<CokeOvenBatteryCont
 			{
 				slot.xPos = -Integer.MAX_VALUE;
 				slot.yPos = -Integer.MAX_VALUE;
-			} else
+			}
+			else
 			{
 				slot.xPos = 13 + x;
 				slot.yPos = 17 + y;

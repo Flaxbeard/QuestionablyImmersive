@@ -49,7 +49,8 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 		if (rot == null)
 		{
 			return false;
-		} else
+		}
+		else
 		{
 			Template template = getTemplate();
 
@@ -57,7 +58,8 @@ public abstract class TiledTemplateMultiblock extends QITemplateMultiblock
 			if (this.canBeMirrored())
 			{
 				mirrorStates = ImmutableList.of(Mirror.NONE, Mirror.FRONT_BACK);
-			} else
+			}
+			else
 			{
 				mirrorStates = ImmutableList.of(Mirror.NONE);
 			}

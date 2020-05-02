@@ -103,7 +103,8 @@ public class QIBlockItem extends BlockItem
 			if (!ieBlock.canIEBlockBePlaced(newState, context))
 			{
 				return false;
-			} else
+			}
+			else
 			{
 				boolean ret = super.placeBlock(context, newState);
 				if (ret)
@@ -113,7 +114,8 @@ public class QIBlockItem extends BlockItem
 
 				return ret;
 			}
-		} else
+		}
+		else
 		{
 			return super.placeBlock(context, newState);
 		}

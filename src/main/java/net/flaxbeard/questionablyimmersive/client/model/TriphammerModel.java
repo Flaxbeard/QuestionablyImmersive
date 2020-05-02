@@ -37,7 +37,8 @@ public class TriphammerModel extends Model
 			RendererModel redman = new RendererModel(this, 0, 0);
 			redman.addBox(-0.01f, 0.005f, 32, 16, 32, 16);
 			this.base.addChild(redman);
-		} else
+		}
+		else
 		{
 			RendererModel redman = new RendererModel(this, 0, 0);
 			redman.addBox(-0.01f, 0.005f, 0, 16, 32, 16);
@@ -65,7 +66,8 @@ public class TriphammerModel extends Model
 			RendererModel trip2 = new RendererModel(this, 0, 56);
 			trip2.addBox(-8, -2, -13, 4, 4, 9);
 			this.spinboye.addChild(trip2);
-		} else
+		}
+		else
 		{
 			this.spinboye = new RendererModel(this, 0, 48);
 			this.spinboye.setRotationPoint(8, 24, 24);
@@ -132,16 +134,19 @@ public class TriphammerModel extends Model
 		if (fTks >= 0 && fTks < 9)
 		{
 			hammer.rotateAngleZ = (float) Math.toRadians(totalDeg * fTks / 9.);
-		} else if (fTks < 15)
+		}
+		else if (fTks < 15)
 		{
 			float ttl = (float) Math.toRadians(totalDeg);
 			hammer.rotateAngleZ = ttl;
-		} else if (fTks < 17)
+		}
+		else if (fTks < 17)
 		{
 			float ttl = (float) Math.toRadians(totalDeg) - offset;
 			float down = (float) Math.cos((fTks - 15) / 2 * Math.PI / 2);
 			hammer.rotateAngleZ = down * ttl + offset;
-		} else
+		}
+		else
 		{
 			hammer.rotateAngleZ = 0 + offset;
 		}

@@ -36,9 +36,7 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.capabilities.Capability;
@@ -56,7 +54,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 public class TriphammerTileEntity extends PoweredMultiblockTileEntity<TriphammerTileEntity, IMultiblockRecipe> implements QIBlockInterfaces.IInteractionObjectQI, IEBlockInterfaces.IBlockBounds
 {
@@ -100,7 +101,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 					TriphammerTileEntity.this.updateRepairOutput();
 				}
 				return result;
-			} else
+			}
+			else
 			{
 				ItemStack og = stack.copy();
 				stack = stack.copy();
@@ -246,7 +248,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			if (targetedBlock.getBlock() == Blocks.CHIPPED_ANVIL)
 			{
 				baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL_CHIPPED.getDefaultState();
-			} else if (targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL)
+			}
+			else if (targetedBlock.getBlock() == Blocks.DAMAGED_ANVIL)
 			{
 				baseState = QIBlocks.Metal.TRIPHAMMER_ANVIL_DAMAGED.getDefaultState();
 			}
@@ -293,7 +296,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 				setMaximumCost(0);
 
 				progress = 0;
-			} else if (isAnvilMode && !wasAnvilMode)
+			}
+			else if (isAnvilMode && !wasAnvilMode)
 			{
 				newAnvilCooldown = 1;
 			}
@@ -359,11 +363,13 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 									{
 										itemstack.shrink(materialCost);
 										inventory.set(1, itemstack);
-									} else
+									}
+									else
 									{
 										inventory.set(1, ItemStack.EMPTY);
 									}
-								} else
+								}
+								else
 								{
 									inventory.set(1, ItemStack.EMPTY);
 								}
@@ -382,14 +388,16 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 										world.removeBlock(targetPos, false);
 										world.playEvent(1029, targetPos, 0);
 										newAnvilCooldown = 60;
-									} else
+									}
+									else
 									{
 										world.setBlockState(targetPos, damagedStack, 2);
 										world.playEvent(1030, targetPos, 0);
 									}
 								}
 							}
-						} else
+						}
+						else
 						{
 							maxProgress = (int) Math.ceil(targetedBlock.getBlockHardness(world, targetPos) * QIConfig.TRIPHAMMER.ticksPerHardness.get());
 							if (progress >= maxProgress && ticks % 60 == 35)
@@ -411,7 +419,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 										}
 										Utils.dropStackAtPos(world, targetPos, out);
 									}
-								} else
+								}
+								else
 								{
 									world.destroyBlock(targetPos, true);
 								}
@@ -422,7 +431,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						}
 
 					}
-				} else
+				}
+				else
 				{
 					progress = 0;
 				}
@@ -447,7 +457,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			{
 				progress++;
 			}
-		} else
+		}
+		else
 		{
 			if (fallingTicks % 60 >= 30 && fallingTicks % 60 < 40)
 			{
@@ -477,7 +488,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 						this.world.rand.nextFloat() * 0.1F + 0.75F,
 						false
 				);
-			} else if (active)
+			}
+			else if (active)
 			{
 				BlockPos targetPos = getBlockPosForPos(new BlockPos(1, 0, 3));
 
@@ -580,14 +592,16 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			if (posInMultiblock.getX() == 1)
 			{
 				list.add(new AxisAlignedBB(0, 0, 0, 1, 0.5, 1));
-			} else if (posInMultiblock.getX() == 0)
+			}
+			else if (posInMultiblock.getX() == 0)
 			{
 				minX = fw == Direction.EAST ? 0.5F : 0F;
 				minZ = fw == Direction.SOUTH ? 0.5F : 0F;
 				maxX = fw == Direction.WEST ? 0.5F : 1F;
 				maxZ = fw == Direction.NORTH ? 0.5F : 1F;
 				list.add(new AxisAlignedBB(minX, 0, minZ, maxX, 0.5, maxZ));
-			} else
+			}
+			else
 			{
 				minX = fw == Direction.WEST ? 0.5F : 0F;
 				minZ = fw == Direction.NORTH ? 0.5F : 0F;
@@ -882,7 +896,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			if (output.getTag().isEmpty())
 			{
 				output.setTag(null);
-			} else
+			}
+			else
 			{
 				output.setRepairCost(0);
 			}
@@ -910,7 +925,8 @@ public class TriphammerTileEntity extends PoweredMultiblockTileEntity<Triphammer
 			if (StringUtils.isBlank(newName))
 			{
 				output.clearCustomName();
-			} else
+			}
+			else
 			{
 				output.setDisplayName(new StringTextComponent(this.repairedItemName));
 			}
